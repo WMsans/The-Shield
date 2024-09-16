@@ -17,6 +17,9 @@ public class PlayerStats : ScriptableObject
 
     [Header("MOVEMENT")] [Tooltip("The top horizontal movement speed")]
     public float MaxSpeed = 14;
+    
+    [Tooltip("The top horizontal movement speed when bounced")]
+    public float MaxBouncedSpeed = 20;
 
     [Tooltip("The player's capacity to gain horizontal speed")]
     public float Acceleration = 120;

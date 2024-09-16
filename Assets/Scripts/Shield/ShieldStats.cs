@@ -9,6 +9,8 @@ public class ShieldStats : ScriptableObject
     public LayerMask GroundLayer;
     [Header("MOVEMENT")] [Tooltip("The top horizontal movement speed")]
     public float MaxSpeed = 14;
+    [Tooltip("The force to apply to the player")]
+    public float ForceToPlayer = 200;
     [Tooltip("The range of bounced angle")]
     public float MaxAngle = 45;
     [Tooltip("The minimum distance to be catched by the player")]

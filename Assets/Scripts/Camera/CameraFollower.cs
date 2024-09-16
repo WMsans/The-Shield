@@ -12,7 +12,7 @@ public class CameraFollower : MonoBehaviour
 
     Vector3 _moveDamp = new();
     Vector3 _lastFollowPos = new();
-    Camera cam;
+    public Camera Cam {get; private set;}
     float camZ;
     public Vector2 MinPoint { get; set; } = Vector2.zero;
     public Vector2 MaxPoint { get; set; } = Vector2.zero;
@@ -28,12 +28,12 @@ public class CameraFollower : MonoBehaviour
         {
             Instance = this;
         }
-        cam = GetComponent<Camera>();
+        Cam = GetComponent<Camera>();
     }
     void Start()
     {
         _lastFollowPos = follow.position;
-        camZ = cam.transform.position.z;
+        camZ = Cam.transform.position.z;
         CameraLimiter = null;
     }
     void Update()
@@ -42,13 +42,13 @@ public class CameraFollower : MonoBehaviour
 
         if (Vector2.Distance(MinPoint, MaxPoint) > 0f && CameraLimiter != null)
         {
-            _targetPos.x = Mathf.Clamp(_targetPos.x, MinPoint.x + Extents(cam).x, MaxPoint.x - Extents(cam).x);
-            _targetPos.y = Mathf.Clamp(_targetPos.y, MinPoint.y + Extents(cam).y, MaxPoint.y - Extents(cam).y);
+            _targetPos.x = Mathf.Clamp(_targetPos.x, MinPoint.x + Extents(Cam).x, MaxPoint.x - Extents(Cam).x);
+            _targetPos.y = Mathf.Clamp(_targetPos.y, MinPoint.y + Extents(Cam).y, MaxPoint.y - Extents(Cam).y);
         }
         transform.position = Vector3.SmoothDamp(transform.position, _targetPos, ref _moveDamp, followSpeed);
         _lastFollowPos = follow.position;
 
-        cam.transform.position = new(transform.position.x, transform.position.y, camZ);
+        Cam.transform.position = new(transform.position.x, transform.position.y, camZ);
     }
     private Vector2 Extents(Camera cam)
     {

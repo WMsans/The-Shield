@@ -7,6 +7,7 @@ using UnityEngine;
 public class ShieldController : MonoBehaviour
 {
     public static ShieldController Instance {get; private set;}
+    public Rigidbody2D Rd { get; private set; }
     public ShieldStats stats;
     public Enums.ShieldState CurrentState { get; private set; }
     Dictionary<Enums.ShieldState, ShieldBaseState> states = new()
@@ -26,6 +27,7 @@ public class ShieldController : MonoBehaviour
             Debug.LogError("There is more than one Shield in the scene");
             Destroy(gameObject);
         }
+        Rd = GetComponent<Rigidbody2D>();
     }
     private void Update()
     {
