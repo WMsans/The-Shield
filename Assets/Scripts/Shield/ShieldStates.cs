@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -124,34 +123,73 @@ public class ShieldFlyingState : ShieldBaseState
 
     class ChangePointFinder
     {
-        private Vector2 _shieldPosition;
+        private Rigidbody2D _shieldRd;
+        private Rigidbody2D _playerRd;
+        private LayerMask _groundLayer;
+        private LayerMask _targetLayer;
+        private Vector2 ShieldPosition => _shieldRd.position;
+        private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
         private float _maxTargetDistance;
 
-
-        public Vector2 FindChangePoint(Vector2 shieldPos, int chance, float targetDistance)
+        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, float shieldMaxDistance, LayerMask groundLayer)
         {
-            _shieldPosition = shieldPos;
-            _maxTargetDistance = targetDistance;
+            _shieldRd = shieldRd;
+            _playerRd = playerRd;
+            _groundLayer = groundLayer;
+            _maxTargetDistance = shieldMaxDistance;
+        }
+
+        public Vector2 NextPosition()
+        {
             _shieldAttractingObjects = FindAllShieldAttractingObjects();
-            
+        }
+
+        private bool CheckNextPosition(int index, int chance)
+        {
+            Vector2 nowPos = _shieldAttractingObjects[index].transform.position;
+            if (chance <= 1)
+            {
+                // Check if it can return to the player
+                var ray = Physics2D.Raycast(nowPos, (PlayerPosition - nowPos).normalized, Mathf.Infinity, _groundLayer);
+                if (ray.collider != null)
+                {
+                    // cannot reach player
+                    return false;
+                }
+                return true;
+            }
+
+            var bestDis = Mathf.Infinity;
+            var bestPoint = Vector2.zero;
+            // Go through every item in the shield attracting objects
             for (var i = 0; i < _shieldAttractingObjects.Count; i++)
             {
-                if (Vector2.Distance(_shieldPosition, _shieldAttractingObjects[i].transform.position) >
-                    _maxTargetDistance) break;
-                FindNextChangePoint(i, chance - 1);
+                if(i == index) continue;// Not comparing itself
+                var shieldAttractingObject = _shieldAttractingObjects[i];
+                // Check reachable with ray
+                var ray = Physics2D.Raycast(nowPos, ((Vector2)shieldAttractingObject.transform.position - nowPos).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
+                if(ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
+                // Check within distance
+                if (ray.distance > _maxTargetDistance)
+                    continue;
+                if (bestDis > ray.distance)
+                {
+                    if (CheckNextPosition(i, chance - 1)) ;
+                }
             }
         }
-
-        void FindNextChangePoint(int index, int chance)
+        public Vector2 NextPosition(Rigidbody2D shieldRd, float shieldMaxDistance)
         {
-            var nowPos = _shieldAttractingObjects[index].transform.position;
+            _shieldRd = shieldRd;
+            _maxTargetDistance = shieldMaxDistance;
+            NextPosition();
         }
-        List<ShieldAttractingObject> FindAllShieldAttractingObjects()
+        private List<ShieldAttractingObject> FindAllShieldAttractingObjects()
         {
             IEnumerable<ShieldAttractingObject> objects = Object.FindObjectsOfType<ShieldAttractingObject>();
             // return the sorted list
-            return objects.OrderBy(obj => Vector2.Distance(obj.transform.position, _shieldPosition)).ToList();
+            return new(objects);
         }
     }
     

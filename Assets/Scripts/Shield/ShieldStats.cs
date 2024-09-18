@@ -7,6 +7,8 @@ public class ShieldStats : ScriptableObject
 {
     [Header("Layers")] [Tooltip("Set this to the layer shield is collided on")]
     public LayerMask GroundLayer;
+    [Tooltip("Set this to the layer shield is targeted on")]
+    public LayerMask TargetLayer;
     [Header("MOVEMENT")] [Tooltip("The top horizontal movement speed")]
     public float MaxSpeed = 14;
     [Tooltip("The force to apply to the player")]
