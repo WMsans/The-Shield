@@ -11,6 +11,10 @@ public class ShieldStats : ScriptableObject
     public float MaxSpeed = 14;
     [Tooltip("The force to apply to the player")]
     public float ForceToPlayer = 200;
+    [Tooltip("The max number of change in direction")]
+    public int MaxChangeDirection = 3;
+    [Tooltip("The max number of target distance")]
+    public float MaxTargetDistance = 7.5f;
     [Tooltip("The range of bounced angle")]
     public float MaxAngle = 45;
     [Tooltip("The minimum distance to be catched by the player")]

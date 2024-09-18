@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using Unity.VisualScripting.FullSerializer;
+using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public abstract class ShieldBaseState
 {
@@ -69,6 +70,7 @@ public class ShieldFlyingState : ShieldBaseState
     private Rigidbody2D _rd;
     private Rigidbody2D _playerRd;
     private Camera _cam;
+    private int _chanceOfChangingDir;
     private Vector2 MousePos {get {return _cam.ScreenToWorldPoint(Input.mousePosition);}}
     public override void EnterState(ShieldController shield)
     {
@@ -79,6 +81,7 @@ public class ShieldFlyingState : ShieldBaseState
         _playerRd = _player.Rd;
         _rd = shield.Rd;
         _cam = CameraFollower.Instance.Cam;
+        _chanceOfChangingDir = _stats.MaxChangeDirection;
 
         // Move in direction
         var dir = (MousePos - _playerRd.position).normalized;
@@ -101,9 +104,57 @@ public class ShieldFlyingState : ShieldBaseState
 
     public override void FixedUpdateState(ShieldController shield)
     {
+        if (_rd.IsTouchingLayers(_stats.GroundLayer))
+        {
+            // Change direction
+            ChangeDirection(shield);
+        }
+    }
+
+    void ChangeDirection(ShieldController shield)
+    {
+        _chanceOfChangingDir--;
+        if (_chanceOfChangingDir <= 1)
+        {
+            shield.SwitchState(Enums.ShieldState.Returning);
+        }
+        // Determine the target
         
     }
 
+    class ChangePointFinder
+    {
+        private Vector2 _shieldPosition;
+        private List<ShieldAttractingObject> _shieldAttractingObjects;
+        private float _maxTargetDistance;
+
+
+        public Vector2 FindChangePoint(Vector2 shieldPos, int chance, float targetDistance)
+        {
+            _shieldPosition = shieldPos;
+            _maxTargetDistance = targetDistance;
+            _shieldAttractingObjects = FindAllShieldAttractingObjects();
+            
+            for (var i = 0; i < _shieldAttractingObjects.Count; i++)
+            {
+                if (Vector2.Distance(_shieldPosition, _shieldAttractingObjects[i].transform.position) >
+                    _maxTargetDistance) break;
+                FindNextChangePoint(i, chance - 1);
+            }
+        }
+
+        void FindNextChangePoint(int index, int chance)
+        {
+            var nowPos = _shieldAttractingObjects[index].transform.position;
+        }
+        List<ShieldAttractingObject> FindAllShieldAttractingObjects()
+        {
+            IEnumerable<ShieldAttractingObject> objects = Object.FindObjectsOfType<ShieldAttractingObject>();
+            // return the sorted list
+            return objects.OrderBy(obj => Vector2.Distance(obj.transform.position, _shieldPosition)).ToList();
+        }
+    }
+    
     public override void LateUpdateState(ShieldController shield)
     {
         
