@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -55,7 +56,7 @@ public class ShieldHoldState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = playerRd.position;
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, playerRd.position, 120f * Time.deltaTime);
     }
     public override void ExitState(ShieldController shield)
     {
@@ -81,12 +82,12 @@ public class ShieldFlyingState : ShieldBaseState
         _rd = shield.Rd;
         _cam = CameraFollower.Instance.Cam;
         _chanceOfChangingDir = _stats.MaxChangeDirection;
-
-        // Move in direction
+        
         var dir = (MousePos - _playerRd.position).normalized;
-        _rd.velocity = dir * _stats.MaxSpeed;
-        // Push player in opposite direction
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        // Move in direction
+        ChangeDirection(MousePos);
+        // Push player in opposite direction
         if (Mathf.DeltaAngle(rot, 180f) < 30f)
         {
             _playerRd.velocity *= Vector2.right;
@@ -105,20 +106,47 @@ public class ShieldFlyingState : ShieldBaseState
     {
         if (_rd.IsTouchingLayers(_stats.GroundLayer))
         {
-            // Change direction
-            ChangeDirection(shield);
+            // Check for returning
+            _chanceOfChangingDir--;
+            if (_chanceOfChangingDir <= 1)
+            {
+                shield.SwitchState(Enums.ShieldState.Returning);
+            }
+            else
+            {
+                // Change direction
+                if (!ChangeDirection())
+                {
+                    // 直接返回
+                    shield.SwitchState(Enums.ShieldState.Returning);
+                }
+            }
+        }
+        else if (Vector2.Distance(_rd.position, _playerRd.position) >= _stats.MaxTargetDistance)
+        {
+            Debug.Log(Vector2.Distance(_rd.position, _playerRd.position));
+            shield.SwitchState(Enums.ShieldState.Returning);
         }
     }
 
-    void ChangeDirection(ShieldController shield)
+    bool ChangeDirection()
     {
-        _chanceOfChangingDir--;
-        if (_chanceOfChangingDir <= 1)
-        {
-            shield.SwitchState(Enums.ShieldState.Returning);
-        }
         // Determine the target
-        
+        var nextPoint = new ChangePointFinder(_rd, _playerRd, _stats.MaxTargetDistance, _stats.MaxChangeDirection, _stats.GroundLayer, _stats.TargetLayer).NextPosition();
+        if (Vector2.Distance(_rd.position, nextPoint) > _stats.MaxTargetDistance)
+            return false;
+        // Change to that direction
+        ChangeDirection(nextPoint);
+        return true;
+    }
+
+    void ChangeDirection(Vector2 target)
+    {
+        // Move in direction
+        var dir = (target - _rd.position).normalized;
+        var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        _rd.velocity = dir * _stats.MaxSpeed;
+        _rd.rotation = rot;
     }
 
     class ChangePointFinder
@@ -131,18 +159,40 @@ public class ShieldFlyingState : ShieldBaseState
         private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
         private float _maxTargetDistance;
+        private int _maxChangeDirection;
 
-        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, float shieldMaxDistance, LayerMask groundLayer)
+        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, float shieldMaxDistance, int maxChangeDirection, LayerMask groundLayer, LayerMask targetLayer)
         {
             _shieldRd = shieldRd;
             _playerRd = playerRd;
             _groundLayer = groundLayer;
             _maxTargetDistance = shieldMaxDistance;
+            _targetLayer = targetLayer;
+            _maxChangeDirection = maxChangeDirection;
         }
 
         public Vector2 NextPosition()
         {
             _shieldAttractingObjects = FindAllShieldAttractingObjects();
+            var bestDis = Mathf.Infinity;
+            var bestPoint = new Vector2();
+            for (int i = 0; i < _shieldAttractingObjects.Count; i++)
+            {
+                var shieldAttractingObject = _shieldAttractingObjects[i];
+                Vector2 tarPoint = _shieldAttractingObjects[i].transform.position;
+                // Check if this thing is reachable
+                var ray = Physics2D.Raycast(ShieldPosition, tarPoint, _maxTargetDistance, _groundLayer | _targetLayer);
+                if (ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
+                // Check if it is best distance
+                if(ray.distance < bestDis)
+                {
+                    bestDis = ray.distance;
+                    bestPoint = ray.point;
+                }
+            }
+            if(bestDis < _maxTargetDistance)
+                return bestPoint;
+            return new(Mathf.Infinity, Mathf.Infinity);
         }
 
         private bool CheckNextPosition(int index, int chance)
@@ -160,9 +210,7 @@ public class ShieldFlyingState : ShieldBaseState
                 return true;
             }
 
-            var bestDis = Mathf.Infinity;
-            var bestPoint = Vector2.zero;
-            // Go through every item in the shield attracting objects
+            // Go through every point in the shield attracting objects
             for (var i = 0; i < _shieldAttractingObjects.Count; i++)
             {
                 if(i == index) continue;// Not comparing itself
@@ -171,19 +219,15 @@ public class ShieldFlyingState : ShieldBaseState
                 var ray = Physics2D.Raycast(nowPos, ((Vector2)shieldAttractingObject.transform.position - nowPos).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if(ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
                 // Check within distance
-                if (ray.distance > _maxTargetDistance)
-                    continue;
-                if (bestDis > ray.distance)
+                if (ray.distance > _maxTargetDistance) continue;
+                // Check from this point
+                if (CheckNextPosition(i, chance - 1))
                 {
-                    if (CheckNextPosition(i, chance - 1)) ;
+                    return true;
                 }
             }
-        }
-        public Vector2 NextPosition(Rigidbody2D shieldRd, float shieldMaxDistance)
-        {
-            _shieldRd = shieldRd;
-            _maxTargetDistance = shieldMaxDistance;
-            NextPosition();
+            // No object is available to go
+            return false;
         }
         private List<ShieldAttractingObject> FindAllShieldAttractingObjects()
         {
@@ -204,9 +248,25 @@ public class ShieldFlyingState : ShieldBaseState
 }
 public class ShieldReturnState : ShieldBaseState
 {
+    Rigidbody2D _rd;
+    Rigidbody2D _playerRd;
+    ShieldStats _stats;
     public override void EnterState(ShieldController shield)
     {
         Debug.Log("Shield: Entered Return State");
+        
+        _rd = shield.Rd;
+        _playerRd = PlayerController.Instance.Rd;
+        _stats = shield.stats;
+        ChangeDirection(_playerRd.position);
+    }
+    void ChangeDirection(Vector2 target)
+    {
+        // Move in direction
+        var dir = (target - _rd.position).normalized;
+        var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        _rd.velocity = dir * _stats.MaxSpeed;
+        _rd.rotation = rot;
     }
     public override void UpdateState(ShieldController shield)
     {
@@ -215,7 +275,10 @@ public class ShieldReturnState : ShieldBaseState
 
     public override void FixedUpdateState(ShieldController shield)
     {
-        
+        if (Vector2.Distance(_rd.position, _playerRd.position) < _stats.HandRange)
+        {
+            shield.SwitchState(Enums.ShieldState.Hold);
+        }
     }
     public override void LateUpdateState(ShieldController shield)
     {
