@@ -126,7 +126,6 @@ public class ShieldFlyingState : ShieldBaseState
         }
         else if (Vector2.Distance(_rd.position, _playerRd.position) >= _stats.MaxTargetDistance)
         {
-            Debug.Log(Vector2.Distance(_rd.position, _playerRd.position));
             shield.SwitchState(Enums.ShieldState.Returning);
         }
     }
@@ -160,6 +159,7 @@ public class ShieldFlyingState : ShieldBaseState
         private Vector2 ShieldPosition => _shieldRd.position;
         private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
+        private List<bool> _vis;
         private float _maxTargetDistance;
         private int _maxChangeDirection;
 
@@ -171,6 +171,7 @@ public class ShieldFlyingState : ShieldBaseState
             _maxTargetDistance = shieldMaxDistance;
             _targetLayer = targetLayer;
             _maxChangeDirection = maxChangeDirection;
+            _vis = new List<bool>();
         }
 
         public Vector2 NextPosition()
@@ -178,13 +179,15 @@ public class ShieldFlyingState : ShieldBaseState
             _shieldAttractingObjects = FindAllShieldAttractingObjects();
             var bestDis = Mathf.Infinity;
             var bestPoint = new Vector2();
+            Debug.Log(_shieldAttractingObjects.Count);
             for (int i = 0; i < _shieldAttractingObjects.Count; i++)
             {
                 var shieldAttractingObject = _shieldAttractingObjects[i];
                 Vector2 tarPoint = _shieldAttractingObjects[i].transform.position;
                 // Check if this thing is reachable
-                var ray = Physics2D.Raycast(ShieldPosition, tarPoint, _maxTargetDistance, _groundLayer | _targetLayer);
+                var ray = Physics2D.Raycast(Vector2.MoveTowards(ShieldPosition, tarPoint, .5f), (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if (ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
+                if (!CheckNextPosition(i, +_maxChangeDirection)) continue;
                 // Check if it is best distance
                 if(ray.distance < bestDis)
                 {
@@ -202,20 +205,13 @@ public class ShieldFlyingState : ShieldBaseState
             Vector2 nowPos = _shieldAttractingObjects[index].transform.position;
             if (chance <= 1)
             {
-                // Check if it can return to the player
-                var ray = Physics2D.Raycast(nowPos, (PlayerPosition - nowPos).normalized, Mathf.Infinity, _groundLayer);
-                if (ray.collider != null)
-                {
-                    // cannot reach player
-                    return false;
-                }
-                return true;
+                return CheckReturning(index);
             }
-
+            _vis[index] = true;
             // Go through every point in the shield attracting objects
             for (var i = 0; i < _shieldAttractingObjects.Count; i++)
             {
-                if(i == index) continue;// Not comparing itself
+                if(!_vis[i]) continue;// Not comparing itself
                 var shieldAttractingObject = _shieldAttractingObjects[i];
                 // Check reachable with ray
                 var ray = Physics2D.Raycast(nowPos, ((Vector2)shieldAttractingObject.transform.position - nowPos).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
@@ -229,7 +225,7 @@ public class ShieldFlyingState : ShieldBaseState
                 }
             }
             // No object is available to go
-            return false;
+            return CheckReturning(index);
         }
         private List<ShieldAttractingObject> FindAllShieldAttractingObjects()
         {
@@ -237,7 +233,20 @@ public class ShieldFlyingState : ShieldBaseState
             // return the sorted list
             return new(objects);
         }
+        bool CheckReturning(int index)
+        {
+            Vector2 nowPos = _shieldAttractingObjects[index].transform.position;
+            // Check if it can return to the player
+            var ray = Physics2D.Raycast(nowPos, (PlayerPosition - nowPos).normalized, Mathf.Infinity, _groundLayer);
+            if (ray.collider != null)
+            {
+                // cannot reach player
+                return false;
+            }
+            return true;
+        }
     }
+
     
     public override void LateUpdateState(ShieldController shield)
     {
