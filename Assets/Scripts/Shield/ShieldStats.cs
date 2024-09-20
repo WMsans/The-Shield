@@ -21,4 +21,6 @@ public class ShieldStats : ScriptableObject
     public float MaxAngle = 45;
     [Tooltip("The minimum distance to be catched by the player")]
     public float HandRange = 0.5f;
+    [Tooltip("The player's cool down time to throw shield")]
+    public float CoolDownTime = .15f;
 }

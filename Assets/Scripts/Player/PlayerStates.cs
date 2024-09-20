@@ -1,4 +1,4 @@
-using System;
+    using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -16,8 +16,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
     private FrameInput _frameInput;
-    private bool _cachedQueryStartInColliders;
-
+    
     #region Interface
 
     public Vector2 FrameInput => _frameInput.Move;
@@ -34,12 +33,12 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         
         _rb = player.Rd;
         _col = player.GetComponent<CapsuleCollider2D>();
-        _cachedQueryStartInColliders = Physics2D.queriesStartInColliders;
     }
 
     public override void UpdateState(PlayerController player)
     {
         _time += Time.deltaTime;
+        
         GatherInput();
     }
     private void GatherInput()
@@ -109,7 +108,6 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             GroundedChanged?.Invoke(false, 0);
         }
 
-        Physics2D.queriesStartInColliders = _cachedQueryStartInColliders;
     }
 
     #endregion

@@ -17,9 +17,9 @@ public abstract class ShieldBaseState
 public class ShieldHoldState : ShieldBaseState
 {
     #region movements
-    private Rigidbody2D rd;
-    private Rigidbody2D playerRd;
-    
+    private Rigidbody2D _rd;
+    private Rigidbody2D _playerRd;
+    private float _CoolDownTimer;
     #endregion
     
     #region input
@@ -31,14 +31,16 @@ public class ShieldHoldState : ShieldBaseState
     {
         Debug.Log("Shield: Entered Hold State");
         
-        rd = shield.Rd;
-        playerRd = PlayerController.Instance.Rd;
+        _rd = shield.Rd;
+        _playerRd = PlayerController.Instance.Rd;
+        _CoolDownTimer = shield.stats.CoolDownTime;
     }
 
     public override void UpdateState(ShieldController shield)
     {
+        _CoolDownTimer = Mathf.Max(0f, _CoolDownTimer - Time.deltaTime);
         GatherInput();
-        if (fireDown)
+        if (fireDown && _CoolDownTimer <= 0f)
         {
             // Launch: go to fly state
             shield.SwitchState(Enums.ShieldState.Flying);
@@ -51,12 +53,12 @@ public class ShieldHoldState : ShieldBaseState
     }
     public override void FixedUpdateState(ShieldController shield)
     {
-        
+        _rd.velocity = Vector2.zero;    
     }
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, playerRd.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _playerRd.position, 120f * Time.deltaTime);
     }
     public override void ExitState(ShieldController shield)
     {
@@ -258,7 +260,7 @@ public class ShieldReturnState : ShieldBaseState
         _rd = shield.Rd;
         _playerRd = PlayerController.Instance.Rd;
         _stats = shield.stats;
-        ChangeDirection(_playerRd.position);
+        
     }
     void ChangeDirection(Vector2 target)
     {
@@ -275,6 +277,7 @@ public class ShieldReturnState : ShieldBaseState
 
     public override void FixedUpdateState(ShieldController shield)
     {
+        ChangeDirection(_playerRd.position);
         if (Vector2.Distance(_rd.position, _playerRd.position) < _stats.HandRange)
         {
             shield.SwitchState(Enums.ShieldState.Hold);
