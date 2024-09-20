@@ -9,8 +9,12 @@ public class ShieldStats : ScriptableObject
     public LayerMask GroundLayer;
     [Tooltip("Set this to the layer shield is targeted on")]
     public LayerMask TargetLayer;
-    [Header("MOVEMENT")] [Tooltip("The top horizontal movement speed")]
+    [Tooltip("Set this to the layer player is at")]
+    public LayerMask PlayerLayer;
+    [Header("MOVEMENT")] [Tooltip("The top movement speed")]
     public float MaxSpeed = 14;
+    [Tooltip("The top movement speed when targeted something")]
+    public float MaxTarSpeed = 40;
     [Tooltip("The force to apply to the player")]
     public float ForceToPlayer = 200;
     [Tooltip("The max number of change in direction")]

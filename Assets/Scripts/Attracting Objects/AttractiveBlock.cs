@@ -5,8 +5,5 @@ using UnityEngine;
 
 public class AttractiveBlock : ShieldAttractingObject
 {
-    private void Awake()
-    {
-        Col = GetComponent<Collider2D>();
-    }
+    
 }

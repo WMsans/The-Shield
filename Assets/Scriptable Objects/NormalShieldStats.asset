@@ -17,11 +17,15 @@ MonoBehaviour:
     m_Bits: 1
   TargetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 8
   MaxSpeed: 22.5
+  MaxTarSpeed: 40
   ForceToPlayer: 20
   MaxChangeDirection: 3
   MaxTargetDistance: 30
   MaxAngle: 45
-  HandRange: 0.5
+  HandRange: 0.75
   CoolDownTime: 0.15
