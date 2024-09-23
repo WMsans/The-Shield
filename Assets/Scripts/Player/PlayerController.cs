@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -9,6 +10,8 @@ public class PlayerController : MonoBehaviour
     #region Movements
     public PlayerStats stats;
     public bool Bounced { get; set; }
+    public bool ShieldPushed { get; private set; }
+    private float _shieldPushTimer;
     public Rigidbody2D Rd { get; private set; }
     #endregion
     #region State manchine
@@ -38,18 +41,28 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         SwitchState(Enums.PlayerState.Normal);
+
+        _shieldPushTimer = 0f;
     }
     
     private void Update()
     {
         states[CurrentState].UpdateState(this);
+        
+        _shieldPushTimer -= Time.deltaTime;
+        if(_shieldPushTimer <= 0) ShieldPushed = false;
     }
     
     private void FixedUpdate()
     {
         states[CurrentState].FixedUpdateState(this);
     }
-    
+
+    public void ShieldPush()
+    {
+        ShieldPushed = true;
+        _shieldPushTimer = stats.PushAccelerationSustainTime;
+    }
     public void SwitchState(Enums.PlayerState state)
     {
         if (states.ContainsKey(CurrentState))

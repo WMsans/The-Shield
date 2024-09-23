@@ -35,6 +35,12 @@ public class PlayerStats : ScriptableObject
 
     [Tooltip("The detection distance for grounding and roof detection"), Range(0f, 0.5f)]
     public float GrounderDistance = 0.05f;
+    
+    [Tooltip("The push acceleration sustain time in seconds")]
+    public float PushAccelerationSustainTime = 1f;
+    
+    [Tooltip("Horizontal acceleration ratio after pushed by shield")][Range(0,1)]
+    public float PushAcceleration = .3f;
 
     [Header("JUMP")] [Tooltip("The immediate velocity applied when jumping")]
     public float JumpPower = 36;

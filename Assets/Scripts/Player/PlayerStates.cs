@@ -12,7 +12,7 @@ public abstract class PlayerBaseState
 
 public class PlayerNormalState : PlayerBaseState, IPlayerController
 {
-    private PlayerStats stats;
+    private PlayerStats _stats;
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
     private FrameInput _frameInput;
@@ -29,7 +29,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
 
     public override void EnterState(PlayerController player)
     {
-        stats = player.stats;
+        _stats = player.stats;
         
         _rb = player.Rd;
         _col = player.GetComponent<CapsuleCollider2D>();
@@ -50,10 +50,10 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             Move = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"))
         };
 
-        if (stats.SnapInput)
+        if (_stats.SnapInput)
         {
-            _frameInput.Move.x = Mathf.Abs(_frameInput.Move.x) < stats.HorizontalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.x);
-            _frameInput.Move.y = Mathf.Abs(_frameInput.Move.y) < stats.VerticalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.y);
+            _frameInput.Move.x = Mathf.Abs(_frameInput.Move.x) < _stats.HorizontalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.x);
+            _frameInput.Move.y = Mathf.Abs(_frameInput.Move.y) < _stats.VerticalDeadZoneThreshold ? 0 : Mathf.Sign(_frameInput.Move.y);
         }
 
         if (_frameInput.JumpDown)
@@ -82,8 +82,8 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, stats.GrounderDistance, stats.GroundLayer);
-        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, stats.GrounderDistance, stats.GroundLayer);
+        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
 
         // Hit a Ceiling
         if (ceilingHit)
@@ -121,8 +121,8 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     private bool _coyoteUsable;
     private float _timeJumpWasPressed;
 
-    private bool HasBufferedJump => _bufferedJumpUsable && _time < _timeJumpWasPressed + stats.JumpBuffer;
-    private bool CanUseCoyote => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + stats.CoyoteTime;
+    private bool HasBufferedJump => _bufferedJumpUsable && _time < _timeJumpWasPressed + _stats.JumpBuffer;
+    private bool CanUseCoyote => _coyoteUsable && !_grounded && _time < _frameLeftGrounded + _stats.CoyoteTime;
 
     private void HandleJump(PlayerController player)
     {
@@ -141,7 +141,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         _timeJumpWasPressed = 0;
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
-        _rb.velocity = new(_rb.velocity.x, stats.JumpPower);
+        _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
         Jumped?.Invoke();
     }
 
@@ -160,17 +160,28 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     {
         if (_frameInput.Move.x == 0)
         {
-            var deceleration = _grounded ? stats.GroundDeceleration : stats.AirDeceleration;
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, 0, deceleration * Time.fixedDeltaTime), _rb.velocity.y);
+            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, 0, 
+                deceleration * Time.fixedDeltaTime), _rb.velocity.y);
         }
-        else if (player.Bounced && Mathf.Abs(_rb.velocity.x) > stats.MaxBouncedSpeed && Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
+        else if (player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxBouncedSpeed && 
+                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
         {
-            var deceleration = _grounded ? stats.GroundDeceleration : stats.AirDeceleration;
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * stats.MaxBouncedSpeed, deceleration * Time.fixedDeltaTime), _rb.velocity.y);
+            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxBouncedSpeed, 
+                deceleration * Time.fixedDeltaTime), _rb.velocity.y);
         }
-        else if(!(_rb.velocity.x < stats.MaxBouncedSpeed && _rb.velocity.x > stats.MaxSpeed))
+        else if (!player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed &&
+                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
         {
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * stats.MaxSpeed, stats.Acceleration * Time.fixedDeltaTime), _rb.velocity.y);
+            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed, 
+                (player.ShieldPushed ? _stats.PushAcceleration * deceleration : deceleration) * Time.fixedDeltaTime), _rb.velocity.y);
+        }
+        else if(!(_rb.velocity.x < _stats.MaxBouncedSpeed && _rb.velocity.x > _stats.MaxSpeed && player.Bounced))
+        {
+            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed,
+                (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
     }
     
@@ -182,13 +193,13 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     {
         if (_grounded && _rb.velocity.y <= 0f)
         {
-            _rb.velocity = new(_rb.velocity.x, stats.GroundingForce);
+            _rb.velocity = new(_rb.velocity.x, _stats.GroundingForce);
         }
         else
         {
-            var inAirGravity = stats.FallAcceleration;
-            if (_endedJumpEarly && _rb.velocity.y > 0 && !player.Bounced) inAirGravity *= stats.JumpEndEarlyGravityModifier;
-            _rb.velocity = new(_rb.velocity.x, Mathf.MoveTowards(_rb.velocity.y, -stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
+            var inAirGravity = _stats.FallAcceleration;
+            if (_endedJumpEarly && _rb.velocity.y > 0 && !player.Bounced) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            _rb.velocity = new(_rb.velocity.x, Mathf.MoveTowards(_rb.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
         }
     }
 
@@ -204,7 +215,6 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
 public interface IPlayerController
 {
     public event Action<bool, float> GroundedChanged;
-
     public event Action Jumped;
     public Vector2 FrameInput { get; }
 }

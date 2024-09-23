@@ -87,6 +87,7 @@ public class ShieldFlyingState : ShieldBaseState
         Debug.Log("Shield: Entered Flying State");
         InitializeVariables(shield);
         InitializeMovement();
+        InitializePlayerMovement();
     }
 
     void InitializeVariables(ShieldController shield)
@@ -106,10 +107,14 @@ public class ShieldFlyingState : ShieldBaseState
 
     void InitializeMovement()
     {
-        _currentTarget = MousePos + (MousePos - _rd.position).normalized * _stats.MaxTargetDistance;
+        _currentTarget = MousePos + (MousePos - ShieldPos).normalized * _stats.MaxTargetDistance;
         ChangeDirection(_currentMaxSpeed, _currentTarget);
+    }
+
+    void InitializePlayerMovement()
+    {
         // Push player in opposite direction
-        var dir = (MousePos - _playerRd.position).normalized;
+        var dir = (MousePos - PlayerPos).normalized;
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         if (Mathf.DeltaAngle(rot, 180f) < 30f)
         {
@@ -117,8 +122,9 @@ public class ShieldFlyingState : ShieldBaseState
         }
         _playerRd.velocity -= dir * _stats.ForceToPlayer;
         _player.Bounced = true;
+        // Decrease player acceleration
+        _player.ShieldPush();
     }
-
     public override void UpdateState(ShieldController shield)
     {
         
@@ -127,13 +133,13 @@ public class ShieldFlyingState : ShieldBaseState
     public override void FixedUpdateState(ShieldController shield)
     {
         // If out range, return
-        if (_outOfRangeFlag && Vector2.Distance(_rd.position, _playerRd.position) < _stats.HandRange)
+        if (_outOfRangeFlag && Vector2.Distance(ShieldPos, PlayerPos) < _stats.HandRange)
         {
             shield.SwitchState(Enums.ShieldState.Hold);
         }
         else CheckForChangeDirection(shield); // Check for collision
-        if (Vector2.Distance(_rd.position, _playerRd.position) > _stats.HandRange) _outOfRangeFlag = true;
-        if (Vector2.Distance(_rd.position, _playerRd.position) >= _stats.MaxTargetDistance)
+        if (Vector2.Distance(ShieldPos, PlayerPos) > _stats.HandRange) _outOfRangeFlag = true;
+        if (Vector2.Distance(ShieldPos, PlayerPos) >= _stats.MaxTargetDistance)
         {
             shield.SwitchState(Enums.ShieldState.Returning);
         }
@@ -142,7 +148,7 @@ public class ShieldFlyingState : ShieldBaseState
     }
     void CheckForChangeDirection(ShieldController shield)
     {
-        var cols = Physics2D.OverlapCircleAll(_rd.position, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
+        var cols = Physics2D.OverlapCircleAll(ShieldPos, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
         
         foreach (var t in cols)
         {
@@ -171,41 +177,39 @@ public class ShieldFlyingState : ShieldBaseState
     bool ChangeDirection()
     {
         // Determine the target
-        var nextPoint = new ChangePointFinder(_rd, _playerRd, _collidedFlags, _stats, this).NextPosition();
-        if (Vector2.Distance(_rd.position, nextPoint) > _stats.MaxTargetDistance)
+        var nextPoint = new ChangePointFinder(_rd, _playerRd, _collidedFlags, _stats).NextPosition();
+        if (Vector2.Distance(ShieldPos, nextPoint) > _stats.MaxTargetDistance)
             return false;
         // Change to that direction
-        _currentTarget = nextPoint + (nextPoint - _rd.position).normalized * _stats.MaxTargetDistance;
+        _currentTarget = nextPoint + (nextPoint - ShieldPos).normalized * _stats.MaxTargetDistance;
         return true;
     }
 
     void ChangeDirection(float spd, Vector2 target)
     {
         // Move in direction
-        var dir = (target - _rd.position).normalized;
+        var dir = (target - ShieldPos).normalized;
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         _rd.velocity = dir * spd;
         _rd.rotation = rot;
     }
     class ChangePointFinder
     {
-        private ShieldFlyingState _state;
-        private Rigidbody2D _shieldRd;
-        private Rigidbody2D _playerRd;
-        private LayerMask _groundLayer;
-        private LayerMask _targetLayer;
-        private LayerMask _playerLayer;
+        private readonly Rigidbody2D _shieldRd;
+        private readonly Rigidbody2D _playerRd;
+        private readonly LayerMask _groundLayer;
+        private readonly LayerMask _targetLayer;
+        private readonly LayerMask _playerLayer;
         private Vector2 ShieldPosition => _shieldRd.position;
         private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
         private bool[] _vis;
         private List<Collider2D> _collidedFlags;
-        private float _maxTargetDistance;
-        private int _maxChangeDirection;
+        private readonly float _maxTargetDistance;
+        private readonly int _maxChangeDirection;
 
-        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, List<Collider2D> collidedFlags, ShieldStats stats, ShieldFlyingState state)
+        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, List<Collider2D> collidedFlags, ShieldStats stats)
         {
-            _state = state;
             _shieldRd = shieldRd;
             _playerRd = playerRd;
             _groundLayer = stats.GroundLayer;
