@@ -6,6 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private void Start()
+    {
+        Physics2D.IgnoreLayerCollision(6, 7, true);
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F2))

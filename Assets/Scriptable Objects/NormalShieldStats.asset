@@ -17,7 +17,7 @@ MonoBehaviour:
     m_Bits: 1
   TargetLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -29,3 +29,4 @@ MonoBehaviour:
   MaxAngle: 45
   HandRange: 0.75
   CoolDownTime: 0.2
+  DetectionRadius: 0.4

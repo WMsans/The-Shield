@@ -57,6 +57,11 @@ public class ShieldController : MonoBehaviour
         CurrentState = state;
         states[CurrentState].EnterState(this);
     }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, stats.DetectionRadius);
+    }
 #if UNITY_EDITOR
     private void OnValidate()
     {

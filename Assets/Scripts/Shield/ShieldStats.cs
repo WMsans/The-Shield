@@ -27,4 +27,6 @@ public class ShieldStats : ScriptableObject
     public float HandRange = 0.5f;
     [Tooltip("The player's cool down time to throw shield")]
     public float CoolDownTime = .15f;
+    [Header("Detection")][Tooltip("The detection radius")]
+    public float DetectionRadius = 0.5f;
 }

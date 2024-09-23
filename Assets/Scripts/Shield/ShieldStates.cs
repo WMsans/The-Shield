@@ -74,19 +74,18 @@ public class ShieldFlyingState : ShieldBaseState
     private Rigidbody2D _playerRd;
     private Camera _cam;
     private int _chanceOfChangingDir;
-    private Collider2D _potentialTarget;
     private float _currentMaxSpeed;
     private Vector2 _currentTarget;
     private Vector2 MousePos => _cam.ScreenToWorldPoint(Input.mousePosition);
     private Vector2 PlayerPos => _playerRd.position;
     private Vector2 ShieldPos => _rd.position;
+    private List<Collider2D> _collidedFlags; 
     private Collider2D _nowGroundCollision;
     private bool _outOfRangeFlag;
     public override void EnterState(ShieldController shield)
     {
         Debug.Log("Shield: Entered Flying State");
         InitializeVariables(shield);
-        InitializeTarget();
         InitializeMovement();
     }
 
@@ -101,7 +100,7 @@ public class ShieldFlyingState : ShieldBaseState
         _chanceOfChangingDir = _stats.MaxChangeDirection;
         _currentMaxSpeed = _stats.MaxSpeed;
         _nowGroundCollision = null;
-        _potentialTarget = null;
+        _collidedFlags = new();
         _outOfRangeFlag = false;
     }
 
@@ -120,19 +119,6 @@ public class ShieldFlyingState : ShieldBaseState
         _player.Bounced = true;
     }
 
-    void InitializeTarget()
-    {
-        _currentMaxSpeed = _stats.MaxSpeed;
-        // Determine if targeted something and set potential target
-        var ray = Physics2D.Raycast(ShieldPos, (MousePos - _playerRd.position).normalized, _stats.MaxTargetDistance, _stats.TargetLayer | _stats.GroundLayer);
-        if (ray.collider == null) return;
-        if (new ChangePointFinder(_rd, _playerRd, _stats).CheckNextPosition(ray.point, _stats.MaxChangeDirection - 1))
-        {
-            
-            _currentMaxSpeed = _stats.MaxTarSpeed;
-            _potentialTarget = ray.collider;
-        }
-    }
     public override void UpdateState(ShieldController shield)
     {
         
@@ -140,8 +126,6 @@ public class ShieldFlyingState : ShieldBaseState
 
     public override void FixedUpdateState(ShieldController shield)
     {
-        
-        
         // If out range, return
         if (_outOfRangeFlag && Vector2.Distance(_rd.position, _playerRd.position) < _stats.HandRange)
         {
@@ -154,21 +138,18 @@ public class ShieldFlyingState : ShieldBaseState
             shield.SwitchState(Enums.ShieldState.Returning);
         }
         // Move in direction
-        if(Vector2.SqrMagnitude(_rd.velocity) < Mathf.Epsilon) shield.SwitchState(Enums.ShieldState.Returning);
         ChangeDirection(_currentMaxSpeed, _currentTarget);
     }
-
     void CheckForChangeDirection(ShieldController shield)
     {
-        var cols = new List<Collider2D>();
-        var filter = new ContactFilter2D();
-        filter.layerMask = _stats.GroundLayer;
-        var n = _rd.GetContacts(filter, cols);
-        for (var i = 0; i < n; i++)
+        var cols = Physics2D.OverlapCircleAll(_rd.position, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
+        
+        foreach (var t in cols)
         {
-            if (_rd.IsTouchingLayers(_stats.GroundLayer) && (_nowGroundCollision == null || _nowGroundCollision != cols[i]) )
+            if (_nowGroundCollision == null || _nowGroundCollision != t)
             {
-                _nowGroundCollision = cols[i];
+                _nowGroundCollision = t;
+                _collidedFlags.Add(t);
                 // Check for returning
                 _chanceOfChangingDir--;
                 if (_chanceOfChangingDir <= 1)
@@ -180,20 +161,17 @@ public class ShieldFlyingState : ShieldBaseState
                     // Change direction
                     if (!ChangeDirection())
                     {
-                        // Check for potential target
-                        if(_potentialTarget != null) _currentTarget = (Vector2)_potentialTarget.transform.position + ((Vector2)_potentialTarget.transform.position - _rd.position).normalized * _stats.MaxTargetDistance;
-                        else shield.SwitchState(Enums.ShieldState.Returning);
+                        shield.SwitchState(Enums.ShieldState.Returning);
                     }
                 }
                 break;
             }
-            
         }
     }
     bool ChangeDirection()
     {
         // Determine the target
-        var nextPoint = new ChangePointFinder(_rd, _playerRd, _stats).NextPosition();
+        var nextPoint = new ChangePointFinder(_rd, _playerRd, _collidedFlags, _stats, this).NextPosition();
         if (Vector2.Distance(_rd.position, nextPoint) > _stats.MaxTargetDistance)
             return false;
         // Change to that direction
@@ -209,9 +187,9 @@ public class ShieldFlyingState : ShieldBaseState
         _rd.velocity = dir * spd;
         _rd.rotation = rot;
     }
-
     class ChangePointFinder
     {
+        private ShieldFlyingState _state;
         private Rigidbody2D _shieldRd;
         private Rigidbody2D _playerRd;
         private LayerMask _groundLayer;
@@ -221,11 +199,13 @@ public class ShieldFlyingState : ShieldBaseState
         private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
         private bool[] _vis;
+        private List<Collider2D> _collidedFlags;
         private float _maxTargetDistance;
         private int _maxChangeDirection;
 
-        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, ShieldStats stats)
+        public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, List<Collider2D> collidedFlags, ShieldStats stats, ShieldFlyingState state)
         {
+            _state = state;
             _shieldRd = shieldRd;
             _playerRd = playerRd;
             _groundLayer = stats.GroundLayer;
@@ -234,6 +214,7 @@ public class ShieldFlyingState : ShieldBaseState
             _playerLayer = stats.PlayerLayer;
             _maxChangeDirection = stats.MaxChangeDirection;
             _vis = new bool[100];
+            _collidedFlags = collidedFlags;
         }
 
         public Vector2 NextPosition()
@@ -245,12 +226,12 @@ public class ShieldFlyingState : ShieldBaseState
             for (int i = 0; i < _shieldAttractingObjects.Count; i++)
             {
                 var shieldAttractingObject = _shieldAttractingObjects[i];
+                if(_collidedFlags.Contains(shieldAttractingObject.Col)) continue;
                 Vector2 tarPoint = _shieldAttractingObjects[i].transform.position;
                 // Check if this thing is reachable
-                var ray = Physics2D.Raycast(Vector2.MoveTowards(ShieldPosition, tarPoint, .5f), (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
-                if (ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
-                if (!CheckNextPosition(i, +_maxChangeDirection)) continue;
-                
+                var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
+                if (ray.collider == null || ray.transform != shieldAttractingObject.transform) continue;
+                if (!CheckNextPosition(i, _maxChangeDirection)) continue;
                 // Check if it is best distance
                 if(ray.distance < bestDis)
                 {
@@ -274,9 +255,10 @@ public class ShieldFlyingState : ShieldBaseState
             if(_shieldAttractingObjects == null) _shieldAttractingObjects = FindAllShieldAttractingObjects();
             for (var i = 0; i < _shieldAttractingObjects.Count; i++)
             {
-                if(_vis[i]) continue;// Not comparing itself
-                _vis[i] = true;
                 var shieldAttractingObject = _shieldAttractingObjects[i];
+                if(_vis[i]) continue;// Don't bounce twice
+                _vis[i] = true;
+                
                 // Check reachable with ray
                 var ray = Physics2D.Raycast(nowPos, ((Vector2)shieldAttractingObject.transform.position - nowPos).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 
@@ -304,9 +286,10 @@ public class ShieldFlyingState : ShieldBaseState
             // Go through every point in the shield attracting objects
             for (var i = 0; i < _shieldAttractingObjects.Count; i++)
             {
-                if(_vis[i]) continue;// Not comparing itself
-                _vis[i] = true;
                 var shieldAttractingObject = _shieldAttractingObjects[i];
+                if(_vis[i]) continue;
+                _vis[i] = true;
+                
                 // Check reachable with ray
                 var ray = Physics2D.Raycast(nowPos, ((Vector2)shieldAttractingObject.transform.position - nowPos).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if(ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
@@ -320,7 +303,6 @@ public class ShieldFlyingState : ShieldBaseState
                 }
             }
             
-            // No object is available to go
             return CheckReturning(index);
         }
         
