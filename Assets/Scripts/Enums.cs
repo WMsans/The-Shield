@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Enums
 {
-    #region Player
+    #region State Machines
     public enum PlayerState
     {
         Normal,
@@ -15,6 +15,15 @@ public static class Enums
         Hold, 
         Flying, 
         Returning,
+    }
+    #endregion
+    
+    #region Skills
+
+    public enum Skill
+    {
+        None,
+        Fixation,
     }
     #endregion
 }

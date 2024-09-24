@@ -5,7 +5,12 @@ using UnityEngine;
 public class SkillManager : MonoBehaviour
 {
     public static SkillManager Instance { get; private set; }
-    private void Awake()
+    public Enums.Skill CurrentSkill { get; private set;}
+    Dictionary<Enums.Skill, BaseSkill> skills = new()
+    {
+        {Enums.Skill.Fixation, new ShieldFixationSkill() }
+    };
+    void Awake()
     {
         if (Instance == null)
         {
@@ -16,6 +21,11 @@ public class SkillManager : MonoBehaviour
             Debug.LogError("There is more than one SkillManager in the scene!");
             Destroy(gameObject);
         }
+    }
+
+    void Start()
+    {
+        CurrentSkill = Enums.Skill.None;
     }
     
 }
