@@ -149,7 +149,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     {
         if (player.Bounced)
         {
-            if(_grounded) player.Bounced = false;
+            if(_grounded && !player.ShieldPushed) player.Bounced = false;
         }
     }
     #endregion
@@ -176,7 +176,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         {
             var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed, 
-                (player.ShieldPushed ? _stats.PushAcceleration * deceleration : deceleration) * Time.fixedDeltaTime), _rb.velocity.y);
+                (player.ShieldPushed ? _stats.PushDeceleration * deceleration : deceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
         else if(!(_rb.velocity.x < _stats.MaxBouncedSpeed && _rb.velocity.x > _stats.MaxSpeed && player.Bounced))
         {
@@ -204,8 +204,6 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     }
 
     #endregion
-
-
     public override void ExitState(PlayerController player)
     {
         

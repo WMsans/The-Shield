@@ -118,7 +118,13 @@ public class ShieldFlyingState : ShieldBaseState
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         if (Mathf.DeltaAngle(rot, 180f) < 30f)
         {
+            // If push upward, disable player falling
             _playerRd.velocity *= Vector2.right;
+        }
+        else if (Mathf.DeltaAngle(rot, 0f) < 30f)
+        {
+            // Don't push downward
+            dir = Vector2.zero;
         }
         _playerRd.velocity -= dir * _stats.ForceToPlayer;
         _player.Bounced = true;

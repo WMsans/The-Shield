@@ -25,7 +25,7 @@ MonoBehaviour:
   AirDeceleration: 80
   GroundingForce: -1.5
   GrounderDistance: 0.1
-  PushAccelerationSustainTime: 0.5
+  PushAccelerationSustainTime: 0.25
   PushAcceleration: 0.4
   JumpPower: 25
   MaxFallSpeed: 30
