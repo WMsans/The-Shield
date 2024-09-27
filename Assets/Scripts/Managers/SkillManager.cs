@@ -27,5 +27,22 @@ public class SkillManager : MonoBehaviour
     {
         CurrentSkill = Enums.Skill.None;
     }
-    
+    private void Update()
+    {
+        skills[CurrentSkill].UpdateSkill(this);
+    }
+    private void FixedUpdate()
+    {
+        skills[CurrentSkill].FixedUpdateSkill(this);
+    }
+    public void SwitchSkill(Enums.Skill skill)
+    {
+        if (skills.ContainsKey(CurrentSkill))
+        {
+            if (skills[CurrentSkill] != null)
+                skills[CurrentSkill].EndSkill(this);
+        }
+        CurrentSkill = skill;
+        skills[skill].StartSkill(this);
+    }
 }

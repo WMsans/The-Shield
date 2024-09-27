@@ -82,6 +82,7 @@ public class ShieldFlyingState : ShieldBaseState
     private List<Collider2D> _collidedFlags; 
     private Collider2D _nowGroundCollision;
     private bool _outOfRangeFlag;
+    private bool _holdingAttack;
     public override void EnterState(ShieldController shield)
     {
         Debug.Log("Shield: Entered Flying State");
@@ -103,6 +104,7 @@ public class ShieldFlyingState : ShieldBaseState
         _nowGroundCollision = null;
         _collidedFlags = new();
         _outOfRangeFlag = false;
+        _holdingAttack = false;
     }
 
     void InitializeMovement()
@@ -128,14 +130,19 @@ public class ShieldFlyingState : ShieldBaseState
         }
         _playerRd.velocity -= dir * _stats.ForceToPlayer;
         _player.Bounced = true;
+        _player.StartBounceTimer();
         // Decrease player acceleration
         _player.ShieldPush();
     }
     public override void UpdateState(ShieldController shield)
     {
-        
+        GatherInput();
     }
 
+    void GatherInput()
+    {
+        _holdingAttack = Input.GetButton("Fire1");
+    }
     public override void FixedUpdateState(ShieldController shield)
     {
         // If out range, return
@@ -158,6 +165,7 @@ public class ShieldFlyingState : ShieldBaseState
         
         foreach (var t in cols)
         {
+            var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision == null || _nowGroundCollision != t)
             {
                 _nowGroundCollision = t;
@@ -168,6 +176,16 @@ public class ShieldFlyingState : ShieldBaseState
                 {
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
+                else if (!realGrounded && _holdingAttack)
+                {
+                    // Fly as well
+                    
+                }
+                else if (realGrounded && _holdingAttack)
+                {
+                    // Return
+                    shield.SwitchState(Enums.ShieldState.Returning);
+                }
                 else
                 {
                     // Change direction
@@ -176,6 +194,7 @@ public class ShieldFlyingState : ShieldBaseState
                         shield.SwitchState(Enums.ShieldState.Returning);
                     }
                 }
+                
                 break;
             }
         }

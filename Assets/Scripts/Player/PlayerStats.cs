@@ -20,6 +20,9 @@ public class PlayerStats : ScriptableObject
     
     [Tooltip("The top horizontal movement speed when bounced")]
     public float MaxBouncedSpeed = 20;
+    
+    [Tooltip("The time of bounced in seconds")]
+    public float BounceTime = 0.5f;
 
     [Tooltip("The player's capacity to gain horizontal speed")]
     public float Acceleration = 120;

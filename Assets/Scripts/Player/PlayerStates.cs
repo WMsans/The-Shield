@@ -130,7 +130,11 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
 
         if (!_jumpToConsume && !HasBufferedJump) return;
 
-        if (_grounded || CanUseCoyote) ExecuteJump();
+        if (_grounded || CanUseCoyote)
+        {
+            ExecuteJump();
+            if (player.Bounced) player.SuperBounce();
+        }
 
         _jumpToConsume = false;
     }

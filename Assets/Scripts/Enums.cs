@@ -18,8 +18,7 @@ public static class Enums
     }
     #endregion
     
-    #region Skills
-
+    #region Player Abilities
     public enum Skill
     {
         None,

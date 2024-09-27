@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     #region Movements
     public PlayerStats stats;
     public bool Bounced { get; set; }
+    private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
     public Rigidbody2D Rd { get; private set; }
@@ -51,6 +52,13 @@ public class PlayerController : MonoBehaviour
         
         _shieldPushTimer -= Time.deltaTime;
         if(_shieldPushTimer <= 0) ShieldPushed = false;
+        if (!ShieldPushed) _shieldPushTimer = 0f;
+        
+        _bouncedTimer -= Time.deltaTime;
+        if(_bouncedTimer <= 0) Bounced = false;
+        if(!Bounced) _bouncedTimer = 0f;
+        
+        print(_bouncedTimer + " " + Bounced);
     }
     
     private void FixedUpdate()
@@ -62,6 +70,16 @@ public class PlayerController : MonoBehaviour
     {
         ShieldPushed = true;
         _shieldPushTimer = stats.PushAccelerationSustainTime;
+    }
+
+    public void StartBounceTimer()
+    {
+        _bouncedTimer = stats.BounceTime;
+    }
+
+    public void SuperBounce()
+    {
+        _bouncedTimer = Mathf.Infinity;
     }
     public void SwitchState(Enums.PlayerState state)
     {
