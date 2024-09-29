@@ -26,6 +26,9 @@ MonoBehaviour:
   AirDeceleration: 80
   GroundingForce: -1.5
   GrounderDistance: 0.1
+  WallingForce: 12.5
+  WallingNeutralForce: 16
+  WallerDistance: 1
   PushAccelerationSustainTime: 0.5
   PushAcceleration: 0.3
   PushDecelerationSustainTime: 1

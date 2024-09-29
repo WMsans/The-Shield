@@ -8,6 +8,7 @@ public class ShieldController : MonoBehaviour
 {
     public static ShieldController Instance {get; private set;}
     public Rigidbody2D Rd { get; private set; }
+    public bool DisCoolDown {get; set; }
     public ShieldStats stats;
     public Enums.ShieldState CurrentState { get; private set; }
     Dictionary<Enums.ShieldState, ShieldBaseState> states = new()
@@ -57,11 +58,11 @@ public class ShieldController : MonoBehaviour
         CurrentState = state;
         states[CurrentState].EnterState(this);
     }
-
     public void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, stats.DetectionRadius);
     }
+    
 #if UNITY_EDITOR
     private void OnValidate()
     {

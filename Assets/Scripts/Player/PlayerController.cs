@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
     public Rigidbody2D Rd { get; private set; }
+    private float _pressingHor;
     #endregion
     #region State manchine
     
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
+        GatherInput();
         states[CurrentState].UpdateState(this);
         
         _shieldPushTimer -= Time.deltaTime;
@@ -57,19 +59,65 @@ public class PlayerController : MonoBehaviour
         _bouncedTimer -= Time.deltaTime;
         if(_bouncedTimer <= 0) Bounced = false;
         if(!Bounced) _bouncedTimer = 0f;
-        
-        print(_bouncedTimer + " " + Bounced);
     }
-    
+
+    void GatherInput()
+    {
+        _pressingHor = Input.GetAxisRaw("Horizontal");
+    }
     private void FixedUpdate()
     {
         states[CurrentState].FixedUpdateState(this);
     }
 
-    public void ShieldPush()
+    /// <summary>
+    /// Push the player against the direction and activate the bounce and push timer
+    /// </summary>
+    /// <param name="dir">Direction in normal Vector2</param>
+    /// <param name="force">Force given to player</param>
+    /// <returns>If the player did a neutral bounce</returns>
+    public bool ShieldPush(Vector2 dir, float force)
     {
+        Rd.velocity -= dir * force;
+        Bounced = true;
+        StartBounceTimer();
         ShieldPushed = true;
         _shieldPushTimer = stats.PushAccelerationSustainTime;
+        
+        var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        if (Mathf.DeltaAngle(rot, 270f) < 30f)
+        {
+            // If push upward, check if player is beside a wall
+            var ray = Physics2D.Raycast(Rd.position, Vector2.right, stats.WallerDistance, stats.GroundLayer);
+            if (ray.collider != null)
+            {
+                if(!Mathf.Approximately(_pressingHor, 0f) && Mathf.Sign(_pressingHor) >= 1f) // Push player against the wall
+                {
+                    Rd.velocity = new(-stats.WallingForce, Rd.velocity.y);
+                    return false;
+                }
+                else // Neutral Jump
+                {
+                    Rd.velocity = new(-stats.WallingNeutralForce, Rd.velocity.y);
+                    return true;
+                }
+            }
+            ray = Physics2D.Raycast(Rd.position, Vector2.left, stats.WallerDistance, stats.GroundLayer);
+            if (ray.collider != null)
+            {
+                if(!Mathf.Approximately(_pressingHor, 0f) && Mathf.Sign(_pressingHor) <= -1f) // Push player against the wall
+                {
+                    Rd.velocity = new(stats.WallingForce, Rd.velocity.y);
+                    return false;
+                }
+                else // Neutral Jump
+                {
+                    Rd.velocity = new(stats.WallingNeutralForce, Rd.velocity.y);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void StartBounceTimer()

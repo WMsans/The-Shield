@@ -30,11 +30,12 @@ public class ShieldHoldState : ShieldBaseState
     #endregion
     public override void EnterState(ShieldController shield)
     {
-        Debug.Log("Shield: Entered Hold State");
-        
         _rd = shield.Rd;
         _playerRd = PlayerController.Instance.Rd;
-        _coolDownTimer = shield.stats.CoolDownTime;
+        if(!shield.DisCoolDown)
+            _coolDownTimer = shield.stats.CoolDownTime;
+        else
+            shield.DisCoolDown = false;
     }
 
     public override void UpdateState(ShieldController shield)
@@ -85,10 +86,9 @@ public class ShieldFlyingState : ShieldBaseState
     private bool _holdingAttack;
     public override void EnterState(ShieldController shield)
     {
-        Debug.Log("Shield: Entered Flying State");
         InitializeVariables(shield);
-        InitializeMovement();
-        InitializePlayerMovement();
+        InitializeMovement(shield);
+        InitializePlayerMovement(shield);
     }
 
     void InitializeVariables(ShieldController shield)
@@ -107,32 +107,39 @@ public class ShieldFlyingState : ShieldBaseState
         _holdingAttack = false;
     }
 
-    void InitializeMovement()
+    void InitializeMovement(ShieldController shield)
     {
         _currentTarget = MousePos + (MousePos - ShieldPos).normalized * _stats.MaxTargetDistance;
         ChangeDirection(_currentMaxSpeed, _currentTarget);
     }
 
-    void InitializePlayerMovement()
+    void InitializePlayerMovement(ShieldController shield)
     {
         // Push player in opposite direction
         var dir = (MousePos - PlayerPos).normalized;
+        PushPlayer(dir, shield);
+    }
+
+    void PushPlayer(Vector2 dir, ShieldController shield)
+    {
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        if (Mathf.DeltaAngle(rot, 180f) < 30f)
+        if (Mathf.DeltaAngle(rot, 270f) < 30f)
         {
             // If push upward, disable player falling
             _playerRd.velocity *= Vector2.right;
         }
-        else if (Mathf.DeltaAngle(rot, 0f) < 30f)
+        else if (Mathf.DeltaAngle(rot, 90f) < 30f)
         {
             // Don't push downward
-            dir = Vector2.zero;
+            dir *= Vector2.right;
         }
-        _playerRd.velocity -= dir * _stats.ForceToPlayer;
-        _player.Bounced = true;
-        _player.StartBounceTimer();
+        
         // Decrease player acceleration
-        _player.ShieldPush();
+        var neutralBounced = _player.ShieldPush(dir, _stats.ForceToPlayer);
+        if (neutralBounced)
+        {
+            shield.DisCoolDown = true;
+        }
     }
     public override void UpdateState(ShieldController shield)
     {
@@ -385,8 +392,6 @@ public class ShieldReturnState : ShieldBaseState
     ShieldStats _stats;
     public override void EnterState(ShieldController shield)
     {
-        Debug.Log("Shield: Entered Return State");
-        
         _rd = shield.Rd;
         _playerRd = PlayerController.Instance.Rd;
         _stats = shield.stats;

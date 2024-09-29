@@ -182,7 +182,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed, 
                 (player.ShieldPushed ? _stats.PushDeceleration * deceleration : deceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
-        else if(!(_rb.velocity.x < _stats.MaxBouncedSpeed && _rb.velocity.x > _stats.MaxSpeed && player.Bounced))
+        else if(!( Mathf.Abs(_rb.velocity.x) < _stats.MaxBouncedSpeed && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed && player.Bounced))
         {
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed,
                 (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);

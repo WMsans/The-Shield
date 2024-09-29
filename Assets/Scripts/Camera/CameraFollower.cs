@@ -9,6 +9,7 @@ public class CameraFollower : MonoBehaviour
     [SerializeField] Transform follow;
     [SerializeField] float followSpeed = 0.3f;
     [SerializeField] float lookForward;
+    [SerializeField] Vector2 frameInDistance;
 
     Vector3 _moveDamp = new();
     Vector3 _lastFollowPos = new();
@@ -38,16 +39,29 @@ public class CameraFollower : MonoBehaviour
     }
     void Update()
     {
-        var _targetPos = follow.position + (follow.position - _lastFollowPos) * lookForward;
-
+        // Find target pos
+        var targetPos = follow.position + (follow.position - _lastFollowPos) * lookForward;
         if (Vector2.Distance(MinPoint, MaxPoint) > 0f && CameraLimiter != null)
         {
-            _targetPos.x = Mathf.Clamp(_targetPos.x, MinPoint.x + Extents(Cam).x, MaxPoint.x - Extents(Cam).x);
-            _targetPos.y = Mathf.Clamp(_targetPos.y, MinPoint.y + Extents(Cam).y, MaxPoint.y - Extents(Cam).y);
+            targetPos.x = Mathf.Clamp(targetPos.x, MinPoint.x + Extents(Cam).x, MaxPoint.x - Extents(Cam).x);
+            targetPos.y = Mathf.Clamp(targetPos.y, MinPoint.y + Extents(Cam).y, MaxPoint.y - Extents(Cam).y);
         }
-        transform.position = Vector3.SmoothDamp(transform.position, _targetPos, ref _moveDamp, followSpeed);
+        // Move camera toward target
+        
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref _moveDamp, followSpeed);
+        if (Mathf.Abs(targetPos.x - transform.position.x) > frameInDistance.x)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos,
+                Mathf.Abs(targetPos.x - transform.position.x) - frameInDistance.x);
+        }
+        if (Mathf.Abs(targetPos.y - transform.position.y) > frameInDistance.y)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos,
+                Mathf.Abs(targetPos.y - transform.position.y) - frameInDistance.y);
+        }
+        // Reset target
         _lastFollowPos = follow.position;
-
+        // Set camera Z position
         Cam.transform.position = new(transform.position.x, transform.position.y, camZ);
     }
     private Vector2 Extents(Camera cam)
