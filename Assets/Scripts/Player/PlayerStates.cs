@@ -162,6 +162,11 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
 
     private void HandleDirection(PlayerController player)
     {
+        if ((!Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)) ||
+             _frameInput.Move.x == 0) && player.Bounced)
+        {
+            player.Bounced = false;
+        }
         if (_frameInput.Move.x == 0)
         {
             var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
@@ -169,21 +174,20 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
                 deceleration * Time.fixedDeltaTime), _rb.velocity.y);
         }
         else if (player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxBouncedSpeed && 
-                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
+                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x))) 
         {
-            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxBouncedSpeed, 
-                deceleration * Time.fixedDeltaTime), _rb.velocity.y);
+            // Speed higher than bounced max speed, direct constrain
+            _rb.velocity = new(_frameInput.Move.x * _stats.MaxBouncedSpeed, _rb.velocity.y);
         }
         else if (!player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed &&
                  Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
         {
-            var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed, 
-                (player.ShieldPushed ? _stats.PushDeceleration * deceleration : deceleration) * Time.fixedDeltaTime), _rb.velocity.y);
+            // Speed higher than max speed, direct constrain
+            _rb.velocity = new(_frameInput.Move.x * _stats.MaxSpeed, _rb.velocity.y);
         }
         else if(!( Mathf.Abs(_rb.velocity.x) < _stats.MaxBouncedSpeed && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed && player.Bounced))
         {
+            // Normal
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed,
                 (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
@@ -191,7 +195,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     
     #endregion
 
-    #region Gravity
+    #region Vertical 
 
     private void HandleGravity(PlayerController player)
     {
@@ -202,7 +206,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         else
         {
             var inAirGravity = _stats.FallAcceleration;
-            if (_endedJumpEarly && _rb.velocity.y > 0 && !player.Bounced) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            if (_endedJumpEarly && _rb.velocity.y > 0 && !player.Bounced && !player.ShieldPushed) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
             _rb.velocity = new(_rb.velocity.x, Mathf.MoveTowards(_rb.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
         }
     }

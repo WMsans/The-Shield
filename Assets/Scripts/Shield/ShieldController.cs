@@ -19,7 +19,7 @@ public class ShieldController : MonoBehaviour
         {Enums.ShieldState.Melee, new ShieldMeleeState() },
         {Enums.ShieldState.Returning, new ShieldReturnState()}
     };
-    public float FireDownTimer { get; private set; }
+    public float FireDownTimer { get; set; }
     private void Awake()
     {
         if (Instance == null)

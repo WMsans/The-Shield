@@ -43,10 +43,8 @@ public class ShieldHoldState : ShieldBaseState
 
     public override void UpdateState(ShieldController shield)
     {
-        var fireDownTimer = shield.FireDownTimer;
         _coolDownTimer = Mathf.Max(0f, _coolDownTimer - Time.deltaTime);
-        fireDownTimer = Mathf.Max(0f, fireDownTimer - Time.deltaTime);
-        if (fireDownTimer > 0f && _coolDownTimer <= 0f)
+        if (shield.FireDownTimer > 0f && _coolDownTimer <= 0f)
         {
             // Check if melee attack is available
             var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
@@ -60,6 +58,8 @@ public class ShieldHoldState : ShieldBaseState
                 // Throw Shield: go to fly state
                 shield.SwitchState(Enums.ShieldState.Flying);
             }
+
+            shield.FireDownTimer = 0;
         }
     }
     public override void FixedUpdateState(ShieldController shield)
@@ -309,6 +309,7 @@ public class ShieldFlyingState : ShieldBaseState
                 
                 if(ray.collider == null || ray.collider != shieldAttractingObject.Col) continue;
                 // Check within distance
+                // Check within distance
                 if (ray.distance > _maxTargetDistance) continue;
                 // Check from this point
                 if (CheckNextPosition(i, chance - 1))
@@ -441,17 +442,21 @@ public class ShieldReturnState : ShieldBaseState
 public class ShieldMeleeState : ShieldBaseState
 {
     PlayerController _player;
+    private float _debugTimer;
     public override void EnterState(ShieldController shield)
     {
         Debug.Log("Shield Melee Attack!!!");
         _player = PlayerController.Instance;
-        
-        _player.SwitchState(Enums.PlayerState.Melee);
     }
 
     public override void UpdateState(ShieldController shield)
     {
-        
+        _debugTimer += Time.deltaTime;
+        if (_debugTimer >= 0.5f)
+        {
+            if(shield.FireDownTimer > 0) _debugTimer = 0;
+            else shield.SwitchState(Enums.ShieldState.Hold);
+        }
     }
 
     public override void FixedUpdateState(ShieldController shield)
@@ -461,7 +466,7 @@ public class ShieldMeleeState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rd.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)

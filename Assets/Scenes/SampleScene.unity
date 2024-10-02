@@ -763,7 +763,7 @@ GameObject:
   - component: {fileID: 592014044}
   - component: {fileID: 592014043}
   - component: {fileID: 592014045}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AttractiveGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1547,7 +1547,7 @@ GameObject:
   - component: {fileID: 1205717360}
   - component: {fileID: 1205717359}
   - component: {fileID: 1205717361}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: AttractiveGround (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
