@@ -11,12 +11,15 @@ public class ShieldController : MonoBehaviour
     public bool DisCoolDown {get; set; }
     public ShieldStats stats;
     public Enums.ShieldState CurrentState { get; private set; }
-    Dictionary<Enums.ShieldState, ShieldBaseState> states = new()
+
+    private readonly Dictionary<Enums.ShieldState, ShieldBaseState> _states = new()
     {
         {Enums.ShieldState.Hold, new ShieldHoldState() },
         {Enums.ShieldState.Flying, new ShieldFlyingState() },
+        {Enums.ShieldState.Melee, new ShieldMeleeState() },
         {Enums.ShieldState.Returning, new ShieldReturnState()}
     };
+    public float FireDownTimer { get; private set; }
     private void Awake()
     {
         if (Instance == null)
@@ -32,7 +35,19 @@ public class ShieldController : MonoBehaviour
     }
     private void Update()
     {
-        states[CurrentState].UpdateState(this);
+        TimerUpdate();
+        GatherInput();
+        _states[CurrentState].UpdateState(this);
+    }
+
+    void GatherInput()
+    {
+        if (Input.GetButtonDown("Fire1")) FireDownTimer = stats.PreInputTime;
+    }
+
+    void TimerUpdate()
+    {
+        FireDownTimer = Mathf.Max(0f, FireDownTimer - Time.deltaTime);
     }
     private void Start()
     {
@@ -41,22 +56,22 @@ public class ShieldController : MonoBehaviour
 
     void FixedUpdate()
     {
-        states[CurrentState].FixedUpdateState(this);
+        _states[CurrentState].FixedUpdateState(this);
     }
 
     void LateUpdate()
     {
-        states[CurrentState].LateUpdateState(this);
+        _states[CurrentState].LateUpdateState(this);
     }
     public void SwitchState(Enums.ShieldState state)
     {
-        if (states.ContainsKey(CurrentState))
+        if (_states.ContainsKey(CurrentState))
         {
-            if (states[CurrentState] != null)
-                states[CurrentState].ExitState(this);
+            if (_states[CurrentState] != null)
+                _states[CurrentState].ExitState(this);
         }
         CurrentState = state;
-        states[CurrentState].EnterState(this);
+        _states[CurrentState].EnterState(this);
     }
     public void OnDrawGizmos()
     {

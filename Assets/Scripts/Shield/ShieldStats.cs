@@ -13,20 +13,20 @@ public class ShieldStats : ScriptableObject
     public LayerMask PlayerLayer;
     [Header("MOVEMENT")] [Tooltip("The top movement speed")]
     public float MaxSpeed = 14;
-    [Tooltip("The top movement speed when targeted something")]
-    public float MaxTarSpeed = 40;
     [Tooltip("The force to apply to the player")]
     public float ForceToPlayer = 200;
     [Tooltip("The max number of change in direction")]
     public int MaxChangeDirection = 3;
     [Tooltip("The max number of target distance")]
     public float MaxTargetDistance = 7.5f;
-    [Tooltip("The range of bounced angle")]
-    public float MaxAngle = 45;
     [Tooltip("The minimum distance to be catched by the player")]
     public float HandRange = 0.5f;
     [Tooltip("The player's cool down time to throw shield")]
     public float CoolDownTime = .15f;
-    [Header("Detection")][Tooltip("The detection radius")]
+    [Header("Detection")][Tooltip("The detection radius for collision")]
     public float DetectionRadius = 0.5f;
+    [Tooltip("The detection ray length for enemy")]
+    public float DetectionRayLength = 1f;
+    [Tooltip("The pre-input for attack in seconds")]
+    public float PreInputTime = 0.25f;
 }

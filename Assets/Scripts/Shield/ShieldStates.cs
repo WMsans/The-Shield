@@ -17,6 +17,7 @@ public abstract class ShieldBaseState
 
 public class ShieldHoldState : ShieldBaseState
 {
+    private ShieldStats _stats;
     #region movements
     private Rigidbody2D _rd;
     private Rigidbody2D _playerRd;
@@ -24,14 +25,16 @@ public class ShieldHoldState : ShieldBaseState
     #endregion
     
     #region input
-
-    private bool _fireDown;
+    private Camera _cam;
+    private Vector2 MousePos => _cam.ScreenToWorldPoint(Input.mousePosition);
     
     #endregion
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rd;
         _playerRd = PlayerController.Instance.Rd;
+        _cam = CameraFollower.Instance.Cam;
+        _stats = shield.stats;
         if(!shield.DisCoolDown)
             _coolDownTimer = shield.stats.CoolDownTime;
         else
@@ -40,18 +43,24 @@ public class ShieldHoldState : ShieldBaseState
 
     public override void UpdateState(ShieldController shield)
     {
+        var fireDownTimer = shield.FireDownTimer;
         _coolDownTimer = Mathf.Max(0f, _coolDownTimer - Time.deltaTime);
-        GatherInput();
-        if (_fireDown && _coolDownTimer <= 0f)
+        fireDownTimer = Mathf.Max(0f, fireDownTimer - Time.deltaTime);
+        if (fireDownTimer > 0f && _coolDownTimer <= 0f)
         {
-            // Launch: go to fly state
-            shield.SwitchState(Enums.ShieldState.Flying);
+            // Check if melee attack is available
+            var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
+            if (ray.collider != null)
+            {
+                // Melee attack
+                shield.SwitchState(Enums.ShieldState.Melee);
+            }
+            else
+            {
+                // Throw Shield: go to fly state
+                shield.SwitchState(Enums.ShieldState.Flying);
+            }
         }
-    }
-
-    void GatherInput()
-    {
-        _fireDown = Input.GetButtonDown("Fire1");
     }
     public override void FixedUpdateState(ShieldController shield)
     {
@@ -75,7 +84,7 @@ public class ShieldFlyingState : ShieldBaseState
     private Rigidbody2D _playerRd;
     private Camera _cam;
     private int _chanceOfChangingDir;
-    private float _currentMaxSpeed;
+    private float _maxSpeed;
     private Vector2 _currentTarget;
     private Vector2 MousePos => _cam.ScreenToWorldPoint(Input.mousePosition);
     private Vector2 PlayerPos => _playerRd.position;
@@ -100,7 +109,7 @@ public class ShieldFlyingState : ShieldBaseState
         _rd = shield.Rd;
         _cam = CameraFollower.Instance.Cam;
         _chanceOfChangingDir = _stats.MaxChangeDirection;
-        _currentMaxSpeed = _stats.MaxSpeed;
+        _maxSpeed = _stats.MaxSpeed;
         _nowGroundCollision = null;
         _collidedFlags = new();
         _outOfRangeFlag = false;
@@ -110,7 +119,7 @@ public class ShieldFlyingState : ShieldBaseState
     void InitializeMovement(ShieldController shield)
     {
         _currentTarget = MousePos + (MousePos - ShieldPos).normalized * _stats.MaxTargetDistance;
-        ChangeDirection(_currentMaxSpeed, _currentTarget);
+        ChangeDirection(_maxSpeed, _currentTarget);
     }
 
     void InitializePlayerMovement(ShieldController shield)
@@ -164,7 +173,7 @@ public class ShieldFlyingState : ShieldBaseState
             shield.SwitchState(Enums.ShieldState.Returning);
         }
         // Move in direction
-        ChangeDirection(_currentMaxSpeed, _currentTarget);
+        ChangeDirection(_maxSpeed, _currentTarget);
     }
     void CheckForChangeDirection(ShieldController shield)
     {
@@ -426,5 +435,37 @@ public class ShieldReturnState : ShieldBaseState
     public override void ExitState(ShieldController shield)
     {
         shield.GetComponent<Collider2D>().enabled = true;
+    }
+}
+
+public class ShieldMeleeState : ShieldBaseState
+{
+    PlayerController _player;
+    public override void EnterState(ShieldController shield)
+    {
+        Debug.Log("Shield Melee Attack!!!");
+        _player = PlayerController.Instance;
+        
+        _player.SwitchState(Enums.PlayerState.Melee);
+    }
+
+    public override void UpdateState(ShieldController shield)
+    {
+        
+    }
+
+    public override void FixedUpdateState(ShieldController shield)
+    {
+        
+    }
+
+    public override void LateUpdateState(ShieldController shield)
+    {
+        
+    }
+
+    public override void ExitState(ShieldController shield)
+    {
+        
     }
 }

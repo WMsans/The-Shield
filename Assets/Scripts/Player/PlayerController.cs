@@ -21,7 +21,8 @@ public class PlayerController : MonoBehaviour
     public Enums.PlayerState CurrentState { get; private set; }
     Dictionary<Enums.PlayerState, PlayerBaseState> states = new()
     {
-        {Enums.PlayerState.Normal, new PlayerNormalState() }
+        {Enums.PlayerState.Normal, new PlayerNormalState() },
+        {Enums.PlayerState.Melee, new PlayerMeleeState()}
     };
     
     #endregion

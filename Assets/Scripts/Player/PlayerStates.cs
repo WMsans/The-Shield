@@ -214,6 +214,28 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     }
 }
 
+public class PlayerMeleeState : PlayerBaseState
+{
+    public override void EnterState(PlayerController player)
+    {
+        Debug.Log("Player Melee Attack!!!");
+    }
+
+    public override void UpdateState(PlayerController player)
+    {
+        
+    }
+
+    public override void FixedUpdateState(PlayerController player)
+    {
+        
+    }
+
+    public override void ExitState(PlayerController player)
+    {
+        
+    }
+}
 public interface IPlayerController
 {
     public event Action<bool, float> GroundedChanged;
