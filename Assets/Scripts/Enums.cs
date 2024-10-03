@@ -8,14 +8,15 @@ public static class Enums
     public enum PlayerState
     {
         Normal,
-        Melee,
+        Defence,
     }
 
     public enum ShieldState
     {
         Hold, 
-        Flying, 
+        Flying,
         Melee,
+        Defence,
         Returning,
     }
     #endregion
