@@ -22,11 +22,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   MaxSpeed: 40
-  MaxTarSpeed: 40
   ForceToPlayer: 20
   MaxChangeDirection: 3
-  MaxTargetDistance: 30
-  MaxAngle: 45
+  MaxTargetDistance: 20
   HandRange: 0.75
   CoolDownTime: 0.2
   DetectionRadius: 0.4
+  DetectionRayLength: 1
+  PreInputTime: 0.25

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -8,13 +9,15 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
+    private float _pressingHor;
     public PlayerStats stats;
     public bool Bounced { get; set; }
     private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
+    [SerializeField] private Transform _grabPoint;
+    [SerializeField] private float _grabRadius;
     public Rigidbody2D Rd { get; private set; }
-    private float _pressingHor;
     #endregion
     #region State manchine
     
@@ -145,10 +148,15 @@ public class PlayerController : MonoBehaviour
         return states[state];
     }
 
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(_grabPoint.position, _grabPoint.position + _grabRadius * Vector3.right);
+    }
 #if UNITY_EDITOR
     private void OnValidate()
     {
         if (stats == null) Debug.LogWarning("Please assign a PlayerStats asset to the Player Controller's Stats slot", this);
+        if(_grabPoint == null) Debug.LogWarning("Please assign a grab point transform to the Player Controller's Grab Point", this);
     }
 #endif
 }
