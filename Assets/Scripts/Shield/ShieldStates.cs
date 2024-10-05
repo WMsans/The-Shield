@@ -31,7 +31,7 @@ public class ShieldHoldState : ShieldBaseState
     #endregion
     public override void EnterState(ShieldController shield)
     {
-        _rd = shield.Rd;
+        _rd = shield.Rb;
         _playerRd = PlayerController.Instance.Rd;
         _cam = CameraFollower.Instance.Cam;
         _stats = shield.stats;
@@ -58,8 +58,12 @@ public class ShieldHoldState : ShieldBaseState
                 // Throw Shield: go to fly state
                 shield.SwitchState(Enums.ShieldState.Flying);
             }
-
             shield.FireDownTimer = 0;
+        }
+        else if (shield.DefenceDownTimer > 0f)
+        {
+            // Defence
+            shield.SwitchState(Enums.ShieldState.Defence);
         }
     }
     public override void FixedUpdateState(ShieldController shield)
@@ -106,7 +110,7 @@ public class ShieldFlyingState : ShieldBaseState
         _stats = shield.stats;
         _player = PlayerController.Instance;
         _playerRd = _player.Rd;
-        _rd = shield.Rd;
+        _rd = shield.Rb;
         _cam = CameraFollower.Instance.Cam;
         _chanceOfChangingDir = _stats.MaxChangeDirection;
         _maxSpeed = _stats.MaxSpeed;
@@ -402,7 +406,7 @@ public class ShieldReturnState : ShieldBaseState
     ShieldStats _stats;
     public override void EnterState(ShieldController shield)
     {
-        _rd = shield.Rd;
+        _rd = shield.Rb;
         _playerRd = PlayerController.Instance.Rd;
         _stats = shield.stats;
 
@@ -472,5 +476,49 @@ public class ShieldMeleeState : ShieldBaseState
     public override void ExitState(ShieldController shield)
     {
         
+    }
+}
+
+public class ShieldDefenceState : ShieldBaseState
+{
+    private PlayerController _player;
+    private bool _defenceButton;
+    private Rigidbody2D _rb;
+    public override void EnterState(ShieldController shield)
+    {
+        _player = PlayerController.Instance;
+        _player.SwitchState(Enums.PlayerState.Defence);
+
+        _rb = shield.Rb;
+    }
+
+    public override void UpdateState(ShieldController shield)
+    {
+        GatherInput();
+    }
+
+    private void GatherInput()
+    {
+        _defenceButton = Input.GetButton("Defence");
+    }
+    public override void FixedUpdateState(ShieldController shield)
+    {
+        _rb.velocity = Vector2.zero;
+        
+        if (!_defenceButton)
+        {
+            // Return to the normal state
+            shield.SwitchState(Enums.ShieldState.Hold);
+        }
+    }
+
+    public override void LateUpdateState(ShieldController shield)
+    {
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rd.position, 120f * Time.deltaTime);
+    }
+
+    public override void ExitState(ShieldController shield)
+    {
+        _player.SwitchState(Enums.PlayerState.Normal);
     }
 }

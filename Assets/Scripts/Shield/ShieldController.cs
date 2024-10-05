@@ -7,7 +7,7 @@ using UnityEngine;
 public class ShieldController : MonoBehaviour
 {
     public static ShieldController Instance {get; private set;}
-    public Rigidbody2D Rd { get; private set; }
+    public Rigidbody2D Rb { get; private set; }
     public bool DisCoolDown {get; set; }
     public ShieldStats stats;
     public Enums.ShieldState CurrentState { get; private set; }
@@ -17,9 +17,11 @@ public class ShieldController : MonoBehaviour
         {Enums.ShieldState.Hold, new ShieldHoldState() },
         {Enums.ShieldState.Flying, new ShieldFlyingState() },
         {Enums.ShieldState.Melee, new ShieldMeleeState() },
-        {Enums.ShieldState.Returning, new ShieldReturnState()}
+        {Enums.ShieldState.Returning, new ShieldReturnState() },
+        {Enums.ShieldState.Defence, new ShieldDefenceState() }, 
     };
     public float FireDownTimer { get; set; }
+    public float DefenceDownTimer { get; set; }
     private void Awake()
     {
         if (Instance == null)
@@ -31,7 +33,7 @@ public class ShieldController : MonoBehaviour
             Debug.LogError("There is more than one Shield in the scene");
             Destroy(gameObject);
         }
-        Rd = GetComponent<Rigidbody2D>();
+        Rb = GetComponent<Rigidbody2D>();
     }
     private void Update()
     {
@@ -43,11 +45,13 @@ public class ShieldController : MonoBehaviour
     void GatherInput()
     {
         if (Input.GetButtonDown("Fire1")) FireDownTimer = stats.PreInputTime;
+        if (Input.GetButtonDown("Defence")) DefenceDownTimer = stats.PreInputTime;
     }
 
     void TimerUpdate()
     {
         FireDownTimer = Mathf.Max(0f, FireDownTimer - Time.deltaTime);
+        DefenceDownTimer = Mathf.Max(0f, DefenceDownTimer - Time.deltaTime);
     }
     private void Start()
     {

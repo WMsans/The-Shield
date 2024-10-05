@@ -15,16 +15,18 @@ public class PlayerController : MonoBehaviour
     private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
-    [SerializeField] private Transform _grabPoint;
-    [SerializeField] private float _grabRadius;
+    public Transform grabPoint;
+    public float grabRadius;
     public Rigidbody2D Rd { get; private set; }
     #endregion
     #region State manchine
     
     public Enums.PlayerState CurrentState { get; private set; }
-    Dictionary<Enums.PlayerState, PlayerBaseState> states = new()
+
+    private readonly Dictionary<Enums.PlayerState, PlayerBaseState> _states = new()
     {
         {Enums.PlayerState.Normal, new PlayerNormalState() },
+        {Enums.PlayerState.Defence, new PlayerDefenceState() }, 
     };
     
     #endregion
@@ -53,7 +55,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         GatherInput();
-        states[CurrentState].UpdateState(this);
+        _states[CurrentState].UpdateState(this);
         
         _shieldPushTimer -= Time.deltaTime;
         if(_shieldPushTimer <= 0) ShieldPushed = false;
@@ -70,7 +72,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        states[CurrentState].FixedUpdateState(this);
+        _states[CurrentState].FixedUpdateState(this);
     }
 
     /// <summary>
@@ -134,29 +136,30 @@ public class PlayerController : MonoBehaviour
     }
     public void SwitchState(Enums.PlayerState state)
     {
-        if (states.ContainsKey(CurrentState))
+        if (_states.ContainsKey(CurrentState))
         {
-            if (states[CurrentState] != null)
-                states[CurrentState].ExitState(this);
+            if (_states[CurrentState] != null)
+                _states[CurrentState].ExitState(this);
         }
         CurrentState = state;
-        states[CurrentState].EnterState(this);
+        _states[CurrentState].EnterState(this);
     }
     
     public PlayerBaseState GetStateInstance(Enums.PlayerState state)
     {
-        return states[state];
+        return _states[state];
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(_grabPoint.position, _grabPoint.position + _grabRadius * Vector3.right);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(grabPoint.position, grabPoint.position + grabRadius * Vector3.right);
     }
 #if UNITY_EDITOR
     private void OnValidate()
     {
         if (stats == null) Debug.LogWarning("Please assign a PlayerStats asset to the Player Controller's Stats slot", this);
-        if(_grabPoint == null) Debug.LogWarning("Please assign a grab point transform to the Player Controller's Grab Point", this);
+        if(grabPoint == null) Debug.LogWarning("Please assign a grab point transform to the Player Controller's Grab Point", this);
     }
 #endif
 }

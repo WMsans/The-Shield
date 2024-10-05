@@ -24,7 +24,7 @@ MonoBehaviour:
   MaxSpeed: 40
   ForceToPlayer: 20
   MaxChangeDirection: 3
-  MaxTargetDistance: 20
+  MaxTargetDistance: 18
   HandRange: 0.75
   CoolDownTime: 0.2
   DetectionRadius: 0.4

@@ -220,21 +220,75 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
 
 public class PlayerDefenceState : PlayerBaseState
 {
+    private Rigidbody2D _rd;
+    private PlayerStats _stats;
+    private CapsuleCollider2D _col;
+    private bool _grounded;
+    private bool _jumpHeld;
     public override void EnterState(PlayerController player)
     {
-        
+        Debug.Log("Player Defence!");
+        _rd = player.Rd;
+        _stats = player.stats;
+        _col = player.GetComponent<CapsuleCollider2D>();
     }
 
     public override void UpdateState(PlayerController player)
     {
-        
+        GatherInput();
     }
 
+    private void GatherInput()
+    {
+        _jumpHeld = Input.GetButton("Jump");
+    }
     public override void FixedUpdateState(PlayerController player)
     {
+        CheckCollisions();
+        HandleGravity(player);
         
+        var decel = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+        _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
     }
 
+    private void CheckCollisions()
+    {
+        Physics2D.queriesStartInColliders = false;
+
+        // Ground and Ceiling
+        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+
+        // Hit a Ceiling
+        if (ceilingHit)
+        {
+            _rd.velocity = new(_rd.velocity.x, Mathf.Min(0, _rd.velocity.y));
+        }
+
+        // Landed on the Ground
+        if (!_grounded && groundHit)
+        {
+            _grounded = true;
+        }
+        // Left the Ground
+        else if (_grounded && !groundHit)
+        {
+            _grounded = false;
+        }
+    }
+    private void HandleGravity(PlayerController player)
+    {
+        if (_grounded && _rd.velocity.y <= 0f)
+        {
+            _rd.velocity = new(_rd.velocity.x, _stats.GroundingForce);
+        }
+        else
+        {
+            var inAirGravity = _stats.FallAcceleration;
+            if (_rd.velocity.y > 0 && !player.Bounced && !player.ShieldPushed) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
+        }
+    }
     public override void ExitState(PlayerController player)
     {
         
