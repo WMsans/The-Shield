@@ -19,6 +19,9 @@ public class PlayerController : MonoBehaviour
     public Transform grabPoint;
     public Transform grabBodyPoint;
     public float grabRadius;
+    public Transform grabDownPoint;
+    public float grabDownRadius;
+    public Transform RightEdgePoint;
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     #endregion
@@ -149,7 +152,18 @@ public class PlayerController : MonoBehaviour
         CurrentState = state;
         _states[CurrentState].EnterState(this);
     }
-    
+
+    public void FlipPlayer()
+    {
+        FacingRight = !FacingRight;
+        transform.rotation = Quaternion.Euler(0f, FacingRight ? 0 : -180f, 0f);
+    }
+
+    public void FlipPlayer(bool facingRight)
+    {
+        FacingRight = facingRight;
+        transform.rotation = Quaternion.Euler(0f, FacingRight ? 0 : -180f, 0f);
+    }
     public PlayerBaseState GetStateInstance(Enums.PlayerState state)
     {
         return _states[state];
@@ -160,6 +174,10 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(grabPoint.position, grabPoint.position + grabRadius * Vector3.right);
         Gizmos.DrawLine(grabBodyPoint.position, grabBodyPoint.position + grabRadius * Vector3.right);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(grabDownPoint.position, grabDownRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(RightEdgePoint.position, RightEdgePoint.position + Vector3.down * 3);
     }
 #if UNITY_EDITOR
     private void OnValidate()

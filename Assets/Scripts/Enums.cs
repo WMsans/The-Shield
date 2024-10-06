@@ -19,7 +19,6 @@ public static class Enums
         Melee,
         Defense,
         Returning,
-        Ledge,
         LedgeDefense,
     }
     #endregion

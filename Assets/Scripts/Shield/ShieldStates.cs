@@ -482,12 +482,13 @@ public class ShieldMeleeState : ShieldBaseState
 public class ShieldDefenseState : ShieldBaseState
 {
     private PlayerController _player;
-    private bool _DefenseButton;
+    private bool _defenseButton;
     private Rigidbody2D _rb;
     public override void EnterState(ShieldController shield)
     {
         _player = PlayerController.Instance;
-        _player.SwitchState(Enums.PlayerState.Defense);
+        if(_player.CurrentState != Enums.PlayerState.Ledge)
+            _player.SwitchState(Enums.PlayerState.Defense);
 
         _rb = shield.Rb;
     }
@@ -499,13 +500,13 @@ public class ShieldDefenseState : ShieldBaseState
 
     private void GatherInput()
     {
-        _DefenseButton = Input.GetButton("Defense");
+        _defenseButton = Input.GetButton("Defense");
     }
     public override void FixedUpdateState(ShieldController shield)
     {
         _rb.velocity = Vector2.zero;
         
-        if (!_DefenseButton)
+        if (!_defenseButton)
         {
             // Return to the normal state
             shield.SwitchState(Enums.ShieldState.Hold);
@@ -519,35 +520,8 @@ public class ShieldDefenseState : ShieldBaseState
 
     public override void ExitState(ShieldController shield)
     {
-        _player.SwitchState(Enums.PlayerState.Normal);
+        if(_player.CurrentState != Enums.PlayerState.Ledge)
+            _player.SwitchState(Enums.PlayerState.Normal);
     }
 }
 
-public class ShieldLedgeState : ShieldBaseState
-{
-    PlayerController _player;
-    public override void EnterState(ShieldController shield)
-    {
-        _player = PlayerController.Instance;
-    }
-
-    public override void UpdateState(ShieldController shield)
-    {
-        
-    }
-
-    public override void FixedUpdateState(ShieldController shield)
-    {
-        
-    }
-
-    public override void LateUpdateState(ShieldController shield)
-    {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
-    }
-
-    public override void ExitState(ShieldController shield)
-    {
-        
-    }
-}

@@ -33,8 +33,10 @@ MonoBehaviour:
   PushAcceleration: 0.3
   PushDeceleration: 0.8
   JumpPower: 25
+  ClimbPower: 15
   MaxFallSpeed: 30
   FallAcceleration: 60
   JumpEndEarlyGravityModifier: 3
   CoyoteTime: 0.15
   JumpBuffer: 0.2
+  LedgeBuffer: 0.2

@@ -19,7 +19,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     private Transform _ledgeCheck;
     private Transform _ledgeBodyCheck;
     private float _ledgeCheckRadius;
-    
+    private float _timeGrabDownWasPressed;
     #region Interface
 
     public Vector2 FrameInput => _frameInput.Move;
@@ -39,6 +39,8 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         _ledgeCheck = player.grabPoint;
         _ledgeBodyCheck = player.grabBodyPoint;
         _ledgeCheckRadius = player.grabRadius;
+
+        _endedJumpEarly = false;
     }
 
     public override void UpdateState(PlayerController player)
@@ -67,11 +69,17 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             _jumpToConsume = true;
             _timeJumpWasPressed = _time;
         }
+
+        if (Input.GetButtonDown("Ledge"))
+        {
+            _timeGrabDownWasPressed = _time;
+        }
     }
 
     public override void FixedUpdateState(PlayerController player)
     {
         CheckCollisions(player);
+        CheckGrabDownLedge(player);
         CheckForBounced(player);
 
         HandleJump(player);
@@ -124,7 +132,22 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             player.SwitchState(Enums.PlayerState.Ledge);
         }
     }
-
+    private bool HasBufferedLedge => _time < _timeGrabDownWasPressed + _stats.LedgeBuffer;
+    void CheckGrabDownLedge(PlayerController player)
+    {
+        var col = Physics2D.OverlapCircle(player.grabDownPoint.position, player.grabDownRadius, _stats.GroundLayer);
+        if(col != null || !_grounded) return;
+        // If no wall in front of the player, check for ledging
+        if (HasBufferedLedge)
+        {
+            // Find the ledge point
+            var ray = Physics2D.Raycast(player.grabDownPoint.position, Vector2.left * (player.FacingRight ? 1 : -1), Mathf.Infinity, _stats.GroundLayer);
+            if (!ray) return;
+            player.LedgePoint = new(ray.point.x, Physics2D.Raycast(_rb.position, Vector2.down, Mathf.Infinity, _stats.GroundLayer).point.y);
+            player.FlipPlayer();
+            player.SwitchState(Enums.PlayerState.Ledge);
+        }
+    }
     #endregion
 
 
@@ -209,8 +232,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         // Player rotation
         if (_frameInput.Move.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
         {
-            player.FacingRight = _rb.velocity.x > 0;
-            player.transform.rotation = Quaternion.Euler(0f, player.FacingRight ? 0 : -180f, 0f);
+            player.FlipPlayer(_rb.velocity.x > 0);
         }
     }
     
@@ -268,7 +290,7 @@ public class PlayerDefenseState : PlayerBaseState
         CheckCollisions();
         HandleGravity(player);
         
-        var decel = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
+        var decel = _grounded ? _stats.GroundDeceleration : 0f;
         _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
     }
 
@@ -318,17 +340,15 @@ public class PlayerDefenseState : PlayerBaseState
 
 public class PlayerLedgeState : PlayerBaseState
 {
-    private ShieldController _shield;
     private Rigidbody2D _rb;
 
     private float _jumpTimer;
+    private Vector2 _move;
     PlayerStats _stats;
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Climb Edge");
         
-        _shield = ShieldController.Instance;
-        _shield.SwitchState(Enums.ShieldState.Ledge);
         _rb = player.Rb;
         _stats = player.stats;
         _jumpTimer = 0f;
@@ -346,27 +366,47 @@ public class PlayerLedgeState : PlayerBaseState
         {
             _jumpTimer = _stats.JumpBuffer;
         }
+
+        _move = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        if (_stats.SnapInput)
+        {
+            _move.x = Mathf.Abs(_move.x) < _stats.HorizontalDeadZoneThreshold ? 0 : Mathf.Sign(_move.x);
+            _move.y = Mathf.Abs(_move.y) < _stats.VerticalDeadZoneThreshold ? 0 : Mathf.Sign(_move.y);
+        }
     }
     public override void FixedUpdateState(PlayerController player)
     {
-        // Fixed to the ledge position
-        _rb.velocity = Vector2.zero;
-        _rb.position = new(_rb.position.x, player.LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
-        // Jump detection
+        HandlePosition(player);
         HandleJump(player);
     }
-
+    void HandlePosition(PlayerController player)
+    {
+        // Fixed to the ledge position
+        _rb.velocity = Vector2.zero;
+        _rb.position = new(player.LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, player.LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
+        Debug.DrawRay(player.LedgePoint, Vector3.down, Color.red);
+    }
     void HandleJump(PlayerController player)
     {
         if(_jumpTimer > 0)
         {
-            _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
+            if (_move.y >= 0)
+            {
+                if (Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
+                {
+                    _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
+                }
+                else
+                {
+                    _rb.velocity = new(_rb.velocity.x, _stats.ClimbPower);
+                }
+            }
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }
     public override void ExitState(PlayerController player)
     {
-        _shield.SwitchState(Enums.ShieldState.Hold);
+        
     }
 }
 public interface IPlayerController
