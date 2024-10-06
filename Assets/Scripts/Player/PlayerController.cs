@@ -12,11 +12,14 @@ public class PlayerController : MonoBehaviour
     private float _pressingHor;
     public PlayerStats stats;
     public bool Bounced { get; set; }
+    public bool FacingRight { get; set; } = true;
     private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
     public Transform grabPoint;
+    public Transform grabBodyPoint;
     public float grabRadius;
+    public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rd { get; private set; }
     #endregion
     #region State manchine
@@ -26,7 +29,8 @@ public class PlayerController : MonoBehaviour
     private readonly Dictionary<Enums.PlayerState, PlayerBaseState> _states = new()
     {
         {Enums.PlayerState.Normal, new PlayerNormalState() },
-        {Enums.PlayerState.Defence, new PlayerDefenceState() }, 
+        {Enums.PlayerState.Defense, new PlayerDefenseState() }, 
+        {Enums.PlayerState.Ledge, new PlayerLedgeState() }
     };
     
     #endregion
@@ -50,6 +54,7 @@ public class PlayerController : MonoBehaviour
         SwitchState(Enums.PlayerState.Normal);
 
         _shieldPushTimer = 0f;
+        FacingRight = true;
     }
     
     private void Update()
@@ -154,12 +159,14 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawLine(grabPoint.position, grabPoint.position + grabRadius * Vector3.right);
+        Gizmos.DrawLine(grabBodyPoint.position, grabBodyPoint.position + grabRadius * Vector3.right);
     }
 #if UNITY_EDITOR
     private void OnValidate()
     {
         if (stats == null) Debug.LogWarning("Please assign a PlayerStats asset to the Player Controller's Stats slot", this);
         if(grabPoint == null) Debug.LogWarning("Please assign a grab point transform to the Player Controller's Grab Point", this);
+        if(grabBodyPoint == null) Debug.LogWarning("Please assign a grab body point transform to the Player Controller's Grab grab Point", this);
     }
 #endif
 }

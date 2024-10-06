@@ -1,6 +1,6 @@
-    using System;
+using System;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public abstract class PlayerBaseState
 {
@@ -16,6 +16,9 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
     private FrameInput _frameInput;
+    private Transform _ledgeCheck;
+    private Transform _ledgeBodyCheck;
+    private float _ledgeCheckRadius;
     
     #region Interface
 
@@ -33,6 +36,9 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         
         _rb = player.Rd;
         _col = player.GetComponent<CapsuleCollider2D>();
+        _ledgeCheck = player.grabPoint;
+        _ledgeBodyCheck = player.grabBodyPoint;
+        _ledgeCheckRadius = player.grabRadius;
     }
 
     public override void UpdateState(PlayerController player)
@@ -107,7 +113,16 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             _frameLeftGrounded = _time;
             GroundedChanged?.Invoke(false, 0);
         }
-
+        // Check for ledge climbing
+        var ledgeRay = Physics2D.Raycast(_ledgeCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
+        var bodyRay = Physics2D.Raycast(_ledgeBodyCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
+        if (!ledgeRay && bodyRay && !_grounded && _rb.velocity.y < 0)
+        {
+            // Ledge climbing! Find the ledge point
+            var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, Mathf.Infinity, _stats.GroundLayer);
+            player.LedgePoint = new (bodyRay.point.x, ray.point.y);
+            player.SwitchState(Enums.PlayerState.Ledge);
+        }
     }
 
     #endregion
@@ -191,6 +206,12 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed,
                 (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
+        // Player rotation
+        if (_frameInput.Move.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
+        {
+            player.FacingRight = _rb.velocity.x > 0;
+            player.transform.rotation = Quaternion.Euler(0f, player.FacingRight ? 0 : -180f, 0f);
+        }
     }
     
     #endregion
@@ -218,7 +239,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     }
 }
 
-public class PlayerDefenceState : PlayerBaseState
+public class PlayerDefenseState : PlayerBaseState
 {
     private Rigidbody2D _rd;
     private PlayerStats _stats;
@@ -227,7 +248,7 @@ public class PlayerDefenceState : PlayerBaseState
     private bool _jumpHeld;
     public override void EnterState(PlayerController player)
     {
-        Debug.Log("Player Defence!");
+        Debug.Log("Player Defense!");
         _rd = player.Rd;
         _stats = player.stats;
         _col = player.GetComponent<CapsuleCollider2D>();
@@ -289,6 +310,34 @@ public class PlayerDefenceState : PlayerBaseState
             _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
         }
     }
+    public override void ExitState(PlayerController player)
+    {
+        
+    }
+}
+
+public class PlayerLedgeState : PlayerBaseState
+{
+    private ShieldController _shield;
+    public override void EnterState(PlayerController player)
+    {
+        Debug.Log("Climb Edge");
+        
+        _shield = ShieldController.Instance;
+        _shield.SwitchState(Enums.ShieldState.Ledge);
+    }
+
+    public override void UpdateState(PlayerController player)
+    {
+        
+    }
+
+    public override void FixedUpdateState(PlayerController player)
+    {
+        // Fixed to the ledge position
+        
+    }
+
     public override void ExitState(PlayerController player)
     {
         

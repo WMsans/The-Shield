@@ -8,7 +8,8 @@ public static class Enums
     public enum PlayerState
     {
         Normal,
-        Defence,
+        Defense,
+        Ledge,
     }
 
     public enum ShieldState
@@ -16,8 +17,10 @@ public static class Enums
         Hold, 
         Flying,
         Melee,
-        Defence,
+        Defense,
         Returning,
+        Ledge,
+        LedgeDefense,
     }
     #endregion
     

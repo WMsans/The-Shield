@@ -18,10 +18,11 @@ public class ShieldController : MonoBehaviour
         {Enums.ShieldState.Flying, new ShieldFlyingState() },
         {Enums.ShieldState.Melee, new ShieldMeleeState() },
         {Enums.ShieldState.Returning, new ShieldReturnState() },
-        {Enums.ShieldState.Defence, new ShieldDefenceState() }, 
+        {Enums.ShieldState.Defense, new ShieldDefenseState() }, 
+        {Enums.ShieldState.Ledge, new ShieldLedgeState() }
     };
     public float FireDownTimer { get; set; }
-    public float DefenceDownTimer { get; set; }
+    public float DefenseDownTimer { get; set; }
     private void Awake()
     {
         if (Instance == null)
@@ -45,13 +46,13 @@ public class ShieldController : MonoBehaviour
     void GatherInput()
     {
         if (Input.GetButtonDown("Fire1")) FireDownTimer = stats.PreInputTime;
-        if (Input.GetButtonDown("Defence")) DefenceDownTimer = stats.PreInputTime;
+        if (Input.GetButtonDown("Defense")) DefenseDownTimer = stats.PreInputTime;
     }
 
     void TimerUpdate()
     {
         FireDownTimer = Mathf.Max(0f, FireDownTimer - Time.deltaTime);
-        DefenceDownTimer = Mathf.Max(0f, DefenceDownTimer - Time.deltaTime);
+        DefenseDownTimer = Mathf.Max(0f, DefenseDownTimer - Time.deltaTime);
     }
     private void Start()
     {
