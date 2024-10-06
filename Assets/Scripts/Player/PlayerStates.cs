@@ -34,7 +34,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     {
         _stats = player.stats;
         
-        _rb = player.Rd;
+        _rb = player.Rb;
         _col = player.GetComponent<CapsuleCollider2D>();
         _ledgeCheck = player.grabPoint;
         _ledgeBodyCheck = player.grabBodyPoint;
@@ -249,7 +249,7 @@ public class PlayerDefenseState : PlayerBaseState
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Player Defense!");
-        _rd = player.Rd;
+        _rd = player.Rb;
         _stats = player.stats;
         _col = player.GetComponent<CapsuleCollider2D>();
     }
@@ -319,28 +319,54 @@ public class PlayerDefenseState : PlayerBaseState
 public class PlayerLedgeState : PlayerBaseState
 {
     private ShieldController _shield;
+    private Rigidbody2D _rb;
+
+    private float _jumpTimer;
+    PlayerStats _stats;
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Climb Edge");
         
         _shield = ShieldController.Instance;
         _shield.SwitchState(Enums.ShieldState.Ledge);
+        _rb = player.Rb;
+        _stats = player.stats;
+        _jumpTimer = 0f;
     }
 
     public override void UpdateState(PlayerController player)
     {
-        
+        GatherInput();
     }
 
+    void GatherInput()
+    {
+        _jumpTimer = Mathf.Max(0f, _jumpTimer - Time.deltaTime);
+        if (Input.GetButtonDown("Jump"))
+        {
+            _jumpTimer = _stats.JumpBuffer;
+        }
+    }
     public override void FixedUpdateState(PlayerController player)
     {
         // Fixed to the ledge position
-        
+        _rb.velocity = Vector2.zero;
+        _rb.position = new(_rb.position.x, player.LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
+        // Jump detection
+        HandleJump(player);
     }
 
+    void HandleJump(PlayerController player)
+    {
+        if(_jumpTimer > 0)
+        {
+            _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
+            player.SwitchState(Enums.PlayerState.Normal);
+        }
+    }
     public override void ExitState(PlayerController player)
     {
-        
+        _shield.SwitchState(Enums.ShieldState.Hold);
     }
 }
 public interface IPlayerController

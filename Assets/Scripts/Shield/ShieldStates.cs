@@ -32,7 +32,7 @@ public class ShieldHoldState : ShieldBaseState
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rb;
-        _playerRd = PlayerController.Instance.Rd;
+        _playerRd = PlayerController.Instance.Rb;
         _cam = CameraFollower.Instance.Cam;
         _stats = shield.stats;
         if(!shield.DisCoolDown)
@@ -109,7 +109,7 @@ public class ShieldFlyingState : ShieldBaseState
         // Initiate variables
         _stats = shield.stats;
         _player = PlayerController.Instance;
-        _playerRd = _player.Rd;
+        _playerRd = _player.Rb;
         _rd = shield.Rb;
         _cam = CameraFollower.Instance.Cam;
         _chanceOfChangingDir = _stats.MaxChangeDirection;
@@ -407,7 +407,7 @@ public class ShieldReturnState : ShieldBaseState
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rb;
-        _playerRd = PlayerController.Instance.Rd;
+        _playerRd = PlayerController.Instance.Rb;
         _stats = shield.stats;
 
         shield.GetComponent<Collider2D>().enabled = false;
@@ -470,7 +470,7 @@ public class ShieldMeleeState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rd.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)
@@ -514,7 +514,7 @@ public class ShieldDefenseState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rd.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)
@@ -543,7 +543,7 @@ public class ShieldLedgeState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rd.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)
