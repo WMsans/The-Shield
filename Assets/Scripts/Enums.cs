@@ -21,6 +21,13 @@ public static class Enums
         Returning,
         LedgeDefense,
     }
+
+    public enum MovingBlockState
+    {
+        Idle,
+        Dashing,
+        Returning,
+    }
     #endregion
     
     #region Player Abilities
