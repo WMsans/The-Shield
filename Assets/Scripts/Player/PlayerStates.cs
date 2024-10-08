@@ -9,8 +9,13 @@ public abstract class PlayerBaseState
     public abstract void FixedUpdateState(PlayerController player);
     public abstract void ExitState(PlayerController player);
 }
-
-public class PlayerNormalState : PlayerBaseState, IPlayerController
+public struct FrameInput
+{
+    public bool JumpDown;
+    public bool JumpHeld;
+    public Vector2 Move;
+}
+public class PlayerNormalState : PlayerBaseState
 {
     private PlayerStats _stats;
     private Rigidbody2D _rb;
@@ -20,13 +25,7 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
     private Transform _ledgeBodyCheck;
     private float _ledgeCheckRadius;
     private float _timeGrabDownWasPressed;
-    #region Interface
-
     public Vector2 FrameInput => _frameInput.Move;
-    public event Action<bool, float> GroundedChanged;
-    public event Action Jumped;
-
-    #endregion
 
     private float _time;
 
@@ -112,14 +111,12 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
-            GroundedChanged?.Invoke(true, Mathf.Abs(_rb.velocity.y));
         }
         // Left the Ground
         else if (_grounded && !groundHit)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
-            GroundedChanged?.Invoke(false, 0);
         }
         // Check for ledge climbing
         var ledgeRay = Physics2D.Raycast(_ledgeCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
@@ -184,7 +181,6 @@ public class PlayerNormalState : PlayerBaseState, IPlayerController
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
         _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
-        Jumped?.Invoke();
     }
 
     private void CheckForBounced(PlayerController player)
@@ -343,6 +339,7 @@ public class PlayerLedgeState : PlayerBaseState
     private Rigidbody2D _rb;
 
     private float _jumpTimer;
+    private float _releaseTimer;
     private Vector2 _move;
     PlayerStats _stats;
     public override void EnterState(PlayerController player)
@@ -352,6 +349,7 @@ public class PlayerLedgeState : PlayerBaseState
         _rb = player.Rb;
         _stats = player.stats;
         _jumpTimer = 0f;
+        _releaseTimer = 0f;
     }
 
     public override void UpdateState(PlayerController player)
@@ -366,6 +364,12 @@ public class PlayerLedgeState : PlayerBaseState
         {
             _jumpTimer = _stats.JumpBuffer;
         }
+        
+        _releaseTimer = Mathf.Max(0f, _releaseTimer - Time.deltaTime);
+        if (Input.GetButtonDown("Ledge"))
+        {
+            _releaseTimer = _stats.JumpBuffer;
+        }
 
         _move = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         if (_stats.SnapInput)
@@ -378,6 +382,7 @@ public class PlayerLedgeState : PlayerBaseState
     {
         HandlePosition(player);
         HandleJump(player);
+        ReleaseGrip(player);
     }
     void HandlePosition(PlayerController player)
     {
@@ -404,20 +409,16 @@ public class PlayerLedgeState : PlayerBaseState
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }
+
+    void ReleaseGrip(PlayerController player)
+    {
+        if (_releaseTimer > 0)
+        {
+            player.SwitchState(Enums.PlayerState.Normal);
+        }
+    }
     public override void ExitState(PlayerController player)
     {
         
     }
-}
-public interface IPlayerController
-{
-    public event Action<bool, float> GroundedChanged;
-    public event Action Jumped;
-    public Vector2 FrameInput { get; }
-}
-public struct FrameInput
-{
-    public bool JumpDown;
-    public bool JumpHeld;
-    public Vector2 Move;
 }

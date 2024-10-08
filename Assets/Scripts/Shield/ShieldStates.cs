@@ -194,16 +194,12 @@ public class ShieldFlyingState : ShieldBaseState
                 _chanceOfChangingDir--;
                 if (_chanceOfChangingDir <= 1)
                 {
+                    // No chance, return
                     shield.SwitchState(Enums.ShieldState.Returning);
-                }
-                else if (!realGrounded && _holdingAttack)
-                {
-                    // Fly as well
-                    
                 }
                 else if (realGrounded && _holdingAttack)
                 {
-                    // Return
+                    // Parkour mode, Return
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
                 else
