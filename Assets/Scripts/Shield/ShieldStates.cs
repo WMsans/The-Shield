@@ -91,8 +91,17 @@ public class ShieldFlyingState : ShieldBaseState
     private float _maxSpeed;
     private Vector2 _currentTarget;
     private Vector2 MousePos => _cam.ScreenToWorldPoint(Input.mousePosition);
-    private Vector2 PlayerPos => _playerRd.position;
-    private Vector2 ShieldPos => _rd.position;
+    private Vector2 PlayerPos
+    {
+        get => _playerRd.position;
+        set => _playerRd.position = value;
+    }
+
+    private Vector2 ShieldPos
+    {
+        get => _rd.position;
+        set => _rd.position = value;
+    }
     private List<Collider2D> _collidedFlags; 
     private Collider2D _nowGroundCollision;
     private bool _outOfRangeFlag;
@@ -101,9 +110,21 @@ public class ShieldFlyingState : ShieldBaseState
     {
         InitializeVariables(shield);
         InitializeMovement(shield);
+        InitializePosition(shield);
         InitializePlayerMovement(shield);
     }
 
+    void InitializePosition(ShieldController shield)
+    {
+        var nowForward = 0.1f;
+        while (nowForward <= 0.8f &&
+               Physics2D.OverlapCircle(Vector2.MoveTowards(ShieldPos, _currentTarget, nowForward), _stats.DetectionRadius, _stats.GroundLayer) !=
+               null)
+        {
+            nowForward += 0.1f;
+        }
+        ShieldPos = Vector2.MoveTowards(ShieldPos, _currentTarget, nowForward);
+    }
     void InitializeVariables(ShieldController shield)
     {
         // Initiate variables

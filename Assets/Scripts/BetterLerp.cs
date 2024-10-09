@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BetterLerp
+public abstract class BetterLerp
 {
     public enum LerpType
     {
