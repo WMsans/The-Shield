@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class MovingBlock : MonoBehaviour
+public class MovingBlock : MonoBehaviour, ITriggerable
 {
     [Header("Movements")]
     [SerializeField] Transform target;
@@ -19,7 +19,8 @@ public class MovingBlock : MonoBehaviour
     public Enums.MovingBlockState CurrentState {get; private set;}
     private readonly Dictionary<Enums.MovingBlockState, IMovingBlockAction> _states = new()
     {
-        { Enums.MovingBlockState.Idle, new MovingBlockResting() }
+        { Enums.MovingBlockState.Idle, new MovingBlockResting() },
+        {Enums.MovingBlockState.Dashing, new MovingBlockDashing() }
     };
     Rigidbody2D _rd;
     public Vector2 CurrentVelocity { get; private set; }
@@ -146,4 +147,14 @@ public class MovingBlock : MonoBehaviour
         if (target == null) Debug.LogWarning("Please assign a target point asset to the moving block", this);
     }
 #endif
+    public void OnTrigger()
+    {
+        SwitchState(Enums.MovingBlockState.Dashing);
+    }
+
+    public void OnUnTrigger()
+    {
+        if(CurrentState == Enums.MovingBlockState.Dashing) SwitchState(Enums.MovingBlockState.Returning);
+        else SwitchState(Enums.MovingBlockState.Idle);
+    }
 }
