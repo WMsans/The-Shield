@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -9,19 +10,14 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     [SerializeField] Transform target;
     [SerializeField] Transform start;
     [SerializeField] float moveTime;
-    [SerializeField] float returnTime;
+    [SerializeField] float returnSpd;
     [SerializeField] Enums.MovingBlockState startingState;
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
     
     private float _time;
-    public Enums.MovingBlockState CurrentState {get; private set;}
-    private readonly Dictionary<Enums.MovingBlockState, IMovingBlockAction> _states = new()
-    {
-        { Enums.MovingBlockState.Idle, new MovingBlockResting() },
-        {Enums.MovingBlockState.Dashing, new MovingBlockDashing() }
-    };
+    public MovingBlockAction CurrentState {get; private set;}
     Rigidbody2D _rd;
     public Vector2 CurrentVelocity { get; private set; }
 
@@ -34,88 +30,158 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     {
         SwitchState(startingState);
     }
-    public void SwitchState(Enums.MovingBlockState state)
+    public void SwitchState(MovingBlockAction state)
     {
-        if (_states.ContainsKey(state))
-        {
-            if(_states[state] != null)
-                _states[state].OnExit(this);
-        }
+        if(CurrentState != null)
+            CurrentState.OnExit(this);
         CurrentState = state;
-        _states[CurrentState].OnEnter(this);
+        state.OnEnter(this);
     }
 
     void Update()
     {
-        _states[CurrentState].OnUpdate(this);
+        CurrentState.OnUpdate(this);
     }
 
     void FixedUpdate()
     {
-        _states[CurrentState].OnFixedUpdate(this);
+        CurrentState.OnFixedUpdate(this);
     }
     #region State Machine
-    private interface IMovingBlockAction
+
+    public abstract class MovingBlockAction
     {
-        public void OnEnter(MovingBlock movingBlock);
-        public void OnUpdate(MovingBlock movingBlock);
-        public void OnFixedUpdate(MovingBlock movingBlock);
-        public void OnExit(MovingBlock movingBlock);
+        public abstract void OnEnter(MovingBlock movingBlock);
+        public abstract void OnUpdate(MovingBlock movingBlock);
+        public abstract void OnFixedUpdate(MovingBlock movingBlock);
+        public abstract void OnExit(MovingBlock movingBlock);
+        public static implicit operator MovingBlockAction(Enums.MovingBlockState src)
+        {
+            switch (src)
+            {
+                case Enums.MovingBlockState.Idle:
+                    return new MovingBlockResting();
+                case Enums.MovingBlockState.Dashing:
+                    return new MovingBlockDashing();
+                case Enums.MovingBlockState.Returning:
+                    return new MovingBlockReturning();
+            }
+            return null;
+        }
     }
 
-    private class MovingBlockResting : IMovingBlockAction
+    private class MovingBlockResting : MovingBlockAction
     {
-        public void OnEnter(MovingBlock movingBlock)
+        private float _time;
+        public override void OnEnter(MovingBlock movingBlock)
         {
             movingBlock.CurrentVelocity = Vector2.zero;
             // Vibrates
             
         }
 
-        public void OnUpdate(MovingBlock movingBlock)
+        public override void OnUpdate(MovingBlock movingBlock)
         {
-            
+            _time += Time.deltaTime;
+            if (_time > 0.5f)
+            {
+                movingBlock.CurrentVelocity = Vector2.zero;
+            }
         }
 
-        public void OnFixedUpdate(MovingBlock movingBlock)
+        public override void OnFixedUpdate(MovingBlock movingBlock)
         {
             movingBlock._rd.velocity = Vector2.zero;
         }
 
-        public void OnExit(MovingBlock movingBlock)
+        public override void OnExit(MovingBlock movingBlock)
         {
             
         }
     }
 
-    private class MovingBlockDashing : IMovingBlockAction
+    private class MovingBlockDashing : MovingBlockAction
     {
         private Vector2 _st;
         private Vector2 _tar;
         private float _time;
         private float _tarTime;
         private BetterLerp.LerpType _lerpType;
-        public void OnEnter(MovingBlock movingBlock)
+        private bool _lerpInversed;
+        public override void OnEnter(MovingBlock movingBlock)
         {
             _st = movingBlock._rd.position;
             _tar = movingBlock.target.position;
             _time = 0;
             _tarTime = movingBlock.moveTime * Vector2.Distance(_st, _tar) / Vector2.Distance(movingBlock.start.position, movingBlock.target.position);
+            _lerpType = movingBlock.movementType;
+            _lerpInversed = movingBlock.inversed;
         }
 
-        public void OnUpdate(MovingBlock movingBlock)
+        public override void OnUpdate(MovingBlock movingBlock)
         {
             _time += Time.deltaTime;
+            if (_time >= _tarTime)
+            {
+                movingBlock.SwitchState(Enums.MovingBlockState.Returning);
+            }
         }
 
-        public void OnFixedUpdate(MovingBlock movingBlock)
+        public override void OnFixedUpdate(MovingBlock movingBlock)
         {
-            var nowPos = BetterLerp.Lerp(_st, _tar, _time / _tarTime, _lerpType);
+            var nowPos = BetterLerp.Lerp(_st, _tar, _time / _tarTime, _lerpType, _lerpInversed);
             movingBlock.CurrentVelocity = nowPos - movingBlock._rd.position;
             movingBlock._rd.position = nowPos;
         }
 
-        public void OnExit(MovingBlock movingBlock)
+        public override void OnExit(MovingBlock movingBlock)
+        {
+            
+        }
+    }
+
+    private class MovingBlockReturning : MovingBlockAction
+    {
+        private Vector2 _st;
+        private Vector2 _tar;
+        private float _time;
+        private float _tarTime;
+        private bool _movingBack;
+        public override void OnEnter(MovingBlock movingBlock)
+        {
+            _time = 0f;
+            _movingBack = false;
+            _tar = movingBlock.start.position;
+        }
+
+        public override void OnUpdate(MovingBlock movingBlock)
+        {
+            _time += Time.deltaTime;
+            if (_time > 0.5f)
+            {
+                _movingBack = true;
+            }
+        }
+
+        public override void OnFixedUpdate(MovingBlock movingBlock)
+        {
+            if (_movingBack)
+            {
+                var nowPos = Vector2.MoveTowards(movingBlock._rd.position, _tar, movingBlock.returnSpd * Time.fixedDeltaTime);
+                movingBlock.CurrentVelocity = nowPos - movingBlock._rd.position;
+                movingBlock._rd.position = nowPos;
+                if (Mathf.Approximately(Vector2.Distance(nowPos, _tar), 0))
+                {
+                    movingBlock.SwitchState(Enums.MovingBlockState.Idle);
+                }
+            }
+            else
+            {
+                _st = movingBlock._rd.position;
+            }
+        }
+
+        public override void OnExit(MovingBlock movingBlock)
         {
             
         }
@@ -154,7 +220,6 @@ public class MovingBlock : MonoBehaviour, ITriggerable
 
     public void OnUnTrigger()
     {
-        if(CurrentState == Enums.MovingBlockState.Dashing) SwitchState(Enums.MovingBlockState.Returning);
-        else SwitchState(Enums.MovingBlockState.Idle);
+        SwitchState(Enums.MovingBlockState.Returning);
     }
 }

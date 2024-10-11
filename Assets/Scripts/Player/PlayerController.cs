@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     public Transform grabDownPoint;
     public float grabDownRadius;
     public Transform RightEdgePoint;
+    public Transform AnchorPoint;
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     #endregion

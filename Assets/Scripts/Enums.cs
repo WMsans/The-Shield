@@ -28,6 +28,7 @@ public static class Enums
         Dashing,
         Returning,
     }
+    
     #endregion
     
     #region Player Abilities

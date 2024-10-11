@@ -1076,10 +1076,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 2065084094}
   start: {fileID: 411924293}
-  moveTime: 1
-  returnTime: 3
+  moveTime: 0.5
+  returnSpd: 3
   startingState: 0
-  movementType: 0
+  movementType: 2
   inversed: 0
 --- !u!212 &818832294
 SpriteRenderer:
@@ -1752,6 +1752,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movingBlock: {fileID: 818832293}
+  allowUnTrigger: 0
 --- !u!1 &1374095303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2427,7 +2428,7 @@ Transform:
   m_GameObject: {fileID: 2065084093}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 3.5, z: 0}
+  m_LocalPosition: {x: -10.5, y: 5.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

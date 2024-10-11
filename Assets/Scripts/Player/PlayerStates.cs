@@ -1,5 +1,3 @@
-using System;
-using UnityEditor;
 using UnityEngine;
 
 public abstract class PlayerBaseState
@@ -124,7 +122,7 @@ public class PlayerNormalState : PlayerBaseState
         if (!ledgeRay && bodyRay && !_grounded && _rb.velocity.y < 0)
         {
             // Ledge climbing! Find the ledge point
-            var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, Mathf.Infinity, _stats.GroundLayer);
+            var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, 1f, _stats.GroundLayer);
             player.LedgePoint = new (bodyRay.point.x, ray.point.y);
             player.SwitchState(Enums.PlayerState.Ledge);
         }
@@ -337,10 +335,12 @@ public class PlayerDefenseState : PlayerBaseState
 public class PlayerLedgeState : PlayerBaseState
 {
     private Rigidbody2D _rb;
-
     private float _jumpTimer;
     private float _releaseTimer;
     private Vector2 _move;
+    private Transform _anchorPoint;
+    private Vector2 _playerLedgePoint;
+    private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.position;
     PlayerStats _stats;
     public override void EnterState(PlayerController player)
     {
@@ -350,6 +350,8 @@ public class PlayerLedgeState : PlayerBaseState
         _stats = player.stats;
         _jumpTimer = 0f;
         _releaseTimer = 0f;
+        _anchorPoint = player.AnchorPoint;
+        _playerLedgePoint = player.LedgePoint + (Vector2)_anchorPoint.position;
     }
 
     public override void UpdateState(PlayerController player)
@@ -388,8 +390,8 @@ public class PlayerLedgeState : PlayerBaseState
     {
         // Fixed to the ledge position
         _rb.velocity = Vector2.zero;
-        _rb.position = new(player.LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, player.LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
-        Debug.DrawRay(player.LedgePoint, Vector3.down, Color.red);
+        _rb.position = new(LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
+        Debug.DrawRay(LedgePoint, Vector3.down, Color.red);
     }
     void HandleJump(PlayerController player)
     {
@@ -409,7 +411,6 @@ public class PlayerLedgeState : PlayerBaseState
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }
-
     void ReleaseGrip(PlayerController player)
     {
         if (_releaseTimer > 0)
@@ -419,6 +420,6 @@ public class PlayerLedgeState : PlayerBaseState
     }
     public override void ExitState(PlayerController player)
     {
-        
+        _anchorPoint.position = Vector3.zero;
     }
 }
