@@ -18,12 +18,11 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     
     private float _time;
     public MovingBlockAction CurrentState {get; private set;}
-    Rigidbody2D _rd;
-    public Vector2 CurrentVelocity { get; private set; }
+    Rigidbody2D _rb;
 
     void Awake()
     {
-        _rd = GetComponent<Rigidbody2D>();
+        _rb = GetComponent<Rigidbody2D>();
     }
     
     void Start()
@@ -75,7 +74,6 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         private float _time;
         public override void OnEnter(MovingBlock movingBlock)
         {
-            movingBlock.CurrentVelocity = Vector2.zero;
             // Vibrates
             
         }
@@ -83,15 +81,11 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         public override void OnUpdate(MovingBlock movingBlock)
         {
             _time += Time.deltaTime;
-            if (_time > 0.5f)
-            {
-                movingBlock.CurrentVelocity = Vector2.zero;
-            }
         }
 
         public override void OnFixedUpdate(MovingBlock movingBlock)
         {
-            movingBlock._rd.velocity = Vector2.zero;
+            movingBlock._rb.velocity = Vector2.zero;
         }
 
         public override void OnExit(MovingBlock movingBlock)
@@ -110,7 +104,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         private bool _lerpInversed;
         public override void OnEnter(MovingBlock movingBlock)
         {
-            _st = movingBlock._rd.position;
+            _st = movingBlock._rb.position;
             _tar = movingBlock.target.position;
             _time = 0;
             _tarTime = movingBlock.moveTime * Vector2.Distance(_st, _tar) / Vector2.Distance(movingBlock.start.position, movingBlock.target.position);
@@ -130,8 +124,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         public override void OnFixedUpdate(MovingBlock movingBlock)
         {
             var nowPos = BetterLerp.Lerp(_st, _tar, _time / _tarTime, _lerpType, _lerpInversed);
-            movingBlock.CurrentVelocity = nowPos - movingBlock._rd.position;
-            movingBlock._rd.position = nowPos;
+            movingBlock._rb.position = nowPos;
         }
 
         public override void OnExit(MovingBlock movingBlock)
@@ -167,9 +160,8 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         {
             if (_movingBack)
             {
-                var nowPos = Vector2.MoveTowards(movingBlock._rd.position, _tar, movingBlock.returnSpd * Time.fixedDeltaTime);
-                movingBlock.CurrentVelocity = nowPos - movingBlock._rd.position;
-                movingBlock._rd.position = nowPos;
+                var nowPos = Vector2.MoveTowards(movingBlock._rb.position, _tar, movingBlock.returnSpd * Time.fixedDeltaTime);
+                movingBlock._rb.position = nowPos;
                 if (Mathf.Approximately(Vector2.Distance(nowPos, _tar), 0))
                 {
                     movingBlock.SwitchState(Enums.MovingBlockState.Idle);
@@ -177,7 +169,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
             }
             else
             {
-                _st = movingBlock._rd.position;
+                _st = movingBlock._rb.position;
             }
         }
 

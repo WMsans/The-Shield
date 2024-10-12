@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     #region Movements
     private float _pressingHor;
     public PlayerStats stats;
-    public bool Bounced { get; set; }
+    public bool Bounced => _bouncedTimer > 0f;
     public bool FacingRight { get; set; } = true;
     private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
@@ -22,7 +22,8 @@ public class PlayerController : MonoBehaviour
     public Transform grabDownPoint;
     public float grabDownRadius;
     public Transform RightEdgePoint;
-    public Transform AnchorPoint;
+    public AnchorPoint AnchorPointBehaviour;
+    public Vector2 AnchorPointVelocity => AnchorPointBehaviour.AnchorPointVelocity * new Vector2(50f, 15f);
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     #endregion
@@ -72,7 +73,6 @@ public class PlayerController : MonoBehaviour
         if (!ShieldPushed) _shieldPushTimer = 0f;
         
         _bouncedTimer -= Time.deltaTime;
-        if(_bouncedTimer <= 0) Bounced = false;
         if(!Bounced) _bouncedTimer = 0f;
     }
 
@@ -84,7 +84,6 @@ public class PlayerController : MonoBehaviour
     {
         _states[CurrentState].FixedUpdateState(this);
     }
-
     /// <summary>
     /// Push the player against the direction and activate the bounce and push timer
     /// </summary>
@@ -94,7 +93,6 @@ public class PlayerController : MonoBehaviour
     public bool ShieldPush(Vector2 dir, float force)
     {
         Rb.velocity -= dir * force;
-        Bounced = true;
         StartBounceTimer();
         ShieldPushed = true;
         _shieldPushTimer = stats.PushAccelerationSustainTime;
@@ -140,6 +138,10 @@ public class PlayerController : MonoBehaviour
         _bouncedTimer = stats.BounceTime;
     }
 
+    public void StopBounceTimer()
+    {
+        _bouncedTimer = 0f;
+    }
     public void SuperBounce()
     {
         _bouncedTimer = Mathf.Infinity;

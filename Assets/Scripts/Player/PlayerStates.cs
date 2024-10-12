@@ -20,6 +20,8 @@ public class PlayerNormalState : PlayerBaseState
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
     private FrameInput _frameInput;
+    private Vector2 _anchorPointLockedDis;
+    private bool _anchorLocked;
     private Transform _ledgeCheck;
     private Transform _ledgeBodyCheck;
     private float _ledgeCheckRadius;
@@ -37,6 +39,8 @@ public class PlayerNormalState : PlayerBaseState
         _ledgeCheck = player.grabPoint;
         _ledgeBodyCheck = player.grabBodyPoint;
         _ledgeCheckRadius = player.grabRadius;
+        _anchorLocked = false;
+        _anchorPointLockedDis = Vector2.zero;
 
         _endedJumpEarly = false;
     }
@@ -96,9 +100,9 @@ public class PlayerNormalState : PlayerBaseState
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
-        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-
+        var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+        
         // Hit a Ceiling
         if (ceilingHit)
         {
@@ -112,12 +116,23 @@ public class PlayerNormalState : PlayerBaseState
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
+            if (groundHit.collider.CompareTag("MovingBlock"))
+            {
+                player.AnchorPointBehaviour.SetTarget(groundHit.transform);
+                _anchorLocked = true;
+                _anchorPointLockedDis = (Vector2)player.AnchorPointBehaviour.transform.position - _rb.position;
+            }
         }
         // Left the Ground
         else if (_grounded && !groundHit)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
+            if (player.AnchorPointBehaviour.Target != null)
+            {
+                player.AnchorPointBehaviour.SetTarget(null);
+                _anchorLocked = false;
+            }
         }
         // Check for ledge climbing
         var ledgeRay = Physics2D.Raycast(_ledgeCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
@@ -128,7 +143,7 @@ public class PlayerNormalState : PlayerBaseState
             var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, 1f, _stats.GroundLayer);
             if (ray.collider.CompareTag("MovingBlock"))
             {
-                player.AnchorPoint.SetParent(ray.transform, true);
+                player.AnchorPointBehaviour.SetTarget(ray.transform);
             }
             player.LedgePoint = new (bodyRay.point.x, ray.point.y);
             player.SwitchState(Enums.PlayerState.Ledge);
@@ -148,7 +163,7 @@ public class PlayerNormalState : PlayerBaseState
             player.LedgePoint = new(ray.point.x, Physics2D.Raycast(_rb.position, Vector2.down, Mathf.Infinity, _stats.GroundLayer).point.y);
             if (ray.collider.CompareTag("MovingBlock"))
             {
-                player.AnchorPoint.SetParent(ray.transform, true);
+                player.AnchorPointBehaviour.SetTarget(ray.transform);
             }
             player.FlipPlayer();
             player.SwitchState(Enums.PlayerState.Ledge);
@@ -196,7 +211,7 @@ public class PlayerNormalState : PlayerBaseState
     {
         if (player.Bounced)
         {
-            if(_grounded && !player.ShieldPushed) player.Bounced = false;
+            if (_grounded && !player.ShieldPushed) player.StopBounceTimer();
         }
     }
     #endregion
@@ -206,9 +221,9 @@ public class PlayerNormalState : PlayerBaseState
     private void HandleDirection(PlayerController player)
     {
         if ((!Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)) ||
-             _frameInput.Move.x == 0) && player.Bounced)
+             Mathf.Approximately(_frameInput.Move.x, 0f)) && player.Bounced)
         {
-            player.Bounced = false;
+            player.StopBounceTimer();
         }
         if (_frameInput.Move.x == 0)
         {
@@ -446,9 +461,9 @@ public class PlayerLedgeState : PlayerBaseState
     private float _jumpTimer;
     private float _releaseTimer;
     private Vector2 _move;
-    private Transform _anchorPoint;
+    private AnchorPoint _anchorPoint;
     private Vector2 _playerLedgePoint;
-    private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.position;
+    private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.transform.position;
     PlayerStats _stats;
     public override void EnterState(PlayerController player)
     {
@@ -458,7 +473,7 @@ public class PlayerLedgeState : PlayerBaseState
         _stats = player.stats;
         _jumpTimer = 0f;
         _releaseTimer = 0f;
-        _anchorPoint = player.AnchorPoint;
+        _anchorPoint = player.AnchorPointBehaviour;
         _playerLedgePoint = player.LedgePoint;
     }
 
@@ -506,11 +521,17 @@ public class PlayerLedgeState : PlayerBaseState
     {
         if(_jumpTimer > 0)
         {
-            if (_move.y >= 0)
+            if (_move.y >= 0f)
             {
-                if (Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
+                float additionalVel = player.AnchorPointVelocity.magnitude;
+                if (Mathf.Approximately(_move.x, 0f) || additionalVel > 1f || Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
                 {
-                    _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
+                    _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.JumpPower + player.AnchorPointVelocity.y);
+                    
+                    if (additionalVel > 1f)
+                    {
+                        player.SuperBounce();
+                    }
                 }
                 else
                 {
@@ -529,7 +550,6 @@ public class PlayerLedgeState : PlayerBaseState
     }
     public override void ExitState(PlayerController player)
     {
-        _anchorPoint.SetParent(null);
-        _anchorPoint.position = Vector3.zero;
+        _anchorPoint.SetTarget(null);
     }
 }

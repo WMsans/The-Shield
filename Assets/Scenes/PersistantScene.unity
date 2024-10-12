@@ -395,7 +395,7 @@ Transform:
   - {fileID: 1441789808}
   - {fileID: 1693055863}
   - {fileID: 963888460}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1669882266}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1056959135
 CapsuleCollider2D:
@@ -478,7 +478,7 @@ MonoBehaviour:
   grabDownPoint: {fileID: 1693055863}
   grabDownRadius: 0.1
   RightEdgePoint: {fileID: 963888460}
-  AnchorPoint: {fileID: 1669882266}
+  AnchorPointBehaviour: {fileID: 1669882267}
 --- !u!1 &1169077757
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,6 +712,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1669882266}
+  - component: {fileID: 1669882267}
   m_Layer: 3
   m_Name: AnchorPos
   m_TagString: Untagged
@@ -731,9 +732,23 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1056959134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1669882267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669882265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818cc06afbd12374da17d122b2d0474e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityStayTime: 0.5
 --- !u!1 &1693055862
 GameObject:
   m_ObjectHideFlags: 0
@@ -871,7 +886,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 2032579450}
-  - {fileID: 1056959134}
   - {fileID: 1669882266}
   - {fileID: 1462190176}
   - {fileID: 2065819625}
