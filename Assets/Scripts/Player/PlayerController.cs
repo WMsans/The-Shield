@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     private readonly Dictionary<Enums.PlayerState, PlayerBaseState> _states = new()
     {
         {Enums.PlayerState.Normal, new PlayerNormalState() },
+        {Enums.PlayerState.Crouch, new PlayerCrouchState() },
         {Enums.PlayerState.Defense, new PlayerDefenseState() }, 
         {Enums.PlayerState.Ledge, new PlayerLedgeState() }
     };

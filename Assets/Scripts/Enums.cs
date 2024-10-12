@@ -8,6 +8,7 @@ public static class Enums
     public enum PlayerState
     {
         Normal,
+        Crouch,
         Defense,
         Ledge,
     }

@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 public abstract class PlayerBaseState
@@ -45,6 +46,10 @@ public class PlayerNormalState : PlayerBaseState
         _time += Time.deltaTime;
         
         GatherInput();
+        if (!_frameInput.JumpDown && _frameInput.Move.y < 0)
+        {
+            player.SwitchState(Enums.PlayerState.Crouch);
+        }
     }
     private void GatherInput()
     {
@@ -65,9 +70,7 @@ public class PlayerNormalState : PlayerBaseState
         {
             _jumpToConsume = true;
             _timeJumpWasPressed = _time;
-        }
-
-        if (Input.GetButtonDown("Ledge"))
+        }else if (Input.GetButtonDown("Ledge"))
         {
             _timeGrabDownWasPressed = _time;
         }
@@ -123,6 +126,10 @@ public class PlayerNormalState : PlayerBaseState
         {
             // Ledge climbing! Find the ledge point
             var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, 1f, _stats.GroundLayer);
+            if (ray.collider.CompareTag("MovingBlock"))
+            {
+                player.AnchorPoint.SetParent(ray.transform, true);
+            }
             player.LedgePoint = new (bodyRay.point.x, ray.point.y);
             player.SwitchState(Enums.PlayerState.Ledge);
         }
@@ -139,6 +146,10 @@ public class PlayerNormalState : PlayerBaseState
             var ray = Physics2D.Raycast(player.grabDownPoint.position, Vector2.left * (player.FacingRight ? 1 : -1), Mathf.Infinity, _stats.GroundLayer);
             if (!ray) return;
             player.LedgePoint = new(ray.point.x, Physics2D.Raycast(_rb.position, Vector2.down, Mathf.Infinity, _stats.GroundLayer).point.y);
+            if (ray.collider.CompareTag("MovingBlock"))
+            {
+                player.AnchorPoint.SetParent(ray.transform, true);
+            }
             player.FlipPlayer();
             player.SwitchState(Enums.PlayerState.Ledge);
         }
@@ -255,6 +266,103 @@ public class PlayerNormalState : PlayerBaseState
     }
 }
 
+public class PlayerCrouchState : PlayerBaseState
+{
+    private Rigidbody2D _rd;
+    private PlayerStats _stats;
+    private CapsuleCollider2D _col;
+    private bool _grounded;
+    private bool _jumpDown;
+    private bool _jumpHeld;
+    private Vector2 _move;
+    public override void EnterState(PlayerController player)
+    {
+        _rd = player.Rb;
+        _stats = player.stats;
+        _col = player.GetComponent<CapsuleCollider2D>();
+        _jumpHeld = _jumpDown = false;
+        _move = Vector2.zero;
+    }
+
+    public override void UpdateState(PlayerController player)
+    {
+        GatherInput();
+        if (_jumpDown)
+        {
+            ExecuteJump();
+            player.SwitchState(Enums.PlayerState.Normal);
+            return;
+        }
+        if (_move.y >= 0)
+        {
+            player.SwitchState(Enums.PlayerState.Normal);
+            return;
+        }
+    }
+
+    private void GatherInput()
+    {
+        _jumpDown = Input.GetButtonDown("Jump");
+        _jumpHeld = Input.GetButton("Jump");
+        _move = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        
+    }
+    public override void FixedUpdateState(PlayerController player)
+    {
+        CheckCollisions();
+        HandleGravity(player);
+        
+        var decel = _grounded ? _stats.GroundDeceleration : 0f;
+        _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
+    }
+    private void ExecuteJump()
+    {
+        _rd.velocity = new(_rd.velocity.x, _stats.JumpPower);
+    }
+    private void CheckCollisions()
+    {
+        Physics2D.queriesStartInColliders = false;
+
+        // Ground and Ceiling
+        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+
+        // Hit a Ceiling
+        if (ceilingHit)
+        {
+            _rd.velocity = new(_rd.velocity.x, Mathf.Min(0, _rd.velocity.y));
+        }
+
+        // Landed on the Ground
+        if (!_grounded && groundHit)
+        {
+            _grounded = true;
+        }
+        // Left the Ground
+        else if (_grounded && !groundHit)
+        {
+            _grounded = false;
+        }
+    }
+    private void HandleGravity(PlayerController player)
+    {
+        if (_grounded && _rd.velocity.y <= 0f)
+        {
+            _rd.velocity = new(_rd.velocity.x, _stats.GroundingForce);
+        }
+        else
+        {
+            var inAirGravity = _stats.FallAcceleration;
+            if (_rd.velocity.y > 0 && !player.Bounced && !player.ShieldPushed) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
+            _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
+        }
+    }
+    public override void ExitState(PlayerController player)
+    {
+        
+    }
+}
 public class PlayerDefenseState : PlayerBaseState
 {
     private Rigidbody2D _rd;
@@ -351,12 +459,13 @@ public class PlayerLedgeState : PlayerBaseState
         _jumpTimer = 0f;
         _releaseTimer = 0f;
         _anchorPoint = player.AnchorPoint;
-        _playerLedgePoint = player.LedgePoint + (Vector2)_anchorPoint.position;
+        _playerLedgePoint = player.LedgePoint;
     }
 
     public override void UpdateState(PlayerController player)
     {
         GatherInput();
+        
     }
 
     void GatherInput()
@@ -420,6 +529,7 @@ public class PlayerLedgeState : PlayerBaseState
     }
     public override void ExitState(PlayerController player)
     {
+        _anchorPoint.SetParent(null);
         _anchorPoint.position = Vector3.zero;
     }
 }

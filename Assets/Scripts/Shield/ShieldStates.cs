@@ -156,6 +156,7 @@ public class ShieldFlyingState : ShieldBaseState
 
     void PushPlayer(Vector2 dir, ShieldController shield)
     {
+        if (_player.CurrentState == Enums.PlayerState.Crouch) return;
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         if (Mathf.DeltaAngle(rot, 270f) < 30f)
         {
