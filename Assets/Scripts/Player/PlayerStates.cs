@@ -39,8 +39,6 @@ public class PlayerNormalState : PlayerBaseState
         _ledgeCheck = player.grabPoint;
         _ledgeBodyCheck = player.grabBodyPoint;
         _ledgeCheckRadius = player.grabRadius;
-        _anchorLocked = false;
-        _anchorPointLockedDis = Vector2.zero;
 
         _endedJumpEarly = false;
     }
@@ -463,7 +461,8 @@ public class PlayerLedgeState : PlayerBaseState
     private Vector2 _move;
     private AnchorPoint _anchorPoint;
     private Vector2 _playerLedgePoint;
-    private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.transform.position;
+    private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.transform.position - _initAnchorPoint;
+    Vector2 _initAnchorPoint;
     PlayerStats _stats;
     public override void EnterState(PlayerController player)
     {
@@ -475,6 +474,7 @@ public class PlayerLedgeState : PlayerBaseState
         _releaseTimer = 0f;
         _anchorPoint = player.AnchorPointBehaviour;
         _playerLedgePoint = player.LedgePoint;
+        _initAnchorPoint = _anchorPoint.transform.position;
     }
 
     public override void UpdateState(PlayerController player)
@@ -514,7 +514,7 @@ public class PlayerLedgeState : PlayerBaseState
     {
         // Fixed to the ledge position
         _rb.velocity = Vector2.zero;
-        _rb.position = new(LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
+        player.transform.position = new(LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
         Debug.DrawRay(LedgePoint, Vector3.down, Color.red);
     }
     void HandleJump(PlayerController player)

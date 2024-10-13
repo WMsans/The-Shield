@@ -17,7 +17,7 @@ MonoBehaviour:
     m_Bits: 1
   TargetLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 384
   PlayerLayer:
     serializedVersion: 2
     m_Bits: 8
