@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     public float grabDownRadius;
     public Transform RightEdgePoint;
     public AnchorPoint AnchorPointBehaviour;
-    public Vector2 AnchorPointVelocity => AnchorPointBehaviour.AnchorPointVelocity * new Vector2(50f, 15f);
+    public Vector2 AnchorPointVelocity => AnchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     #endregion

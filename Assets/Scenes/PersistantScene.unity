@@ -714,7 +714,7 @@ GameObject:
   - component: {fileID: 1669882266}
   - component: {fileID: 1669882267}
   m_Layer: 3
-  m_Name: AnchorPos
+  m_Name: PlayerAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818cc06afbd12374da17d122b2d0474e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocityStayTime: 0.5
+  velocityStayTime: 1
 --- !u!1 &1693055862
 GameObject:
   m_ObjectHideFlags: 0

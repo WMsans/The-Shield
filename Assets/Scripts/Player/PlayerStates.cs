@@ -20,17 +20,23 @@ public class PlayerNormalState : PlayerBaseState
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
     private FrameInput _frameInput;
-    private Vector2 _anchorPointLockedDis;
-    private bool _anchorLocked;
     private Transform _ledgeCheck;
     private Transform _ledgeBodyCheck;
     private float _ledgeCheckRadius;
     private float _timeGrabDownWasPressed;
+    private Vector2 _preBouncedVelocity;
+    private float _preBouncedTime;
+    private bool PreBounced => _preBouncedTime >= _time;
     public Vector2 FrameInput => _frameInput.Move;
 
     private float _time;
 
     public override void EnterState(PlayerController player)
+    {
+        InitializeVariables(player);
+    }
+
+    void InitializeVariables(PlayerController player)
     {
         _stats = player.stats;
         
@@ -41,14 +47,19 @@ public class PlayerNormalState : PlayerBaseState
         _ledgeCheckRadius = player.grabRadius;
 
         _endedJumpEarly = false;
-    }
 
+        if (player.Bounced)
+        {
+            _preBouncedVelocity = _rb.velocity;
+            _preBouncedTime = _time + .25f;
+        }
+    }
     public override void UpdateState(PlayerController player)
     {
         _time += Time.deltaTime;
         
         GatherInput();
-        if (!_frameInput.JumpDown && _frameInput.Move.y < 0)
+        if (!_frameInput.JumpDown && FrameInput.y < 0)
         {
             player.SwitchState(Enums.PlayerState.Crouch);
         }
@@ -97,6 +108,14 @@ public class PlayerNormalState : PlayerBaseState
     {
         Physics2D.queriesStartInColliders = false;
 
+        if (PreBounced && player.Bounced)
+        {
+            if(Mathf.Abs(_rb.velocity.x) < 0.1f)
+                _rb.velocity = new(_preBouncedVelocity.x, _rb.velocity.y);
+            if(Mathf.Abs(_rb.velocity.y) < 0.1f)
+                _rb.velocity = new(_rb.velocity.x, _preBouncedVelocity.y);
+        }
+
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
@@ -114,23 +133,20 @@ public class PlayerNormalState : PlayerBaseState
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
-            if (groundHit.collider.CompareTag("MovingBlock"))
+            /*if (groundHit.collider.CompareTag("MovingBlock"))
             {
                 player.AnchorPointBehaviour.SetTarget(groundHit.transform);
-                _anchorLocked = true;
-                _anchorPointLockedDis = (Vector2)player.AnchorPointBehaviour.transform.position - _rb.position;
-            }
+            }*/
         }
         // Left the Ground
-        else if (_grounded && !groundHit)
+        else if (_grounded && !groundHit.collider)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
-            if (player.AnchorPointBehaviour.Target != null)
+            /*if (player.AnchorPointBehaviour.Target != null)
             {
                 player.AnchorPointBehaviour.SetTarget(null);
-                _anchorLocked = false;
-            }
+            }*/
         }
         // Check for ledge climbing
         var ledgeRay = Physics2D.Raycast(_ledgeCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
@@ -168,8 +184,7 @@ public class PlayerNormalState : PlayerBaseState
         }
     }
     #endregion
-
-
+    
     #region Jumping
 
     private bool _jumpToConsume;
@@ -218,37 +233,37 @@ public class PlayerNormalState : PlayerBaseState
 
     private void HandleDirection(PlayerController player)
     {
-        if ((!Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)) ||
-             Mathf.Approximately(_frameInput.Move.x, 0f)) && player.Bounced)
+        if (((!Mathf.Approximately(Mathf.Sign(FrameInput.x), Mathf.Sign(_rb.velocity.x)) && !Mathf.Approximately(FrameInput.x, 0f)) ||
+             Mathf.Approximately(FrameInput.x, 0f)) && player.Bounced)
         {
             player.StopBounceTimer();
         }
-        if (_frameInput.Move.x == 0)
+        if (FrameInput.x == 0)
         {
             var deceleration = _grounded ? _stats.GroundDeceleration : _stats.AirDeceleration;
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, 0, 
                 deceleration * Time.fixedDeltaTime), _rb.velocity.y);
         }
         else if (player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxBouncedSpeed && 
-                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x))) 
+                 Mathf.Approximately(Mathf.Sign(FrameInput.x), Mathf.Sign(_rb.velocity.x))) 
         {
             // Speed higher than bounced max speed, direct constrain
-            _rb.velocity = new(_frameInput.Move.x * _stats.MaxBouncedSpeed, _rb.velocity.y);
+            _rb.velocity = new(FrameInput.x * _stats.MaxBouncedSpeed, _rb.velocity.y);
         }
         else if (!player.Bounced && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed &&
-                 Mathf.Approximately(Mathf.Sign(_frameInput.Move.x), Mathf.Sign(_rb.velocity.x)))
+                 Mathf.Approximately(Mathf.Sign(FrameInput.x), Mathf.Sign(_rb.velocity.x)))
         {
             // Speed higher than max speed, direct constrain
-            _rb.velocity = new(_frameInput.Move.x * _stats.MaxSpeed, _rb.velocity.y);
+            _rb.velocity = new(FrameInput.x * _stats.MaxSpeed, _rb.velocity.y);
         }
         else if(!( Mathf.Abs(_rb.velocity.x) < _stats.MaxBouncedSpeed && Mathf.Abs(_rb.velocity.x) > _stats.MaxSpeed && player.Bounced))
         {
             // Normal
-            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, _frameInput.Move.x * _stats.MaxSpeed,
+            _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, FrameInput.x * _stats.MaxSpeed,
                 (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
         // Player rotation
-        if (_frameInput.Move.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
+        if (FrameInput.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
         {
             player.FlipPlayer(_rb.velocity.x > 0);
         }
@@ -524,18 +539,18 @@ public class PlayerLedgeState : PlayerBaseState
             if (_move.y >= 0f)
             {
                 float additionalVel = player.AnchorPointVelocity.magnitude;
-                if (Mathf.Approximately(_move.x, 0f) || additionalVel > 1f || Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
+                Debug.Log(player.AnchorPointVelocity);
+                if (Mathf.Approximately(_move.x, 0f) || additionalVel > .1f || Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
                 {
                     _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.JumpPower + player.AnchorPointVelocity.y);
-                    
-                    if (additionalVel > 1f)
-                    {
-                        player.SuperBounce();
-                    }
                 }
                 else
                 {
-                    _rb.velocity = new(_rb.velocity.x, _stats.ClimbPower);
+                    _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.ClimbPower + player.AnchorPointVelocity.y);
+                }
+                if (additionalVel > .1f)
+                {
+                    player.SuperBounce();
                 }
             }
             player.SwitchState(Enums.PlayerState.Normal);
@@ -545,6 +560,12 @@ public class PlayerLedgeState : PlayerBaseState
     {
         if (_releaseTimer > 0)
         {
+            float additionalVel = player.AnchorPointVelocity.magnitude;
+            _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _rb.velocity.y + player.AnchorPointVelocity.y);
+            if (additionalVel > .1f)
+            {
+                player.SuperBounce();
+            }
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }

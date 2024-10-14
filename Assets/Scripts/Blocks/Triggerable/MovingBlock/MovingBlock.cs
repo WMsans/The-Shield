@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
@@ -19,10 +20,12 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     private float _time;
     public MovingBlockAction CurrentState {get; private set;}
     Rigidbody2D _rb;
+    private PlayerController _player;
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _player = PlayerController.Instance;
     }
     
     void Start()
@@ -39,6 +42,11 @@ public class MovingBlock : MonoBehaviour, ITriggerable
 
     void Update()
     {
+        _time += Time.deltaTime;
+        if (PlayerExiting)
+        {
+            _player.AnchorPointBehaviour.SetTarget(null);
+        }
         CurrentState.OnUpdate(this);
     }
 
@@ -179,6 +187,26 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         }
     }
     #endregion
+
+    private float _playerExitTime;
+    private bool PlayerExiting => Mathf.Abs(_playerExitTime - _time) < 0.05f;
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _player.AnchorPointBehaviour.SetTarget(transform);
+            _playerExitTime = 0f;
+        }
+    }
+    
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _playerExitTime = _time + 0.1f;
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

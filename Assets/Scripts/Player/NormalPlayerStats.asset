@@ -32,7 +32,7 @@ MonoBehaviour:
   PushAccelerationSustainTime: 0.25
   PushAcceleration: 0.3
   PushDeceleration: 0.8
-  JumpPower: 25
+  JumpPower: 20
   ClimbPower: 15
   MaxFallSpeed: 30
   FallAcceleration: 60

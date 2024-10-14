@@ -16,4 +16,12 @@ public class MovingBlockTrigger : Trigger
             OnTrigger();
         }
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            OnTrigger();
+        }
+    }
 }
