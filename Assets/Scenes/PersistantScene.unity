@@ -395,7 +395,7 @@ Transform:
   - {fileID: 1441789808}
   - {fileID: 1693055863}
   - {fileID: 963888460}
-  m_Father: {fileID: 1669882266}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1056959135
 CapsuleCollider2D:
@@ -732,8 +732,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1056959134}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1669882267
@@ -886,6 +885,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 2032579450}
+  - {fileID: 1056959134}
   - {fileID: 1669882266}
   - {fileID: 1462190176}
   - {fileID: 2065819625}

@@ -45,7 +45,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         _time += Time.deltaTime;
         if (PlayerExiting)
         {
-            _player.AnchorPointBehaviour.SetTarget(null);
+            _player.transform.parent = null;
         }
         CurrentState.OnUpdate(this);
     }
@@ -123,7 +123,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         public override void OnUpdate(MovingBlock movingBlock)
         {
             _time += Time.deltaTime;
-            if (_time >= _tarTime)
+            if (Vector2.Distance(movingBlock.transform.position, movingBlock.target.position) < 0.1f)
             {
                 movingBlock.SwitchState(Enums.MovingBlockState.Returning);
             }
@@ -132,7 +132,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         public override void OnFixedUpdate(MovingBlock movingBlock)
         {
             var nowPos = BetterLerp.Lerp(_st, _tar, _time / _tarTime, _lerpType, _lerpInversed);
-            movingBlock._rb.position = nowPos;
+            movingBlock.transform.position = nowPos;
         }
 
         public override void OnExit(MovingBlock movingBlock)
@@ -168,8 +168,8 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         {
             if (_movingBack)
             {
-                var nowPos = Vector2.MoveTowards(movingBlock._rb.position, _tar, movingBlock.returnSpd * Time.fixedDeltaTime);
-                movingBlock._rb.position = nowPos;
+                var nowPos = Vector2.MoveTowards(movingBlock.transform.position, _tar, movingBlock.returnSpd * Time.fixedDeltaTime);
+                movingBlock.transform.position = nowPos;
                 if (Mathf.Approximately(Vector2.Distance(nowPos, _tar), 0))
                 {
                     movingBlock.SwitchState(Enums.MovingBlockState.Idle);
@@ -177,7 +177,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
             }
             else
             {
-                _st = movingBlock._rb.position;
+                _st = movingBlock.transform.position;
             }
         }
 
@@ -194,7 +194,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            _player.AnchorPointBehaviour.SetTarget(transform);
+            _player.transform.parent = transform;
             _playerExitTime = 0f;
         }
     }
@@ -203,6 +203,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            
             _playerExitTime = _time + 0.1f;
         }
     }

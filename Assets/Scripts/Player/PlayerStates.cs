@@ -539,7 +539,6 @@ public class PlayerLedgeState : PlayerBaseState
             if (_move.y >= 0f)
             {
                 float additionalVel = player.AnchorPointVelocity.magnitude;
-                Debug.Log(player.AnchorPointVelocity);
                 if (Mathf.Approximately(_move.x, 0f) || additionalVel > .1f || Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
                 {
                     _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.JumpPower + player.AnchorPointVelocity.y);
