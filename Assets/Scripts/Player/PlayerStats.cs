@@ -54,8 +54,8 @@ public class PlayerStats : ScriptableObject
     [Tooltip("Horizontal acceleration ratio after pushed by shield")][Range(0,1)]
     public float PushAcceleration = .3f;
     
-    [Tooltip("Horizontal acceleration ratio after pushed by shield")][Range(0,1)]
-    public float PushDeceleration = .3f;
+    [Tooltip("The buff duration for player to go over the walls in seconds")]
+    public float BouncedBuffTime = 0.5f;
 
     [Header("JUMP")] [Tooltip("The immediate velocity applied when jumping")]
     public float JumpPower = 36;

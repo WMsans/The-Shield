@@ -24,10 +24,8 @@ public class PlayerNormalState : PlayerBaseState
     private Transform _ledgeBodyCheck;
     private float _ledgeCheckRadius;
     private float _timeGrabDownWasPressed;
-    private Vector2 _preBouncedVelocity;
-    private float _preBouncedTime;
-    private bool PreBounced => _preBouncedTime >= _time;
-    public Vector2 FrameInput => _frameInput.Move;
+    private Vector2 FrameInput => _frameInput.Move;
+    Vector2 _preBouncedVelocity;
 
     private float _time;
 
@@ -47,12 +45,6 @@ public class PlayerNormalState : PlayerBaseState
         _ledgeCheckRadius = player.grabRadius;
 
         _endedJumpEarly = false;
-
-        if (player.Bounced)
-        {
-            _preBouncedVelocity = _rb.velocity;
-            _preBouncedTime = _time + .25f;
-        }
     }
     public override void UpdateState(PlayerController player)
     {
@@ -107,14 +99,6 @@ public class PlayerNormalState : PlayerBaseState
     private void CheckCollisions(PlayerController player)
     {
         Physics2D.queriesStartInColliders = false;
-
-        if (PreBounced && player.Bounced)
-        {
-            if(Mathf.Abs(_rb.velocity.x) < 0.1f)
-                _rb.velocity = new(_preBouncedVelocity.x, _rb.velocity.y);
-            if(Mathf.Abs(_rb.velocity.y) < 0.1f)
-                _rb.velocity = new(_rb.velocity.x, _preBouncedVelocity.y);
-        }
 
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
@@ -225,6 +209,29 @@ public class PlayerNormalState : PlayerBaseState
         if (player.Bounced)
         {
             if (_grounded && !player.ShieldPushed) player.StopBounceTimer();
+            /*else if (_rb.velocity.x < .5f)
+            {
+                // Buff on y
+                var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.right * Mathf.Sign(_rb.velocity.x), _stats.WallerDistance, _stats.GroundLayer);
+                if (!ray)
+                {
+                    // Able to buff
+                    _rb.position += Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
+                    _rb.velocity += Vector2.right * _preBouncedVelocity;
+                }else player.StopBounceTimer();
+            }
+            else if (_rb.velocity.y < .5f)
+            {
+                // Buff on x
+                var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.up * Mathf.Sign(_rb.velocity.y), _stats.GrounderDistance, _stats.GroundLayer);
+                if (!ray)
+                {
+                    // Able to buff
+                    _rb.position += Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
+                    _rb.velocity += Vector2.up * _preBouncedVelocity;
+                }else player.StopBounceTimer();
+            }
+            else _preBouncedVelocity = _rb.velocity;*/
         }
     }
     #endregion
@@ -559,12 +566,7 @@ public class PlayerLedgeState : PlayerBaseState
     {
         if (_releaseTimer > 0)
         {
-            float additionalVel = player.AnchorPointVelocity.magnitude;
-            _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _rb.velocity.y + player.AnchorPointVelocity.y);
-            if (additionalVel > .1f)
-            {
-                player.SuperBounce();
-            }
+            player.AnchorPush();
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }

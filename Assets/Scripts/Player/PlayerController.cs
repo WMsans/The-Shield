@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -10,6 +9,8 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get; private set; }
     #region Movements
     private float _pressingHor;
+    private float _pressingVert;
+    private bool _pressingJump;
     public PlayerStats stats;
     public bool Bounced => _bouncedTimer > 0f;
     public bool FacingRight { get; set; } = true;
@@ -79,6 +80,8 @@ public class PlayerController : MonoBehaviour
     void GatherInput()
     {
         _pressingHor = Input.GetAxisRaw("Horizontal");
+        _pressingVert = Input.GetAxisRaw("Vertical");
+        _pressingJump = Input.GetButtonDown("Jump");
     }
     private void FixedUpdate()
     {
@@ -133,6 +136,19 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    public void AnchorPush()
+    {
+        float additionalVel = AnchorPointVelocity.magnitude;
+        Rb.velocity += AnchorPointVelocity;
+        if (additionalVel > .1f)
+        {
+            SuperBounce();
+        }
+        if (_pressingJump)
+        {
+            Rb.velocity = new(Rb.velocity.x, stats.JumpPower);
+        }
+    }
     public void StartBounceTimer()
     {
         _bouncedTimer = stats.BounceTime;

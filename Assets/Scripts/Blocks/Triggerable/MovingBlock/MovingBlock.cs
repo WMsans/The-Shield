@@ -46,6 +46,10 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         if (PlayerExiting)
         {
             _player.transform.parent = null;
+            if(_player.AnchorPointBehaviour.Target == transform)
+                _player.AnchorPointBehaviour.SetTarget(null);
+            _player.AnchorPush();
+            _playerExitTime = 0f;
         }
         CurrentState.OnUpdate(this);
     }
@@ -195,6 +199,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         if (other.gameObject.CompareTag("Player"))
         {
             _player.transform.parent = transform;
+            _player.AnchorPointBehaviour.SetTarget(transform);
             _playerExitTime = 0f;
         }
     }
@@ -203,8 +208,8 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            
             _playerExitTime = _time + 0.1f;
+            
         }
     }
 

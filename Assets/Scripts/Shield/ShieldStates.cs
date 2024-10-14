@@ -256,6 +256,12 @@ public class ShieldFlyingState : ShieldBaseState
         _rd.velocity = dir * spd;
         _rd.rotation = rot;
     }
+    private List<ShieldAttractingObject> FindAllShieldAttractingObjects()
+    {
+        IEnumerable<ShieldAttractingObject> objects = Object.FindObjectsOfType<ShieldAttractingObject>();
+        // return the sorted list
+        return new(objects);
+    }
     class ChangePointFinder
     {
         private readonly Rigidbody2D _shieldRd;
@@ -298,7 +304,6 @@ public class ShieldFlyingState : ShieldBaseState
                 // Check if this thing is reachable
                 var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if (ray.collider == null || ray.transform != shieldAttractingObject.transform) continue;
-                if (!CheckNextPosition(i, _maxChangeDirection)) continue;
                 // Check if it is best distance
                 if(ray.distance < bestDis)
                 {
