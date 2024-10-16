@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
-    public float _pressingHor;
-    public float _pressingVert;
-    public bool _pressingJump;
+    [HideInInspector]public float _pressingHor;
+    [HideInInspector]public float _pressingVert;
+    [HideInInspector]public bool _pressingJump;
     public PlayerStats stats;
     public bool Bounced => _bouncedTimer > 0f;
     public bool FacingRight { get; set; } = true;
@@ -23,8 +23,9 @@ public class PlayerController : MonoBehaviour
     public Transform grabDownPoint;
     public float grabDownRadius;
     public Transform RightEdgePoint;
-    public AnchorPoint AnchorPointBehaviour;
-    public Vector2 AnchorPointVelocity => AnchorPointBehaviour.AnchorPointVelocity;
+    [SerializeField] private GameObject anchorPointPrefab;
+    [HideInInspector]public AnchorPoint anchorPointBehaviour;
+    public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     #endregion
@@ -52,8 +53,13 @@ public class PlayerController : MonoBehaviour
         {
             Debug.LogError("More than one instance of PlayerController in the scene");
             Destroy(gameObject);
+            return;
         }
         Rb = GetComponent<Rigidbody2D>();
+        if (anchorPointBehaviour == null)
+        {
+            anchorPointBehaviour = Instantiate(anchorPointPrefab).GetComponent<AnchorPoint>();
+        }
     }
 
     private void Start()

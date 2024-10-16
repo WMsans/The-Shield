@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovingBlock : MonoBehaviour, ITriggerable
@@ -46,8 +47,9 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         if (PlayerExiting)
         {
             _player.transform.parent = null;
-            if(_player.AnchorPointBehaviour.Target == transform)
-                _player.AnchorPointBehaviour.SetTarget(null);
+            SceneManager.MoveGameObjectToScene(_player.gameObject, SceneManager.GetSceneByName("PersistantScene"));
+            if(_player.anchorPointBehaviour.Target == transform)
+                _player.anchorPointBehaviour.SetTarget(null);
             _player.AnchorPush();
             _playerExitTime = 0f;
         }
@@ -199,7 +201,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         if (other.gameObject.CompareTag("Player"))
         {
             _player.transform.parent = transform;
-            _player.AnchorPointBehaviour.SetTarget(transform);
+            _player.anchorPointBehaviour.SetTarget(transform);
             _playerExitTime = 0f;
         }
     }

@@ -24,7 +24,7 @@ MonoBehaviour:
   MaxSpeed: 40
   HorizontalForceToPlayer: 15
   VarticleForceToPlayer: 20
-  HorizontalOpposeForceToPlayer: 20
+  HorizontalOpposeForceToPlayer: 25
   MaxChangeDirection: 3
   MaxTargetDistance: 17
   HandRange: 0.75

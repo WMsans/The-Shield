@@ -117,20 +117,12 @@ public class PlayerNormalState : PlayerBaseState
             _coyoteUsable = true;
             _bufferedJumpUsable = true;
             _endedJumpEarly = false;
-            /*if (groundHit.collider.CompareTag("MovingBlock"))
-            {
-                player.AnchorPointBehaviour.SetTarget(groundHit.transform);
-            }*/
         }
         // Left the Ground
         else if (_grounded && !groundHit.collider)
         {
             _grounded = false;
             _frameLeftGrounded = _time;
-            /*if (player.AnchorPointBehaviour.Target != null)
-            {
-                player.AnchorPointBehaviour.SetTarget(null);
-            }*/
         }
         // Check for ledge climbing
         var ledgeRay = Physics2D.Raycast(_ledgeCheck.position, Vector2.right * (player.FacingRight ? 1 : -1), _ledgeCheckRadius, _stats.GroundLayer);
@@ -141,7 +133,7 @@ public class PlayerNormalState : PlayerBaseState
             var ray = Physics2D.Raycast((Vector2)_ledgeCheck.position + Vector2.right * ((player.FacingRight ? 1 : -1) * _ledgeCheckRadius), Vector2.down, 1f, _stats.GroundLayer);
             if (ray.collider.CompareTag("MovingBlock"))
             {
-                player.AnchorPointBehaviour.SetTarget(ray.transform);
+                player.anchorPointBehaviour.SetTarget(ray.transform);
             }
             player.LedgePoint = new (bodyRay.point.x, ray.point.y);
             player.SwitchState(Enums.PlayerState.Ledge);
@@ -156,12 +148,13 @@ public class PlayerNormalState : PlayerBaseState
         if (HasBufferedLedge)
         {
             // Find the ledge point
-            var ray = Physics2D.Raycast(player.grabDownPoint.position, Vector2.left * (player.FacingRight ? 1 : -1), Mathf.Infinity, _stats.GroundLayer);
-            if (!ray) return;
-            player.LedgePoint = new(ray.point.x, Physics2D.Raycast(_rb.position, Vector2.down, Mathf.Infinity, _stats.GroundLayer).point.y);
+            var ray = Physics2D.Raycast(player.grabDownPoint.position, Vector2.left * (player.FacingRight ? 1 : -1), 1f, _stats.GroundLayer);
+            var backRay = Physics2D.Raycast(_col.bounds.center - _col.bounds.extents * (player.FacingRight ? 1 : -1), Vector2.down, _col.bounds.extents.y + 1f, _stats.GroundLayer);
+            if (!ray || !backRay) return;
+            player.LedgePoint = new(ray.point.x, backRay.point.y);
             if (ray.collider.CompareTag("MovingBlock"))
             {
-                player.AnchorPointBehaviour.SetTarget(ray.transform);
+                player.anchorPointBehaviour.SetTarget(ray.transform);
             }
             player.FlipPlayer();
             player.SwitchState(Enums.PlayerState.Ledge);
@@ -494,7 +487,7 @@ public class PlayerLedgeState : PlayerBaseState
         _stats = player.stats;
         _jumpTimer = 0f;
         _releaseTimer = 0f;
-        _anchorPoint = player.AnchorPointBehaviour;
+        _anchorPoint = player.anchorPointBehaviour;
         _playerLedgePoint = player.LedgePoint;
         _initAnchorPoint = _anchorPoint.transform.position;
     }
