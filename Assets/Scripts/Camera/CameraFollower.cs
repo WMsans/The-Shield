@@ -11,10 +11,10 @@ public class CameraFollower : MonoBehaviour
     [SerializeField] float lookForward;
     [SerializeField] Vector2 frameInDistance;
 
-    Vector3 _moveDamp = new();
-    Vector3 _lastFollowPos = new();
+    private Vector3 _moveDamp;
+    private Vector3 _lastFollowPos;
     public Camera Cam {get; private set;}
-    float camZ;
+    private float _camZ;
     public Vector2 MinPoint { get; set; } = Vector2.zero;
     public Vector2 MaxPoint { get; set; } = Vector2.zero;
     public CameraLimiter CameraLimiter { get; set; }
@@ -34,7 +34,7 @@ public class CameraFollower : MonoBehaviour
     void Start()
     {
         _lastFollowPos = follow.position;
-        camZ = Cam.transform.position.z;
+        _camZ = Cam.transform.position.z;
         CameraLimiter = null;
     }
     void Update()
@@ -62,7 +62,7 @@ public class CameraFollower : MonoBehaviour
         // Reset target
         _lastFollowPos = follow.position;
         // Set camera Z position
-        Cam.transform.position = new(transform.position.x, transform.position.y, camZ);
+        Cam.transform.position = new(transform.position.x, transform.position.y, _camZ);
     }
     private Vector2 Extents(Camera cam)
     {

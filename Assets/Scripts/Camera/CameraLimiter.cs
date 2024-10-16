@@ -7,8 +7,8 @@ public class CameraLimiter : MonoBehaviour
     [SerializeField] Collider2D collisionBound;
     [SerializeField] Collider2D cameraBound;
 
-    CameraFollower cameraFollower;
-    bool _enabled = false;
+    private CameraFollower _cameraFollower;
+    private bool _enabled;
     void Awake()
     {
         _enabled = false;
@@ -17,36 +17,36 @@ public class CameraLimiter : MonoBehaviour
     }
     private void Start()
     {
-        cameraFollower = CameraFollower.Instance;
+        _cameraFollower = CameraFollower.Instance;
     }
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
             _enabled = true;
             if (cameraBound.bounds.Contains(collision.gameObject.transform.position)){
-                cameraFollower.CameraLimiter = this;
+                _cameraFollower.CameraLimiter = this;
                 //Make this the limiter
-                cameraFollower.MinPoint = cameraBound.bounds.min;
-                cameraFollower.MaxPoint = cameraBound.bounds.max;
+                _cameraFollower.MinPoint = cameraBound.bounds.min;
+                _cameraFollower.MaxPoint = cameraBound.bounds.max;
             }
             else
             {
-                if (cameraFollower.CameraLimiter == this)
+                if (_cameraFollower.CameraLimiter == this)
                 {
-                    cameraFollower.CameraLimiter = null;
+                    _cameraFollower.CameraLimiter = null;
                 }
             }
         }
     }
     void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.gameObject.tag == "Player" && _enabled)
+        if(collision.gameObject.CompareTag("Player") && _enabled)
         {
             _enabled = false;
-            if (cameraFollower.CameraLimiter == this)
+            if (_cameraFollower.CameraLimiter == this)
             {
-                cameraFollower.CameraLimiter = null;
+                _cameraFollower.CameraLimiter = null;
             }
         }
     }

@@ -8,9 +8,9 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
-    private float _pressingHor;
-    private float _pressingVert;
-    private bool _pressingJump;
+    public float _pressingHor;
+    public float _pressingVert;
+    public bool _pressingJump;
     public PlayerStats stats;
     public bool Bounced => _bouncedTimer > 0f;
     public bool FacingRight { get; set; } = true;
@@ -95,12 +95,24 @@ public class PlayerController : MonoBehaviour
     /// <returns>If the player did a neutral bounce</returns>
     public bool ShieldPush(Vector2 dir, float force)
     {
+        return ShieldPush(dir, Vector2.one * force);
+    }
+    /// <summary>
+    /// Push the player against the direction by force and activate the bounce and push timer
+    /// </summary>
+    /// <param name="dir">Direction in normal Vector2</param>
+    /// <param name="force">horizontal and vertical force given to player</param>
+    /// <returns>If the player did a neutral bounce</returns>
+    public bool ShieldPush(Vector2 dir, Vector2 force)
+    {
+        dir.Normalize();
         Rb.velocity -= dir * force;
         StartBounceTimer();
         ShieldPushed = true;
         _shieldPushTimer = stats.PushAccelerationSustainTime;
         
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        // Push player upward
         if (Mathf.DeltaAngle(rot, 270f) < 30f)
         {
             // If push upward, check if player is beside a wall

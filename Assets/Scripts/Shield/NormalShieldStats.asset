@@ -22,7 +22,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   MaxSpeed: 40
-  ForceToPlayer: 20
+  HorizontalForceToPlayer: 15
+  VarticleForceToPlayer: 20
+  HorizontalOpposeForceToPlayer: 20
   MaxChangeDirection: 3
   MaxTargetDistance: 17
   HandRange: 0.75
