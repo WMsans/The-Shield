@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
+    public CapsuleCollider2D Col { get; private set; }
     #endregion
     #region State manchine
     
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Rb = GetComponent<Rigidbody2D>();
+        Col = GetComponent<CapsuleCollider2D>();
         if (anchorPointBehaviour == null)
         {
             anchorPointBehaviour = Instantiate(anchorPointPrefab).GetComponent<AnchorPoint>();

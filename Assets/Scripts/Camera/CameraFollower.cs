@@ -15,8 +15,9 @@ public class CameraFollower : MonoBehaviour
     private Vector3 _lastFollowPos;
     public Camera Cam {get; private set;}
     private float _camZ;
-    public Vector2 MinPoint { get; set; } = Vector2.zero;
-    public Vector2 MaxPoint { get; set; } = Vector2.zero;
+    private Vector2 _minPoint;
+    private Vector2 _maxPoint;
+    private bool _limitinBuff;
     public CameraLimiter CameraLimiter { get; set; }
     void Awake()
     {
@@ -41,20 +42,25 @@ public class CameraFollower : MonoBehaviour
     {
         // Find target pos
         var targetPos = follow.position + (follow.position - _lastFollowPos) * lookForward;
-        if (Vector2.Distance(MinPoint, MaxPoint) > 0f && CameraLimiter != null)
+        if (Vector2.Distance(_minPoint, _maxPoint) > 0f && CameraLimiter != null)
         {
-            targetPos.x = Mathf.Clamp(targetPos.x, MinPoint.x + Extents(Cam).x, MaxPoint.x - Extents(Cam).x);
-            targetPos.y = Mathf.Clamp(targetPos.y, MinPoint.y + Extents(Cam).y, MaxPoint.y - Extents(Cam).y);
+            targetPos.x = Mathf.Clamp(targetPos.x, _minPoint.x + Extents(Cam).x, _maxPoint.x - Extents(Cam).x);
+            targetPos.y = Mathf.Clamp(targetPos.y, _minPoint.y + Extents(Cam).y, _maxPoint.y - Extents(Cam).y);
         }
         // Move camera toward target
-        
         transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref _moveDamp, followSpeed);
-        if (Mathf.Abs(targetPos.x - transform.position.x) > frameInDistance.x)
+        // Frame in
+        if (!(Mathf.Abs(targetPos.x - transform.position.x) > frameInDistance.x ||
+              Mathf.Abs(targetPos.y - transform.position.y) > frameInDistance.y))
+        {
+            _limitinBuff = false;
+        }
+        if (Mathf.Abs(targetPos.x - transform.position.x) > frameInDistance.x && !_limitinBuff)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPos,
                 Mathf.Abs(targetPos.x - transform.position.x) - frameInDistance.x);
         }
-        if (Mathf.Abs(targetPos.y - transform.position.y) > frameInDistance.y)
+        if (Mathf.Abs(targetPos.y - transform.position.y) > frameInDistance.y && !_limitinBuff)
         {
             transform.position = Vector3.MoveTowards(transform.position, targetPos,
                 Mathf.Abs(targetPos.y - transform.position.y) - frameInDistance.y);
@@ -63,6 +69,19 @@ public class CameraFollower : MonoBehaviour
         _lastFollowPos = follow.position;
         // Set camera Z position
         Cam.transform.position = new(transform.position.x, transform.position.y, _camZ);
+    }
+
+    public void Limitin(Vector2 minPoint, Vector2 maxPoint)
+    {
+        _minPoint = minPoint;
+        _maxPoint = maxPoint;
+        _limitinBuff = true;
+    }
+
+    public void Limitout()
+    {
+        print("OUOUOUOUOUOT");
+        _limitinBuff = true;
     }
     private Vector2 Extents(Camera cam)
     {

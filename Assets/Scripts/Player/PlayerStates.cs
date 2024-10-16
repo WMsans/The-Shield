@@ -39,7 +39,7 @@ public class PlayerNormalState : PlayerBaseState
         _stats = player.stats;
         
         _rb = player.Rb;
-        _col = player.GetComponent<CapsuleCollider2D>();
+        _col = player.Col;
         _ledgeCheck = player.grabPoint;
         _ledgeBodyCheck = player.grabBodyPoint;
         _ledgeCheckRadius = player.grabRadius;
@@ -188,12 +188,16 @@ public class PlayerNormalState : PlayerBaseState
         _jumpToConsume = false;
     }
 
-    private void ExecuteJump()
+    private void ResetJumpBuff()
     {
         _endedJumpEarly = false;
         _timeJumpWasPressed = 0;
         _bufferedJumpUsable = false;
         _coyoteUsable = false;
+    }
+    private void ExecuteJump()
+    {
+        ResetJumpBuff();
         _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
     }
 
