@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Player Stats", menuName = "Player Controller/Player Stats", order = 1)]
+[CreateAssetMenu(fileName = "New Player Stats", menuName = "Custom Assets/Player Controller/Player Stats", order = 1)]
 public class PlayerStats : ScriptableObject
 {
     [Header("LAYERS")] [Tooltip("Set this to the layer your player is collided on")]
