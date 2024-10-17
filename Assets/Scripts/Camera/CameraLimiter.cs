@@ -7,7 +7,7 @@ public class CameraLimiter : MonoBehaviour
 {
     [SerializeField] Collider2D collisionBound;
     [SerializeField] Collider2D cameraBound;
-    [SerializeField] SceneField[] scenesToLoad;
+    [SerializeField] List<SceneField> scenesToLoad;
 
     private CameraFollower _cameraFollower;
     private bool _enabled;
@@ -62,7 +62,7 @@ public class CameraLimiter : MonoBehaviour
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             Scene loadedScene = SceneManager.GetSceneAt(i);
-            if (loadedScene.name == "PersistentGameplay" || loadedScene.name == "DontDestroyOnLoad") continue;
+            if (loadedScene.name == "PersistantScene" || loadedScene.name == "DontDestroyOnLoad" || loadedScene == gameObject.scene) continue;
             var unloading = true;
             foreach (var scene in scenesToLoad)
             {

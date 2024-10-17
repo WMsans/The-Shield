@@ -26,7 +26,7 @@ MonoBehaviour:
   VarticleForceToPlayer: 20
   HorizontalOpposeForceToPlayer: 25
   MaxChangeDirection: 3
-  MaxTargetDistance: 17
+  MaxTargetDistance: 20
   HandRange: 0.75
   CoolDownTime: 0.2
   DetectionRadius: 0.4

@@ -8,6 +8,7 @@ public class CameraFollower : MonoBehaviour
     public static CameraFollower Instance { get; private set; }
     [SerializeField] Transform follow;
     [SerializeField] float followSpeed = 0.3f;
+    [SerializeField] float transitionSpeed = 0.5f;
     [SerializeField] float lookForward;
     [SerializeField] Vector2 frameInDistance;
 
@@ -48,7 +49,7 @@ public class CameraFollower : MonoBehaviour
             targetPos.y = Mathf.Clamp(targetPos.y, _minPoint.y + Extents(Cam).y, _maxPoint.y - Extents(Cam).y);
         }
         // Move camera toward target
-        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref _moveDamp, followSpeed);
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref _moveDamp, _limitinBuff ? transitionSpeed : followSpeed);
         // Frame in
         if (!(Mathf.Abs(targetPos.x - transform.position.x) > frameInDistance.x ||
               Mathf.Abs(targetPos.y - transform.position.y) > frameInDistance.y))
@@ -80,7 +81,6 @@ public class CameraFollower : MonoBehaviour
 
     public void Limitout()
     {
-        print("OUOUOUOUOUOT");
         _limitinBuff = true;
     }
     private Vector2 Extents(Camera cam)

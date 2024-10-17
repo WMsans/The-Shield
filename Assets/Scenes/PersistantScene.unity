@@ -229,6 +229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   follow: {fileID: 1056959134}
   followSpeed: 0.3
+  transitionSpeed: 0.2
   lookForward: 0
   frameInDistance: {x: 6, y: 6}
 --- !u!1 &989436151
