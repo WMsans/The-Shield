@@ -1,5 +1,47 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8068597707661146609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf43673b89acb484b907a8b9ace39472, type: 3}
+  m_Name: Spike
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 2121738255, guid: 67972941401969a498bb445edd60d966, type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules:
+  - m_Id: 0
+    m_Sprites:
+    - {fileID: 2121738255, guid: 67972941401969a498bb445edd60d966, type: 3}
+    m_GameObject: {fileID: 0}
+    m_MinAnimationSpeed: 1
+    m_MaxAnimationSpeed: 1
+    m_PerlinScale: 0.5
+    m_Output: 0
+    m_ColliderType: 1
+    m_RandomTransform: 0
+    m_Neighbors: fffffffffdfffffffffffffffdfffffffdfffffffffffffffdffffffffffffff
+    m_NeighborPositions:
+    - {x: -1, y: -1, z: 0}
+    - {x: 0, y: -1, z: 0}
+    - {x: 1, y: -1, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: -1, y: 1, z: 0}
+    - {x: 0, y: 1, z: 0}
+    - {x: 1, y: 1, z: 0}
+    m_RuleTransform: 0
+  UniqueID: 2
+  otherTiles:
+  - {fileID: -7278232248606194305}
+  - {fileID: -8068597707661146609}
+  DebugMode: 0
 --- !u!114 &-7278232248606194305
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,12 +481,11 @@ MonoBehaviour:
   - m_Id: 0
     m_Sprites:
     - {fileID: 1433559307, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
-    - {fileID: -1985397536, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
     m_MaxAnimationSpeed: 1
     m_PerlinScale: 0.5
-    m_Output: 1
+    m_Output: 0
     m_ColliderType: 1
     m_RandomTransform: 0
     m_Neighbors: ffffffff00000000ffffffff0000000000000000ffffffff00000000ffffffff
@@ -461,7 +502,6 @@ MonoBehaviour:
   - m_Id: 0
     m_Sprites:
     - {fileID: -1331578513, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
-    - {fileID: 0}
     m_GameObject: {fileID: 0}
     m_MinAnimationSpeed: 1
     m_MaxAnimationSpeed: 1
@@ -539,10 +579,10 @@ MonoBehaviour:
   m_Name: A1P1Ground
   m_EditorClassIdentifier: 
   settings:
-    _zoomAmount: 0.6214138
+    _zoomAmount: 0.59193736
     _gridCellSize: {x: 32, y: 32}
     _tileRenderOffset: {x: 0, y: 0}
-    _gridOffset: {x: -426.62463, y: 198.79944}
+    _gridOffset: {x: -347.1961, y: 97.21358}
     _lockWindows: 1
     _hideSprites: 0
     _showRuler: 1

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IHarmable
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
@@ -31,7 +31,6 @@ public class PlayerController : MonoBehaviour
     public CapsuleCollider2D Col { get; private set; }
     #endregion
     #region State manchine
-    
     public Enums.PlayerState CurrentState { get; private set; }
 
     private readonly Dictionary<Enums.PlayerState, PlayerBaseState> _states = new()
@@ -41,9 +40,8 @@ public class PlayerController : MonoBehaviour
         {Enums.PlayerState.Defense, new PlayerDefenseState() }, 
         {Enums.PlayerState.Ledge, new PlayerLedgeState() }
     };
-    
     #endregion
-    
+    private float _hitPoints;
     private void Awake()
     {
         if (Instance == null)
@@ -227,6 +225,15 @@ public class PlayerController : MonoBehaviour
         if(grabBodyPoint == null) Debug.LogWarning("Please assign a grab body point transform to the Player Controller's Grab grab Point", this);
     }
 #endif
+    float IHarmable.HitPoints
+    {
+        get => _hitPoints;
+        set => _hitPoints = value;
+    }
+    public void Harm(float damage, Vector2 knockback)
+    {
+        
+    }
 }
 
 
