@@ -220,14 +220,15 @@
       "url": "https://packages.unity.com"
     },
     "com.vinarkgames.betterruletiles": {
-      "version": "file:D:/作业专用/Unity/Packs/BetterRuleTiles Demo",
+      "version": "https://github.com/WMsans/BetterRuleTile-Demo.git",
       "depth": 0,
-      "source": "local",
+      "source": "git",
       "dependencies": {
         "com.unity.modules.tilemap": "1.0.0",
         "com.unity.2d.tilemap": "1.0.0",
         "com.unity.2d.tilemap.extras": "1.0.0"
-      }
+      },
+      "hash": "b2a36789262dfe79c1e88e721d09abc1248982b0"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
