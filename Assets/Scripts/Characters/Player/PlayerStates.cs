@@ -105,13 +105,13 @@ public class PlayerNormalState : PlayerBaseState
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
         
         // Hit a Ceiling
-        if (ceilingHit)
+        if (ceilingHit && !ceilingHit.collider.isTrigger)
         {
             _rb.velocity = new(_rb.velocity.x, Mathf.Min(0, _rb.velocity.y));
         }
 
         // Landed on the Ground
-        if (!_grounded && groundHit)
+        if (!_grounded && groundHit && !groundHit.collider.isTrigger)
         {
             _grounded = true;
             _coyoteUsable = true;
@@ -357,17 +357,17 @@ public class PlayerCrouchState : PlayerBaseState
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
-        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+        var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
 
         // Hit a Ceiling
-        if (ceilingHit)
+        if (ceilingHit && !ceilingHit.collider.isTrigger)
         {
             _rd.velocity = new(_rd.velocity.x, Mathf.Min(0, _rd.velocity.y));
         }
 
         // Landed on the Ground
-        if (!_grounded && groundHit)
+        if (!_grounded && groundHit && !groundHit.collider.isTrigger)
         {
             _grounded = true;
         }
@@ -433,17 +433,17 @@ public class PlayerDefenseState : PlayerBaseState
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
-        bool groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
-        bool ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+        var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
+        var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
 
         // Hit a Ceiling
-        if (ceilingHit)
+        if (ceilingHit && !ceilingHit.collider.isTrigger)
         {
             _rd.velocity = new(_rd.velocity.x, Mathf.Min(0, _rd.velocity.y));
         }
 
         // Landed on the Ground
-        if (!_grounded && groundHit)
+        if (!_grounded && groundHit && !groundHit.collider.isTrigger)
         {
             _grounded = true;
         }

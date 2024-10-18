@@ -80,4 +80,7 @@ public class PlayerStats : ScriptableObject
     
     [Tooltip("The amount of time we buffer a grab down")]
     public float LedgeBuffer = .2f;
+    
+    [Header("Others")] [Tooltip("The time of invincible time after getting hit")]
+    public float InvincibilityTime = 2f;
 }

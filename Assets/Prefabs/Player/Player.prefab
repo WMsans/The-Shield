@@ -75,6 +75,8 @@ GameObject:
   - component: {fileID: 5736256182939471681}
   - component: {fileID: 4392015822394790047}
   - component: {fileID: 5190040323061489835}
+  - component: {fileID: 4037208509072510299}
+  - component: {fileID: 7935721590690901825}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -121,7 +123,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: cca49e7348facc14c8ca08caa9448415, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -142,7 +144,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -1831209405, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -239,6 +241,36 @@ MonoBehaviour:
   RightEdgePoint: {fileID: 8000239977304043187}
   anchorPointPrefab: {fileID: 6852015385444264817, guid: 04d0b4e133586c5459ac317d5759308c, type: 3}
   anchorPointBehaviour: {fileID: 0}
+--- !u!114 &4037208509072510299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816864154691055965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c6adcfdc095cb74b99b8701a758503b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.5
+  lerpType: 0
+--- !u!114 &7935721590690901825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816864154691055965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c6adcfdc095cb74b99b8701a758503b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.5
+  lerpType: 0
 --- !u!1 &5221810689803969352
 GameObject:
   m_ObjectHideFlags: 0

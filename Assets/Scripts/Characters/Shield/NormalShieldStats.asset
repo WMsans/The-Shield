@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Bits: 8
   MaxSpeed: 40
   HorizontalForceToPlayer: 15
-  VarticleForceToPlayer: 20
+  VarticleForceToPlayer: 17.5
   HorizontalOpposeForceToPlayer: 25
   MaxChangeDirection: 3
   MaxTargetDistance: 20

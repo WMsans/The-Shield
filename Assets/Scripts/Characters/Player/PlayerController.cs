@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(DamageFlash))]
 public class PlayerController : MonoBehaviour, IHarmable
 {
     public static PlayerController Instance { get; private set; }
@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour, IHarmable
     };
     #endregion
     private float _hitPoints;
+    public bool Invincible { get; private set; }
+    DamageFlash _damageFlash;
     private void Awake()
     {
         if (Instance == null)
@@ -56,6 +58,8 @@ public class PlayerController : MonoBehaviour, IHarmable
         }
         Rb = GetComponent<Rigidbody2D>();
         Col = GetComponent<CapsuleCollider2D>();
+        Invincible = false;
+        _damageFlash = GetComponent<DamageFlash>();
         if (anchorPointBehaviour == null)
         {
             anchorPointBehaviour = Instantiate(anchorPointPrefab).GetComponent<AnchorPoint>();
@@ -230,9 +234,12 @@ public class PlayerController : MonoBehaviour, IHarmable
         get => _hitPoints;
         set => _hitPoints = value;
     }
-    public void Harm(float damage, Vector2 knockback)
+    public void Harm(float damage)
     {
-        
+        if (Invincible) return;
+        _hitPoints -= damage;
+        // Flash
+        _damageFlash.Flash();
     }
 }
 

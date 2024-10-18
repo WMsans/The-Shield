@@ -7,7 +7,13 @@ using UnityEngine.Serialization;
 public class TrapBlock : MonoBehaviour
 {
     [SerializeField] private float damage;
-    private IHarmable _player;
+    private PlayerController _player;
+
+    private void Awake()
+    {
+        var spr = GetComponent<SpriteRenderer>();
+        if(spr != null) spr.enabled = false;
+    }
 
     private void Start()
     {
