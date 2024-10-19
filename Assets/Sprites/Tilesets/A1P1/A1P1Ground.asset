@@ -565,6 +565,28 @@ MonoBehaviour:
   UniqueID: 1
   otherTiles:
   - {fileID: -7278232248606194305}
+  - {fileID: -1701813595216724324}
+  DebugMode: 0
+--- !u!114 &-1701813595216724324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf43673b89acb484b907a8b9ace39472, type: 3}
+  m_Name: Empty
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 0}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 1
+  m_TilingRules: []
+  UniqueID: 2
+  otherTiles:
+  - {fileID: -7278232248606194305}
+  - {fileID: -1701813595216724324}
   DebugMode: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -579,10 +601,10 @@ MonoBehaviour:
   m_Name: A1P1Ground
   m_EditorClassIdentifier: 
   settings:
-    _zoomAmount: 0.59193736
+    _zoomAmount: 0.34058923
     _gridCellSize: {x: 32, y: 32}
     _tileRenderOffset: {x: 0, y: 0}
-    _gridOffset: {x: -347.1961, y: 97.21358}
+    _gridOffset: {x: -47.203613, y: -82.96045}
     _lockWindows: 1
     _hideSprites: 0
     _showRuler: 1
@@ -592,6 +614,7 @@ MonoBehaviour:
     _drawerSize: 6
   _tileObjects:
   - {fileID: -7278232248606194305}
+  - {fileID: -1701813595216724324}
   _grid:
   - Position: {x: 15, y: 5}
     Sprite: {fileID: -1005518651, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
@@ -5258,5 +5281,15 @@ MonoBehaviour:
     MirrorTexX: 0
     MirrorTexY: 0
     DefaultSprite: {fileID: 1004283859, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
+    ColliderType: 1
+    DefaultGameObject: {fileID: 0}
+  - UniqueID: 2
+    Name: Empty
+    Texture: {fileID: 0}
+    Color: {r: 0.48167175, g: 0.8013594, b: 0.9845785, a: 1}
+    TextureShape: 0
+    MirrorTexX: 0
+    MirrorTexY: 0
+    DefaultSprite: {fileID: 0}
     ColliderType: 1
     DefaultGameObject: {fileID: 0}
