@@ -566,6 +566,7 @@ MonoBehaviour:
   otherTiles:
   - {fileID: -7278232248606194305}
   - {fileID: -1701813595216724324}
+  - {fileID: 6781784481458670251}
   DebugMode: 0
 --- !u!114 &-1701813595216724324
 MonoBehaviour:
@@ -587,6 +588,7 @@ MonoBehaviour:
   otherTiles:
   - {fileID: -7278232248606194305}
   - {fileID: -1701813595216724324}
+  - {fileID: 6781784481458670251}
   DebugMode: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -601,10 +603,10 @@ MonoBehaviour:
   m_Name: A1P1Ground
   m_EditorClassIdentifier: 
   settings:
-    _zoomAmount: 0.34058923
+    _zoomAmount: 1.2510713
     _gridCellSize: {x: 32, y: 32}
     _tileRenderOffset: {x: 0, y: 0}
-    _gridOffset: {x: -47.203613, y: -82.96045}
+    _gridOffset: {x: -1174.9799, y: -507.47894}
     _lockWindows: 1
     _hideSprites: 0
     _showRuler: 1
@@ -615,6 +617,7 @@ MonoBehaviour:
   _tileObjects:
   - {fileID: -7278232248606194305}
   - {fileID: -1701813595216724324}
+  - {fileID: 6781784481458670251}
   _grid:
   - Position: {x: 15, y: 5}
     Sprite: {fileID: -1005518651, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
@@ -5272,6 +5275,30 @@ MonoBehaviour:
     - {x: -1, y: -1, z: 0}
     - {x: 0, y: -1, z: 0}
     - {x: 1, y: -1, z: 0}
+  - Position: {x: 46, y: 22}
+    Sprite: {fileID: -1653368854, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
+    TileID: 3
+    UseDefaultSettings: 1
+    IsModified: 0
+    GameObject: {fileID: 0}
+    Sprites: []
+    ColliderType: 1
+    OutputSprite: 0
+    Transform: 0
+    IncludeSpriteInOutput: 0
+    NoiseScale: 0.5
+    RandomTransform: 0
+    MinAnimationSpeed: 1
+    MaxAnimationSpeed: 1
+    NeighborPositions:
+    - {x: -1, y: 1, z: 0}
+    - {x: 0, y: 1, z: 0}
+    - {x: 1, y: 1, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: -1, y: -1, z: 0}
+    - {x: 0, y: -1, z: 0}
+    - {x: 1, y: -1, z: 0}
   _tiles:
   - UniqueID: 1
     Name: Ground
@@ -5293,3 +5320,56 @@ MonoBehaviour:
     DefaultSprite: {fileID: 0}
     ColliderType: 1
     DefaultGameObject: {fileID: 0}
+  - UniqueID: 3
+    Name: Spike
+    Texture: {fileID: 0}
+    Color: {r: 0.092701316, g: 0.4115227, b: 0.064646125, a: 1}
+    TextureShape: 0
+    MirrorTexX: 0
+    MirrorTexY: 0
+    DefaultSprite: {fileID: 17816454, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
+    ColliderType: 0
+    DefaultGameObject: {fileID: 3218103238324907350, guid: da5f2b8218348ac4aa3feab87af1c7cd, type: 3}
+--- !u!114 &6781784481458670251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf43673b89acb484b907a8b9ace39472, type: 3}
+  m_Name: Spike
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: 17816454, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
+  m_DefaultGameObject: {fileID: 3218103238324907350, guid: da5f2b8218348ac4aa3feab87af1c7cd, type: 3}
+  m_DefaultColliderType: 0
+  m_TilingRules:
+  - m_Id: 0
+    m_Sprites:
+    - {fileID: -1653368854, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
+    m_GameObject: {fileID: 3218103238324907350, guid: da5f2b8218348ac4aa3feab87af1c7cd, type: 3}
+    m_MinAnimationSpeed: 1
+    m_MaxAnimationSpeed: 1
+    m_PerlinScale: 0.5
+    m_Output: 0
+    m_ColliderType: 0
+    m_RandomTransform: 0
+    m_Neighbors: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    m_NeighborPositions:
+    - {x: -1, y: -1, z: 0}
+    - {x: 0, y: -1, z: 0}
+    - {x: 1, y: -1, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: -1, y: 1, z: 0}
+    - {x: 0, y: 1, z: 0}
+    - {x: 1, y: 1, z: 0}
+    m_RuleTransform: 0
+  UniqueID: 3
+  otherTiles:
+  - {fileID: -7278232248606194305}
+  - {fileID: -1701813595216724324}
+  - {fileID: 6781784481458670251}
+  DebugMode: 0

@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour, IHarmable
     public Vector2 LedgePoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     public CapsuleCollider2D Col { get; private set; }
+    public SpriteRenderer Spr { get; private set; }
     #endregion
     #region State manchine
     public Enums.PlayerState CurrentState { get; private set; }
@@ -41,7 +42,6 @@ public class PlayerController : MonoBehaviour, IHarmable
         {Enums.PlayerState.Ledge, new PlayerLedgeState() }
     };
     #endregion
-    private float _hitPoints;
     public bool Invincible { get; private set; }
     DamageFlash _damageFlash;
     private void Awake()
@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour, IHarmable
         }
         Rb = GetComponent<Rigidbody2D>();
         Col = GetComponent<CapsuleCollider2D>();
+        Spr = GetComponent<SpriteRenderer>();
         Invincible = false;
         _damageFlash = GetComponent<DamageFlash>();
         if (anchorPointBehaviour == null)
@@ -231,15 +232,23 @@ public class PlayerController : MonoBehaviour, IHarmable
 #endif
     float IHarmable.HitPoints
     {
-        get => _hitPoints;
-        set => _hitPoints = value;
+        get => PlayerStatsManager.Instance.PlayerHealth;
+        set => PlayerStatsManager.Instance.PlayerHealth = value;
     }
     public void Harm(float damage)
     {
         if (Invincible) return;
-        _hitPoints -= damage;
+        PlayerStatsManager.Instance.PlayerHealth -= damage;
+        StartCoroutine(InvincibleTimer());
         // Flash
         _damageFlash.Flash();
+    }
+
+    IEnumerator InvincibleTimer()
+    {
+        Invincible = true;
+        yield return new WaitForSeconds(stats.InvincibilityTime);
+        Invincible = false;
     }
 }
 
