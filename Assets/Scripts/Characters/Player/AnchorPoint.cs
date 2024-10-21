@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.Serialization;
 public class AnchorPoint : MonoBehaviour
 {
     [SerializeField] float velocityStayTime;
-    public Vector2 AnchorPointVelocity => (_velocityStayed && _velocityStayTimer > 0 ? _stayedVelocity : _nowVelocity) * 40f;
+    public Vector2 AnchorPointVelocity => _stayedVelocity * 15f;
     public Transform Target { get; private set; }
     private Vector2 _initialTargetPos;
     public Vector2 TargetPos => Target == null ? transform.position : (Vector2)Target.position - _initialTargetPos;
@@ -28,22 +27,24 @@ public class AnchorPoint : MonoBehaviour
     private void FixedUpdate()
     {
         HandleVelocity();
+        Debug.Log(_velocityStayTimer);
     }
     
     void HandleVelocity()
     {
         var newVel = TargetPos - _lastPos;
         
-        if (newVel.sqrMagnitude < _nowVelocity.sqrMagnitude && !_velocityStayed && _velocityStayTimer <= 0f)
+        if (newVel.sqrMagnitude < _stayedVelocity.sqrMagnitude && !_velocityStayed)
         {
             // Start the velocity timer
             StartVelocityStayTimer();
-            Debug.Log(_nowVelocity + " " + _stayedVelocity);
         }
-        else if (newVel.sqrMagnitude > _nowVelocity.sqrMagnitude || _velocityStayTimer <= 0f)
+        else if (newVel.sqrMagnitude >= _stayedVelocity.sqrMagnitude)
         {
             ResetVelocityStayTimer();
+            _stayedVelocity = newVel;
         }
+        else if(_velocityStayTimer <= 0f)_stayedVelocity = newVel;
         
         _nowVelocity = newVel; 
         _lastPos = transform.position;
@@ -51,14 +52,12 @@ public class AnchorPoint : MonoBehaviour
 
     void StartVelocityStayTimer()
     {
-        _stayedVelocity = _nowVelocity;
         _velocityStayTimer = velocityStayTime;
         _velocityStayed = true;
     }
 
     void ResetVelocityStayTimer()
     {
-        _stayedVelocity = _nowVelocity;
         _velocityStayTimer = 0f;
         _velocityStayed = false;
     }

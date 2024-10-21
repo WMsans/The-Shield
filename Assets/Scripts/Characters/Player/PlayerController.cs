@@ -61,10 +61,6 @@ public class PlayerController : MonoBehaviour, IHarmable
         Spr = GetComponent<SpriteRenderer>();
         Invincible = false;
         _damageFlash = GetComponent<DamageFlash>();
-        if (anchorPointBehaviour == null)
-        {
-            anchorPointBehaviour = Instantiate(anchorPointPrefab).GetComponent<AnchorPoint>();
-        }
     }
 
     private void Start()
@@ -73,6 +69,10 @@ public class PlayerController : MonoBehaviour, IHarmable
 
         _shieldPushTimer = 0f;
         FacingRight = true;
+        if (anchorPointBehaviour == null)
+        {
+            anchorPointBehaviour = Instantiate(anchorPointPrefab).GetComponent<AnchorPoint>();
+        }
     }
     
     private void Update()

@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818cc06afbd12374da17d122b2d0474e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocityStayTime: 0.5
+  velocityStayTime: 0.25
