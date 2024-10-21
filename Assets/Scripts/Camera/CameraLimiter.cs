@@ -92,4 +92,13 @@ public class CameraLimiter : MonoBehaviour
             }
         }
     }
+    #if UNITY_EDITOR
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(collisionBound.bounds.center, collisionBound.bounds.size);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(cameraBound.bounds.center, cameraBound.bounds.size);
+    }
+    #endif
 }

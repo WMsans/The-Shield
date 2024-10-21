@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 public class AnchorPoint : MonoBehaviour
 {
     [SerializeField] float velocityStayTime;
-    public Vector2 AnchorPointVelocity => (_velocityStayed && _velocityStayTimer > 0 ? _stayedVelocity : _nowVelocity) * 50f;
+    public Vector2 AnchorPointVelocity => (_velocityStayed && _velocityStayTimer > 0 ? _stayedVelocity : _nowVelocity) * 40f;
     public Transform Target { get; private set; }
     private Vector2 _initialTargetPos;
     public Vector2 TargetPos => Target == null ? transform.position : (Vector2)Target.position - _initialTargetPos;
@@ -23,7 +23,7 @@ public class AnchorPoint : MonoBehaviour
     }
     void HandleTimer()
     {
-        _velocityStayTimer = Mathf.Max(0f, _velocityStayTimer - Time.deltaTime);
+        _velocityStayTimer -= Time.deltaTime;
     }
     private void FixedUpdate()
     {
@@ -34,12 +34,13 @@ public class AnchorPoint : MonoBehaviour
     {
         var newVel = TargetPos - _lastPos;
         
-        if (newVel.sqrMagnitude < _nowVelocity.sqrMagnitude && !_velocityStayed)
+        if (newVel.sqrMagnitude < _nowVelocity.sqrMagnitude && !_velocityStayed && _velocityStayTimer <= 0f)
         {
             // Start the velocity timer
             StartVelocityStayTimer();
+            Debug.Log(_nowVelocity + " " + _stayedVelocity);
         }
-        else if (newVel.sqrMagnitude > _nowVelocity.sqrMagnitude)
+        else if (newVel.sqrMagnitude > _nowVelocity.sqrMagnitude || _velocityStayTimer <= 0f)
         {
             ResetVelocityStayTimer();
         }
