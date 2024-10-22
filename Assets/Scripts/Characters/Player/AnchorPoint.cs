@@ -27,7 +27,6 @@ public class AnchorPoint : MonoBehaviour
     private void FixedUpdate()
     {
         HandleVelocity();
-        Debug.Log(_velocityStayTimer);
     }
     
     void HandleVelocity()

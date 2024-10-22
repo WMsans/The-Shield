@@ -14,6 +14,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     [SerializeField] float moveTime;
     [SerializeField] float returnSpd;
     [SerializeField] Enums.MovingBlockState startingState;
+    [SerializeField] bool autoReturn = true;
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
@@ -131,7 +132,13 @@ public class MovingBlock : MonoBehaviour, ITriggerable
             _time += Time.deltaTime;
             if (Vector2.Distance(movingBlock.transform.position, movingBlock.target.position) < 0.1f)
             {
-                movingBlock.SwitchState(Enums.MovingBlockState.Returning);
+                if(movingBlock.autoReturn)
+                    movingBlock.SwitchState(Enums.MovingBlockState.Returning);
+                else
+                {
+                    movingBlock.SwitchState(Enums.MovingBlockState.Idle);
+                    (movingBlock.target, movingBlock.start) = (movingBlock.start, movingBlock.target);
+                }
             }
         }
 

@@ -61,8 +61,9 @@ public class DamageFlash : MonoBehaviour
     }
     IEnumerator InvincibleFlasher()
     {
+        var flashPeriod = .2f;
         var elapsed = 0f;
-        var next = elapsed + .2f;
+        var next = elapsed + flashPeriod;
         var trans = false;
         //var normalColor = _flashMat[0].color;
         while (_player.Invincible)
@@ -70,10 +71,10 @@ public class DamageFlash : MonoBehaviour
             elapsed += Time.deltaTime;
             if (elapsed > next)
             {
-                next = elapsed + .2f;
-                SetFlashAlpha(trans ? 1f : 0f);
+                next = elapsed + flashPeriod;
                 trans = !trans;
             }
+            SetFlashAlpha(BetterLerp.Lerp(trans ? 0f : 1f, trans ? 1f : 0f, (next - elapsed) / flashPeriod, lerpType));
             yield return null;
         }
         SetFlashAlpha(1f);

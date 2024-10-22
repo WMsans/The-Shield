@@ -20,7 +20,7 @@ public class TrapBlock : MonoBehaviour
         _player = PlayerController.Instance;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
