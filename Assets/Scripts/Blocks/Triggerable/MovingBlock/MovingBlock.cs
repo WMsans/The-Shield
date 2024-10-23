@@ -15,6 +15,8 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     [SerializeField] float returnSpd;
     [SerializeField] Enums.MovingBlockState startingState;
     [SerializeField] bool autoReturn = true;
+    [SerializeField] float detectionRadius;
+    [SerializeField] LayerMask obstacleLayer;
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
@@ -113,6 +115,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     {
         private Vector2 _st;
         private Vector2 _tar;
+        private Bounds _colBound;
         private float _time;
         private float _tarTime;
         private BetterLerp.LerpType _lerpType;
@@ -121,6 +124,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         {
             _st = movingBlock._rb.position;
             _tar = movingBlock.target.position;
+            _colBound = movingBlock.gameObject.GetComponentInParent<Collider2D>().bounds;
             _time = 0;
             _tarTime = movingBlock.moveTime * Vector2.Distance(_st, _tar) / Vector2.Distance(movingBlock.start.position, movingBlock.target.position);
             _lerpType = movingBlock.movementType;
@@ -132,22 +136,36 @@ public class MovingBlock : MonoBehaviour, ITriggerable
             _time += Time.deltaTime;
             if (Vector2.Distance(movingBlock.transform.position, movingBlock.target.position) < 0.1f)
             {
-                if(movingBlock.autoReturn)
-                    movingBlock.SwitchState(Enums.MovingBlockState.Returning);
-                else
-                {
-                    movingBlock.SwitchState(Enums.MovingBlockState.Idle);
-                    (movingBlock.target, movingBlock.start) = (movingBlock.start, movingBlock.target);
-                }
+                StopDash(movingBlock);
             }
         }
 
         public override void OnFixedUpdate(MovingBlock movingBlock)
         {
             var nowPos = BetterLerp.Lerp(_st, _tar, _time / _tarTime, _lerpType, _lerpInversed);
+            var ray = Physics2D.BoxCast(movingBlock.transform.position, _colBound.size,
+                movingBlock.transform.rotation.z, (_tar - _st).normalized, Vector2.Distance(nowPos, movingBlock.transform.position), movingBlock.obstacleLayer);
+            if (ray)
+            {
+                // Move to the block
+                movingBlock.transform.position += new Vector3((_tar - _st).normalized.x, (_tar - _st).normalized.y) * ray.distance;
+                StopDash(movingBlock);
+                return;
+            }
+            
             movingBlock.transform.position = nowPos;
         }
 
+        void StopDash(MovingBlock movingBlock)
+        {
+            if(movingBlock.autoReturn)
+                movingBlock.SwitchState(Enums.MovingBlockState.Returning);
+            else
+            {
+                movingBlock.SwitchState(Enums.MovingBlockState.Idle);
+                (movingBlock.target, movingBlock.start) = (movingBlock.start, movingBlock.target);
+            }
+        }
         public override void OnExit(MovingBlock movingBlock)
         {
             

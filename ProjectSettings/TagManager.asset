@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Shield
   - MovingBlock
+  - OneWayPlatform
   layers:
   - Default
   - TransparentFX

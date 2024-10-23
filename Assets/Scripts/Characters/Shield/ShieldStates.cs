@@ -208,6 +208,7 @@ public class ShieldFlyingState : ShieldBaseState
     }
     void CheckForChangeDirection(ShieldController shield)
     {
+        
         var cols = Physics2D.OverlapCircleAll(ShieldPos, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
         
         foreach (var t in cols)
@@ -226,7 +227,7 @@ public class ShieldFlyingState : ShieldBaseState
                 }
                 else if (realGrounded && _holdingAttack)
                 {
-                    // Parkour mode, Return
+                    // Holding left mouse, no attract, Return
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
                 else
@@ -237,7 +238,6 @@ public class ShieldFlyingState : ShieldBaseState
                         shield.SwitchState(Enums.ShieldState.Returning);
                     }
                 }
-                
                 break;
             }
         }
@@ -308,7 +308,7 @@ public class ShieldFlyingState : ShieldBaseState
                 Vector2 tarPoint = _shieldAttractingObjects[i].transform.position;
                 // Check if this thing is reachable
                 var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
-                if (ray.collider == null || ray.transform != shieldAttractingObject.transform) continue;
+                if (ray.collider == null || ray.transform != shieldAttractingObject.transform || ray.distance > shieldAttractingObject.AttractDistance) continue;
                 // Check if it is best distance
                 if(ray.distance < bestDis)
                 {

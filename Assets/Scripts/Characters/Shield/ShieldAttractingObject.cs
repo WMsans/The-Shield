@@ -8,8 +8,10 @@ using UnityEngine;
 public class ShieldAttractingObject : MonoBehaviour
 {
     public Collider2D Col {get; private set;}
-    private void Awake()
+    public float AttractDistance {get; protected set;}
+    protected void Awake()
     {
         Col = GetComponent<Collider2D>();
+        AttractDistance = Mathf.Infinity;
     }
 }

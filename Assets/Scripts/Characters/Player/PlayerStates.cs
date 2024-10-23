@@ -106,7 +106,7 @@ public class PlayerNormalState : PlayerBaseState
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
         
         // Hit a Ceiling
-        if (ceilingHit && !ceilingHit.collider.isTrigger)
+        if (ceilingHit && !ceilingHit.collider.isTrigger && !ceilingHit.collider.CompareTag("OneWayPlatform"))
         {
             _rb.velocity = new(_rb.velocity.x, Mathf.Min(0, _rb.velocity.y));
         }

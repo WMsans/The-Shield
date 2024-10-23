@@ -145,6 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movingBlock: {fileID: 6707268199159075426}
   allowUnTrigger: 0
+  attractDistance: 999
 --- !u!1 &2867046290035170830
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,6 +323,10 @@ MonoBehaviour:
   returnSpd: 3
   startingState: 0
   autoReturn: 1
+  detectionRadius: 0.5
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1
   movementType: 2
   inversed: 0
 --- !u!1 &4382184851517027020
