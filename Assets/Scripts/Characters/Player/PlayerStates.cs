@@ -564,14 +564,18 @@ public class PlayerLedgeState : PlayerBaseState
 
 public class PlayerRespawnState : PlayerBaseState
 {
+    private PlayerStats _stats;
     private float _nowTime;
     private Vector2 _stPos;
+    private ShieldController _shield;
     public override void EnterState(PlayerController player)
     {
         _nowTime = 0f;
         _stPos = player.transform.position;
+        _shield = ShieldController.Instance;
         
-        player.Col.enabled = false;
+        player.Spr.sortingOrder = 1;
+        _shield.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     public override void UpdateState(PlayerController player)
@@ -582,11 +586,15 @@ public class PlayerRespawnState : PlayerBaseState
             return;
         }
         player.transform.position = BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin);
+        _shield.transform.position = player.transform.position;
+        
         _nowTime += Time.deltaTime;
     }
 
     public override void ExitState(PlayerController player)
     {
         player.Col.enabled = true;
+        player.Spr.sortingOrder = 0;
+        _shield.GetComponent<SpriteRenderer>().enabled = true;
     }
 }
