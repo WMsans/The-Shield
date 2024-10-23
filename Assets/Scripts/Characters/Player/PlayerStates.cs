@@ -1,12 +1,13 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public abstract class PlayerBaseState
 {
-    public abstract void EnterState(PlayerController player);
-    public abstract void UpdateState(PlayerController player);
-    public abstract void FixedUpdateState(PlayerController player);
-    public abstract void ExitState(PlayerController player);
+    public virtual void EnterState(PlayerController player) {}
+    public virtual void UpdateState(PlayerController player) {}
+    public virtual void FixedUpdateState(PlayerController player){}
+    public virtual void ExitState(PlayerController player){}
 }
 public struct FrameInput
 {
@@ -292,10 +293,6 @@ public class PlayerNormalState : PlayerBaseState
     }
 
     #endregion
-    public override void ExitState(PlayerController player)
-    {
-        
-    }
 }
 
 public class PlayerCrouchState : PlayerBaseState
@@ -390,10 +387,6 @@ public class PlayerCrouchState : PlayerBaseState
             _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
         }
     }
-    public override void ExitState(PlayerController player)
-    {
-        
-    }
 }
 public class PlayerDefenseState : PlayerBaseState
 {
@@ -465,10 +458,6 @@ public class PlayerDefenseState : PlayerBaseState
             if (_rd.velocity.y > 0 && !player.Bounced && !player.ShieldPushed) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
             _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
         }
-    }
-    public override void ExitState(PlayerController player)
-    {
-        
     }
 }
 
@@ -545,15 +534,15 @@ public class PlayerLedgeState : PlayerBaseState
                 float additionalVel = player.AnchorPointVelocity.magnitude;
                 if (Mathf.Approximately(_move.x, 0f) || additionalVel > .1f || Mathf.Approximately(Mathf.Sign(_move.x), player.FacingRight ? -1 : 1))
                 {
-                    _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.JumpPower + player.AnchorPointVelocity.y);
+                    _rb.velocity = new(_rb.velocity.x /*+ player.AnchorPointVelocity.x*/, _stats.JumpPower /*+ player.AnchorPointVelocity.y*/);
                 }
                 else
                 {
-                    _rb.velocity = new(_rb.velocity.x + player.AnchorPointVelocity.x, _stats.ClimbPower + player.AnchorPointVelocity.y);
+                    _rb.velocity = new(_rb.velocity.x /*+ player.AnchorPointVelocity.x*/, _stats.ClimbPower /*+ player.AnchorPointVelocity.y*/);
                 }
                 if (additionalVel > .1f)
                 {
-                    player.SuperBounce();
+                    player.SuperBounce();   
                 }
             }
             player.SwitchState(Enums.PlayerState.Normal);
@@ -563,12 +552,41 @@ public class PlayerLedgeState : PlayerBaseState
     {
         if (_releaseTimer > 0)
         {
-            player.AnchorPush();
+            //player.AnchorPush();
             player.SwitchState(Enums.PlayerState.Normal);
         }
     }
     public override void ExitState(PlayerController player)
     {
         _anchorPoint.SetTarget(null);
+    }
+}
+
+public class PlayerRespawnState : PlayerBaseState
+{
+    private float _nowTime;
+    private Vector2 _stPos;
+    public override void EnterState(PlayerController player)
+    {
+        _nowTime = 0f;
+        _stPos = player.transform.position;
+        
+        player.Col.enabled = false;
+    }
+
+    public override void UpdateState(PlayerController player)
+    {
+        if (!(Vector2.Distance(player.transform.position, player.RespawnPoint) > 0.1f))
+        {
+            player.SwitchState(Enums.PlayerState.Normal);
+            return;
+        }
+        player.transform.position = BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin);
+        _nowTime += Time.deltaTime;
+    }
+
+    public override void ExitState(PlayerController player)
+    {
+        player.Col.enabled = true;
     }
 }

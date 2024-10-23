@@ -5,12 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class CameraLimiter : MonoBehaviour
 {
+    [Header("Camera Limit")]
     [SerializeField] Collider2D collisionBound;
     [SerializeField] Collider2D cameraBound;
+    [Header("Scene Transition")]
     [SerializeField] List<SceneField> scenesToLoad;
+    [SerializeField] Transform respawnPoint;
 
     private CameraFollower _cameraFollower;
     private bool _enabled;
+    private PlayerController _player;
     void Awake()
     {
         _enabled = false;
@@ -21,18 +25,15 @@ public class CameraLimiter : MonoBehaviour
     private void Start()
     {
         _cameraFollower = CameraFollower.Instance;
+        _player = PlayerController.Instance;
     }
     void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            _enabled = true;
-            if (collisionBound.bounds.Contains(collision.gameObject.transform.position)){
-                _cameraFollower.CameraLimiter = this;
-                //Make this the limiter
-                _cameraFollower.Limitin(cameraBound.bounds.min, cameraBound.bounds.max);
-                // Load scenes
-                UpdateScenes();
+            if (collisionBound.bounds.Contains(collision.gameObject.transform.position))
+            {
+                EnableLimit();
             }
             else
             {
@@ -48,6 +49,17 @@ public class CameraLimiter : MonoBehaviour
         }
     }
 
+    void EnableLimit()
+    {
+        _enabled = true;
+        _cameraFollower.CameraLimiter = this;
+        //Make this the limiter
+        _cameraFollower.Limitin(cameraBound.bounds.min, cameraBound.bounds.max);
+        // Set respawn point for player
+        _player.RespawnPoint = respawnPoint.position;
+        // Load scenes
+        UpdateScenes();
+    }
     void UnEnableLimit()
     {
         _enabled = false;
@@ -99,6 +111,8 @@ public class CameraLimiter : MonoBehaviour
         Gizmos.DrawWireCube(collisionBound.bounds.center, collisionBound.bounds.size);
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(cameraBound.bounds.center, cameraBound.bounds.size);
+        Gizmos.color = new Color(255, 165, 0);
+        Gizmos.DrawWireSphere(respawnPoint.position, 1f);
     }
     #endif
 }

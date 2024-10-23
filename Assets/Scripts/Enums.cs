@@ -11,6 +11,7 @@ public static class Enums
         Crouch,
         Defense,
         Ledge,
+        Respawn,
     }
 
     public enum ShieldState

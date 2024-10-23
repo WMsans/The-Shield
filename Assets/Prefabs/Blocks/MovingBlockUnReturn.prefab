@@ -322,7 +322,7 @@ MonoBehaviour:
   returnSpd: 3
   startingState: 0
   autoReturn: 0
-  movementType: 2
+  movementType: 6
   inversed: 0
 --- !u!1 &4382184851517027020
 GameObject:

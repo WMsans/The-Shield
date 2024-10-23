@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour, IHarmable
     [HideInInspector]public AnchorPoint anchorPointBehaviour;
     public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
+    public Vector2 RespawnPoint { get; set; }
     public Rigidbody2D Rb { get; private set; }
     public CapsuleCollider2D Col { get; private set; }
     public SpriteRenderer Spr { get; private set; }
@@ -39,7 +40,8 @@ public class PlayerController : MonoBehaviour, IHarmable
         {Enums.PlayerState.Normal, new PlayerNormalState() },
         {Enums.PlayerState.Crouch, new PlayerCrouchState() },
         {Enums.PlayerState.Defense, new PlayerDefenseState() }, 
-        {Enums.PlayerState.Ledge, new PlayerLedgeState() }
+        {Enums.PlayerState.Ledge, new PlayerLedgeState() },
+        {Enums.PlayerState.Respawn, new PlayerRespawnState()}, 
     };
     #endregion
     public bool Invincible { get; private set; }
@@ -244,6 +246,11 @@ public class PlayerController : MonoBehaviour, IHarmable
         _damageFlash.Flash();
     }
 
+    public void ReturnToSpawn()
+    {
+        SwitchState(Enums.PlayerState.Respawn);
+    }
+    
     IEnumerator InvincibleTimer()
     {
         Invincible = true;
