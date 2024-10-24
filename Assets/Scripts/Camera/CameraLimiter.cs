@@ -108,7 +108,7 @@ public class CameraLimiter : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(collisionBound.bounds.center, collisionBound.bounds.size);
+        Gizmos.DrawWireCube(collisionBound.bounds.center, collisionBound.bounds.size);  
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(cameraBound.bounds.center, cameraBound.bounds.size);
         Gizmos.color = new Color(255, 165, 0);

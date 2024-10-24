@@ -9,6 +9,7 @@ public class MovingBlockTrigger : Trigger
     [SerializeField] bool allowUnTrigger;
     [SerializeField] float attractDistance;
     protected override ITriggerable TriggeredObject => movingBlock;
+    public override float AttractDistance => attractDistance;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -21,7 +22,6 @@ public class MovingBlockTrigger : Trigger
     private new void Awake()
     {
         base.Awake();
-        AttractDistance = attractDistance;
     }
     private void Update()
     {

@@ -4,15 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class LaserBeamLauncher : MonoBehaviour
+public class LaserBeamLauncher : ShieldAttractingObject
 {
     [SerializeField] private float distanceRay = 100f;
     [SerializeField] private Transform laserPoint;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float attractDis = 100f;
     LineRenderer _laserBeamRenderer;
 
-    private void Awake()
+    public override float AttractDistance => attractDis;
+
+    private new void Awake()
     {
+        base.Awake();
         _laserBeamRenderer = GetComponent<LineRenderer>();
     }
 

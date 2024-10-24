@@ -242,6 +242,8 @@ public class ShieldFlyingState : ShieldBaseState
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
             }
+
+            //ShieldPos += i.distance * (_currentTarget - ShieldPos).normalized;
             break;
         }
     }
