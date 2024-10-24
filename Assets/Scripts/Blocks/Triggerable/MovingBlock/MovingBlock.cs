@@ -181,6 +181,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
         private bool _movingBack;
         public override void OnEnter(MovingBlock movingBlock)
         {
+            movingBlock._rb.velocity = Vector2.zero;
             _time = 0f;
             _movingBack = false;
             _tar = movingBlock.start.position;

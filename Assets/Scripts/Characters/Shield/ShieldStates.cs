@@ -220,6 +220,10 @@ public class ShieldFlyingState : ShieldBaseState
             _collidedFlags.Add(t);
             // Check for returning
             _chanceOfChangingDir--;
+            if (t.CompareTag("Trigger"))
+            {
+                t.GetComponent<Trigger>().OnTrigger();
+            }
             if (_chanceOfChangingDir <= 1)
             {
                 // No chance, return

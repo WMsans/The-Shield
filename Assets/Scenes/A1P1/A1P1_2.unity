@@ -3918,6 +3918,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: -6.5
       objectReference: {fileID: 0}
+    - target: {fileID: 405794633073977212, guid: b2232e831b6216e4da411e5934537da3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2916313492767095506, guid: b2232e831b6216e4da411e5934537da3, type: 3}
       propertyPath: m_LocalPosition.x
       value: 29.5
@@ -3972,7 +3976,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8551969737902673415, guid: b2232e831b6216e4da411e5934537da3, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 3.9
       objectReference: {fileID: 0}
     - target: {fileID: 8551969737902673415, guid: b2232e831b6216e4da411e5934537da3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4158,6 +4162,18 @@ PrefabInstance:
     - target: {fileID: 4382184851517027020, guid: d395975df1c63cf4db0e4176cb44ce15, type: 3}
       propertyPath: m_Name
       value: MovingBlockBelowTrigger
+      objectReference: {fileID: 0}
+    - target: {fileID: 4750100054257340680, guid: d395975df1c63cf4db0e4176cb44ce15, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551969737902673415, guid: d395975df1c63cf4db0e4176cb44ce15, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551969737902673415, guid: d395975df1c63cf4db0e4176cb44ce15, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

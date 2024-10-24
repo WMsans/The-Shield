@@ -20,7 +20,7 @@ public class CriticalBlock : MonoBehaviour
 
     void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && _player.CurrentState != Enums.PlayerState.Respawn)
         {
             _player.Harm(damage);
             _player.ReturnToSpawn();

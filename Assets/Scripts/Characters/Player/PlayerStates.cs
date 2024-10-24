@@ -600,12 +600,14 @@ public class PlayerRespawnState : PlayerBaseState
     private ShieldController _shield;
     public override void EnterState(PlayerController player)
     {
+        _stats = player.stats;
         _nowTime = 0f;
         _stPos = player.transform.position;
         _shield = ShieldController.Instance;
         
         player.Spr.sortingOrder = 1;
         _shield.GetComponent<SpriteRenderer>().enabled = false;
+        Physics2D.IgnoreLayerCollision(player.gameObject.layer, _stats.GroundLayer, true);
     }
 
     public override void UpdateState(PlayerController player)
@@ -616,6 +618,7 @@ public class PlayerRespawnState : PlayerBaseState
             return;
         }
         player.transform.position = BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin);
+        Debug.Log(player.transform.position + "  " + BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin));
         _shield.transform.position = player.transform.position;
         
         _nowTime += Time.deltaTime;
@@ -626,5 +629,6 @@ public class PlayerRespawnState : PlayerBaseState
         player.Col.enabled = true;
         player.Spr.sortingOrder = 0;
         _shield.GetComponent<SpriteRenderer>().enabled = true;
+        Physics2D.IgnoreLayerCollision(player.gameObject.layer, _stats.GroundLayer, false);
     }
 }

@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour, IHarmable
     };
     #endregion
     public bool Invincible { get; private set; }
+    private float _crashTimer;
     DamageFlash _damageFlash;
     private void Awake()
     {
@@ -66,6 +67,7 @@ public class PlayerController : MonoBehaviour, IHarmable
         Spr = GetComponent<SpriteRenderer>();
         Invincible = false;
         _damageFlash = GetComponent<DamageFlash>();
+        _crashTimer = 0f;
     }
 
     private void Start()
@@ -102,6 +104,12 @@ public class PlayerController : MonoBehaviour, IHarmable
     private void FixedUpdate()
     {
         _states[CurrentState].FixedUpdateState(this);
+        var col = Physics2D.OverlapCapsule(crashPoint.position, crashSize, Col.direction, transform.rotation.z, stats.GroundLayer);
+        if (col && !col.isTrigger && CurrentState != Enums.PlayerState.Respawn)
+        {
+            _crashTimer += Time.fixedDeltaTime;
+        }
+        else _crashTimer = 0f;
     }
     /// <summary>
     /// Push the player against the direction and activate the bounce and push timer
@@ -164,9 +172,9 @@ public class PlayerController : MonoBehaviour, IHarmable
         return false;
     }
 
-    public Collider2D CrashDetection()
+    public bool CrashDetection()
     {
-        return Physics2D.OverlapCapsule(crashPoint.position, crashSize, CapsuleDirection2D.Vertical, transform.rotation.z, stats.GroundLayer);
+        return _crashTimer > .5f;
     }
     public void AnchorPush()
     {
