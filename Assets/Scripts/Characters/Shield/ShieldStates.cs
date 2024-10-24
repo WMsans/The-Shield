@@ -209,37 +209,36 @@ public class ShieldFlyingState : ShieldBaseState
     void CheckForChangeDirection(ShieldController shield)
     {
         
-        var cols = Physics2D.OverlapCircleAll(ShieldPos, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
+        var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, (_currentTarget - ShieldPos).normalized, _maxSpeed * Time.fixedDeltaTime, _stats.GroundLayer | _stats.TargetLayer);
         
-        foreach (var t in cols)
+        foreach (var i in ray)
         {
+            var t = i.collider;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
-            if (_nowGroundCollision == null || _nowGroundCollision != t)
+            if (_nowGroundCollision != null && _nowGroundCollision == t) continue;
+            _nowGroundCollision = t;
+            _collidedFlags.Add(t);
+            // Check for returning
+            _chanceOfChangingDir--;
+            if (_chanceOfChangingDir <= 1)
             {
-                _nowGroundCollision = t;
-                _collidedFlags.Add(t);
-                // Check for returning
-                _chanceOfChangingDir--;
-                if (_chanceOfChangingDir <= 1)
-                {
-                    // No chance, return
-                    shield.SwitchState(Enums.ShieldState.Returning);
-                }
-                else if (realGrounded && _holdingAttack)
-                {
-                    // Holding left mouse, no attract, Return
-                    shield.SwitchState(Enums.ShieldState.Returning);
-                }
-                else
-                {
-                    // Change direction
-                    if (!ChangeDirection())
-                    {
-                        shield.SwitchState(Enums.ShieldState.Returning);
-                    }
-                }
-                break;
+                // No chance, return
+                shield.SwitchState(Enums.ShieldState.Returning);
             }
+            else if (realGrounded && _holdingAttack)
+            {
+                // Holding left mouse, no attract, Return
+                shield.SwitchState(Enums.ShieldState.Returning);
+            }
+            else
+            {
+                // Change direction
+                if (!ChangeDirection())
+                {
+                    shield.SwitchState(Enums.ShieldState.Returning);
+                }
+            }
+            break;
         }
     }
     bool ChangeDirection()

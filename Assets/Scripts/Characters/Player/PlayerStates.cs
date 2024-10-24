@@ -104,7 +104,13 @@ public class PlayerNormalState : PlayerBaseState
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
+        var crashCol = player.CrashDetection();
         
+        if(crashCol)
+        {
+            player.ReturnToSpawn();
+            return;
+        }
         // Hit a Ceiling
         if (ceilingHit && !ceilingHit.collider.isTrigger && !ceilingHit.collider.CompareTag("OneWayPlatform"))
         {
@@ -339,7 +345,7 @@ public class PlayerCrouchState : PlayerBaseState
     }
     public override void FixedUpdateState(PlayerController player)
     {
-        CheckCollisions();
+        CheckCollisions(player);
         HandleGravity(player);
         
         var decel = _grounded ? _stats.GroundDeceleration : 0f;
@@ -349,14 +355,20 @@ public class PlayerCrouchState : PlayerBaseState
     {
         _rd.velocity = new(_rd.velocity.x, _stats.JumpPower);
     }
-    private void CheckCollisions()
+    private void CheckCollisions(PlayerController player)
     {
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-
+        var crashCol = player.CrashDetection();
+        
+        if(crashCol)
+        {
+            player.ReturnToSpawn();
+            return;
+        }
         // Hit a Ceiling
         if (ceilingHit && !ceilingHit.collider.isTrigger)
         {
@@ -414,21 +426,27 @@ public class PlayerDefenseState : PlayerBaseState
     }
     public override void FixedUpdateState(PlayerController player)
     {
-        CheckCollisions();
+        CheckCollisions(player);
         HandleGravity(player);
         
         var decel = _grounded ? _stats.GroundDeceleration : 0f;
         _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
     }
 
-    private void CheckCollisions()
+    private void CheckCollisions(PlayerController player)
     {
         Physics2D.queriesStartInColliders = false;
 
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-
+        var crashCol = player.CrashDetection();
+        
+        if(crashCol)
+        {
+            player.ReturnToSpawn();
+            return;
+        }
         // Hit a Ceiling
         if (ceilingHit && !ceilingHit.collider.isTrigger)
         {
@@ -514,15 +532,27 @@ public class PlayerLedgeState : PlayerBaseState
     }
     public override void FixedUpdateState(PlayerController player)
     {
+        CheckCollision(player);
         HandlePosition(player);
         HandleJump(player);
         ReleaseGrip(player);
+    }
+
+    void CheckCollision(PlayerController player)
+    {
+        var crashCol = player.CrashDetection();
+        
+        if(crashCol)
+        {
+            player.ReturnToSpawn();
+            return;
+        }
     }
     void HandlePosition(PlayerController player)
     {
         // Fixed to the ledge position
         _rb.velocity = Vector2.zero;
-        player.transform.position = new(LedgePoint.x + _rb.position.x - player.RightEdgePoint.position.x, LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
+        player.transform.position = new(LedgePoint.x + _rb.position.x - player.rightEdgePoint.position.x, LedgePoint.y + _rb.position.y - player.grabPoint.position.y);
         Debug.DrawRay(LedgePoint, Vector3.down, Color.red);
     }
     void HandleJump(PlayerController player)
