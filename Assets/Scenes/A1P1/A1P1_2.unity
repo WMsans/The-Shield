@@ -3765,6 +3765,37 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!1 &192020719
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 192020720}
+  m_Layer: 0
+  m_Name: RespawnPoint (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &192020720
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192020719}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 13.5, y: 8.978546, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1738655943}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &204847020
 GameObject:
   m_ObjectHideFlags: 0
@@ -4198,8 +4229,20 @@ PrefabInstance:
       value: CamLimit (2)
       objectReference: {fileID: 0}
     - target: {fileID: 1587153019599178680, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+      propertyPath: respawnPoint.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587153019599178680, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
       propertyPath: scenesToLoad.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1587153019599178680, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+      propertyPath: respawnPoint.Array.data[1]
+      value: 
+      objectReference: {fileID: 192020720}
+    - target: {fileID: 1587153019599178680, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+      propertyPath: respawnPoint.Array.data[2]
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1587153019599178680, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
       propertyPath: scenesToLoad.Array.data[0].m_SceneName
@@ -4275,9 +4318,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4166568201039414805, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 192020720}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+--- !u!4 &1738655943 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4166568201039414805, guid: f7521b3ea5ac565438b90763516448b3, type: 3}
+  m_PrefabInstance: {fileID: 1376604869}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3857643618691075037
 PrefabInstance:
   m_ObjectHideFlags: 0

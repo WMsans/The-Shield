@@ -96,7 +96,8 @@ MonoBehaviour:
   scenesToLoad:
   - m_SceneAsset: {fileID: 102900000, guid: 05d11ff1acfd0a54f920bb571bfe3858, type: 3}
     m_SceneName: A1P1_2
-  respawnPoint: {fileID: 6989007848180157350}
+  respawnPoint:
+  - {fileID: 6989007848180157350}
 --- !u!1 &3052096562773195773
 GameObject:
   m_ObjectHideFlags: 0

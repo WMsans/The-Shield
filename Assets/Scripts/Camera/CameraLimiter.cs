@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,7 +11,7 @@ public class CameraLimiter : MonoBehaviour
     [SerializeField] Collider2D cameraBound;
     [Header("Scene Transition")]
     [SerializeField] List<SceneField> scenesToLoad;
-    [SerializeField] Transform respawnPoint;
+    [SerializeField] List<Transform> respawnPoint;
 
     private CameraFollower _cameraFollower;
     private bool _enabled;
@@ -56,7 +57,7 @@ public class CameraLimiter : MonoBehaviour
         //Make this the limiter
         _cameraFollower.Limitin(cameraBound.bounds.min, cameraBound.bounds.max);
         // Set respawn point for player
-        _player.RespawnPoint = respawnPoint.position;
+        _player.RespawnPoint = respawnPoint.OrderBy(t=>(t.position - _player.transform.position).sqrMagnitude).FirstOrDefault()!.position;
         // Load scenes
         UpdateScenes();
     }
@@ -112,7 +113,8 @@ public class CameraLimiter : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(cameraBound.bounds.center, cameraBound.bounds.size);
         Gizmos.color = new Color(255, 165, 0);
-        Gizmos.DrawWireSphere(respawnPoint.position, 1f);
+        foreach(var i in respawnPoint)
+            Gizmos.DrawWireSphere(i.position, 1f);
     }
     #endif
 }

@@ -8,16 +8,22 @@ public class LaserBeamLauncher : ShieldAttractingObject
 {
     [SerializeField] private float distanceRay = 100f;
     [SerializeField] private Transform laserPoint;
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask collidableLayer;
     [SerializeField] private float attractDis = 100f;
+    [SerializeField] private float damage = 1f;
     LineRenderer _laserBeamRenderer;
-
+    private PlayerController _player;
     public override float AttractDistance => attractDis;
 
     private new void Awake()
     {
         base.Awake();
         _laserBeamRenderer = GetComponent<LineRenderer>();
+    }
+
+    private void Start()
+    {
+        _player = PlayerController.Instance;
     }
 
     private void Update()
@@ -27,9 +33,10 @@ public class LaserBeamLauncher : ShieldAttractingObject
 
     void ShootLaser()
     {
-        var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, groundLayer);
+        var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
         if (ray)
         {
+            PlayerDetection(ray);
             Render2DRay(laserPoint.position, ray.point);
         }
         else
@@ -38,6 +45,14 @@ public class LaserBeamLauncher : ShieldAttractingObject
         }
     }
 
+    void PlayerDetection(RaycastHit2D ray)
+    {
+        if (ray.collider.CompareTag("Player"))
+        {
+            // Player detected, harm player
+            _player.Harm(damage);
+        }
+    }
     void Render2DRay(Vector2 startPos, Vector2 endPos)
     {
         _laserBeamRenderer.SetPosition(0, startPos);

@@ -104,8 +104,13 @@ public class PlayerController : MonoBehaviour, IHarmable
     private void FixedUpdate()
     {
         _states[CurrentState].FixedUpdateState(this);
+        CrashDetection();
+    }
+
+    private void CrashDetection()
+    {
         var col = Physics2D.OverlapCapsule(crashPoint.position, crashSize, Col.direction, transform.rotation.z, stats.GroundLayer);
-        if (col && !col.isTrigger && CurrentState != Enums.PlayerState.Respawn)
+        if (col && !col.isTrigger && CurrentState != Enums.PlayerState.Respawn && !col.CompareTag("OneWayPlatform"))
         {
             _crashTimer += Time.fixedDeltaTime;
         }
@@ -172,9 +177,9 @@ public class PlayerController : MonoBehaviour, IHarmable
         return false;
     }
 
-    public bool CrashDetection()
+    public bool IsCrashed()
     {
-        return _crashTimer > .5f;
+        return _crashTimer > .25f;
     }
     public void AnchorPush()
     {

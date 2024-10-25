@@ -104,7 +104,7 @@ public class PlayerNormalState : PlayerBaseState
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-        var crashCol = player.CrashDetection();
+        var crashCol = player.IsCrashed();
         
         if(crashCol)
         {
@@ -362,7 +362,7 @@ public class PlayerCrouchState : PlayerBaseState
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-        var crashCol = player.CrashDetection();
+        var crashCol = player.IsCrashed();
         
         if(crashCol)
         {
@@ -440,7 +440,7 @@ public class PlayerDefenseState : PlayerBaseState
         // Ground and Ceiling
         var groundHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.down, _stats.GrounderDistance, _stats.GroundLayer);
         var ceilingHit = Physics2D.CapsuleCast(_col.bounds.center, _col.size, _col.direction, 0, Vector2.up, _stats.GrounderDistance, _stats.GroundLayer);
-        var crashCol = player.CrashDetection();
+        var crashCol = player.IsCrashed();
         
         if(crashCol)
         {
@@ -540,7 +540,7 @@ public class PlayerLedgeState : PlayerBaseState
 
     void CheckCollision(PlayerController player)
     {
-        var crashCol = player.CrashDetection();
+        var crashCol = player.IsCrashed();
         
         if(crashCol)
         {
