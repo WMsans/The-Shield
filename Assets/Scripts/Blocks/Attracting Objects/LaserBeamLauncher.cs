@@ -11,6 +11,8 @@ public class LaserBeamLauncher : ShieldAttractingObject
     [SerializeField] private LayerMask collidableLayer;
     [SerializeField] private float attractDis = 100f;
     [SerializeField] private float damage = 1f;
+    [SerializeField] private bool forceRespawn;
+    private float _forceRespawnTimer = 0f;
     LineRenderer _laserBeamRenderer;
     private PlayerController _player;
     public override float AttractDistance => attractDis;
@@ -49,8 +51,23 @@ public class LaserBeamLauncher : ShieldAttractingObject
     {
         if (ray.collider.CompareTag("Player"))
         {
-            // Player detected, harm player
             _player.Harm(damage);
+            // Player detected, harm player
+            if (forceRespawn && _forceRespawnTimer <= 0f)
+            {
+                StartCoroutine(ForceRespawn());
+            }
+        }
+    }
+
+    IEnumerator ForceRespawn()
+    {
+        _player.ReturnToSpawn();
+        _forceRespawnTimer = 1f;
+        while (_forceRespawnTimer > 0)
+        {
+            _forceRespawnTimer -= Time.deltaTime;
+            yield return null;
         }
     }
     void Render2DRay(Vector2 startPos, Vector2 endPos)
@@ -61,7 +78,7 @@ public class LaserBeamLauncher : ShieldAttractingObject
     #if UNITY_EDITOR
     void OnDrawGizmos()
     {
-        if(laserPoint != null) Gizmos.DrawLine(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay);    
+        if(laserPoint) Gizmos.DrawLine(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay);    
     }
     #endif
 }

@@ -52,17 +52,20 @@ public class CameraLimiter : MonoBehaviour
 
     void EnableLimit()
     {
+        if (_enabled) return;
         _enabled = true;
         _cameraFollower.CameraLimiter = this;
         //Make this the limiter
         _cameraFollower.Limitin(cameraBound.bounds.min, cameraBound.bounds.max);
         // Set respawn point for player
-        _player.RespawnPoint = respawnPoint.OrderBy(t=>(t.position - _player.transform.position).sqrMagnitude).FirstOrDefault()!.position;
+        _player.RespawnPoint = respawnPoint.OrderBy(t=>Vector2.Distance(t.position, _player.transform.position)).FirstOrDefault()!.position;
+        Debug.Log(_player.RespawnPoint);
         // Load scenes
         UpdateScenes();
     }
     void UnEnableLimit()
     {
+        if(!_enabled) return;
         _enabled = false;
         if (_cameraFollower.CameraLimiter == this)
         {

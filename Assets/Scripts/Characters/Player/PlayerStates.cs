@@ -619,7 +619,6 @@ public class PlayerRespawnState : PlayerBaseState
             return;
         }
         player.transform.position = BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin);
-        Debug.Log(player.transform.position + "  " + BetterLerp.Lerp(_stPos, player.RespawnPoint, _nowTime/2f, BetterLerp.LerpType.Sin));
         _shield.transform.position = player.transform.position;
         
         _nowTime += Time.deltaTime;
