@@ -273,6 +273,7 @@ public class PlayerNormalState : PlayerBaseState
             _rb.velocity = new(Mathf.MoveTowards(_rb.velocity.x, FrameInput.x * _stats.MaxSpeed,
                 (player.ShieldPushed ? _stats.PushAcceleration * _stats.Acceleration : _stats.Acceleration) * Time.fixedDeltaTime), _rb.velocity.y);
         }
+
         // Player rotation
         if (FrameInput.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
         {
