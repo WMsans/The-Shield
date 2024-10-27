@@ -59,7 +59,6 @@ public class CameraLimiter : MonoBehaviour
         _cameraFollower.Limitin(cameraBound.bounds.min, cameraBound.bounds.max);
         // Set respawn point for player
         _player.RespawnPoint = respawnPoint.OrderBy(t=>Vector2.Distance(t.position, _player.transform.position)).FirstOrDefault()!.position;
-        Debug.Log(_player.RespawnPoint);
         // Load scenes
         UpdateScenes();
     }
@@ -75,9 +74,19 @@ public class CameraLimiter : MonoBehaviour
     }
     void UpdateScenes()
     {
-        for (int i = 0; i < SceneManager.sceneCount; i++)
+        for (var i = 0; i < SceneManager.sceneCount; i++)
         {
             Scene loadedScene = SceneManager.GetSceneAt(i);
+            if (loadedScene == gameObject.scene)
+            {
+                // Reset the resetables
+                var resetablesInScene = FindAllResetables(loadedScene);
+                foreach (var resetable in resetablesInScene)
+                {
+                    resetable.OnReset();
+                }
+                continue;
+            }
             if (loadedScene.name == "PersistantScene" || loadedScene.name == "DontDestroyOnLoad" || loadedScene == gameObject.scene) continue;
             var unloading = true;
             foreach (var scene in scenesToLoad)
@@ -88,7 +97,20 @@ public class CameraLimiter : MonoBehaviour
                     break;
                 }
             }
-            if(unloading) SceneManager.UnloadSceneAsync(loadedScene);
+            if(unloading)
+            {
+                // Unload the scene
+                SceneManager.UnloadSceneAsync(loadedScene);
+            }
+            else
+            {
+                // Reset the resetables
+                var resetablesInScene = FindAllResetables(loadedScene);
+                foreach (var resetable in resetablesInScene)
+                {
+                    resetable.OnReset();
+                }
+            }
         }
         foreach (var scene in scenesToLoad)
         {
@@ -104,9 +126,16 @@ public class CameraLimiter : MonoBehaviour
             }
             if (!isSceneLoaded)
             {
+                // Load the scene
                 SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
             }
         }
+    }
+
+    List<IResetable> FindAllResetables(Scene sceneToSearch)
+    {
+        var resetables = FindObjectsOfType<MonoBehaviour>().Where(u=>u.gameObject.scene.name == sceneToSearch.name).OfType<IResetable>();  
+        return new(resetables);
     }
     #if UNITY_EDITOR
     void OnDrawGizmos()

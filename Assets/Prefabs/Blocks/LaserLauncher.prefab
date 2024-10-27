@@ -59,14 +59,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7782022132822291423}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 50, y: 60.5, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4197991134852540725}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6943518762465989913
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -172,7 +172,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.2587719
+        value: 0.2535224
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -249,8 +249,12 @@ MonoBehaviour:
   collidableLayer:
     serializedVersion: 2
     m_Bits: 201
+  laserBeamRadius: 0.2
+  launchPeriod: 2
+  cooldownPeriod: 2
   attractDis: 3
   damage: 1
+  forceRespawn: 0
 --- !u!61 &2423763905237733628
 BoxCollider2D:
   m_ObjectHideFlags: 0

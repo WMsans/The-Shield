@@ -31,6 +31,9 @@ MonoBehaviour:
     serializationDepthLimit: 64
     assemblyNames:
     - AllIn1SpriteShaderAssembly
+    - AllIn1VfxAssmebly
+    - AllIn1VfxDemoScriptAssemblies
+    - AllIn1VfxTexDemoAssembly
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
     - Com.VinarkGames.BetterRuleTiles
@@ -39,6 +42,8 @@ MonoBehaviour:
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo
     - MoreMountains.Tools
+    - SingularityGroup.HotReload.Runtime
+    - SingularityGroup.HotReload.Runtime.Public
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

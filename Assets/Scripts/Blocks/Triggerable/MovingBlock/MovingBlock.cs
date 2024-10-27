@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class MovingBlock : MonoBehaviour, ITriggerable
+public class MovingBlock : MonoBehaviour, ITriggerable, IResetable
 {
     [Header("Movements")]
     [SerializeField] Transform target;
@@ -20,7 +21,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
-    
+    Vector3 _oriPosition;
     private float _time;
     public MovingBlockAction CurrentState {get; private set;}
     Rigidbody2D _rb;
@@ -221,6 +222,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     #endregion
 
     private float _playerExitTime;
+    private bool _initialized;
     private bool PlayerExiting => Mathf.Abs(_playerExitTime - _time) < 0.05f;
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -275,5 +277,28 @@ public class MovingBlock : MonoBehaviour, ITriggerable
     public void OnUnTrigger()
     {
         SwitchState(Enums.MovingBlockState.Returning);
+    }
+
+    bool IResetable.Initialized
+    {
+        get => _initialized;
+        set => _initialized = value;
+    }
+
+    public void OnInitialize()
+    {
+        _oriPosition = transform.position;
+        _initialized = true;
+    }
+
+    public void OnReset()
+    {
+        if (!_initialized) return;
+        transform.position = _oriPosition;
+    }
+
+    private void OnEnable()
+    {
+        OnInitialize();
     }
 }
