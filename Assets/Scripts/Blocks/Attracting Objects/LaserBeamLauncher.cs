@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,9 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class LaserBeamLauncher : ShieldAttractingObject
 {
+    [Header("Laser Beam Properties")]
     [SerializeField] private float distanceRay = 100f;
     [SerializeField] private Transform laserPoint;
     [SerializeField] private LayerMask collidableLayer;
+    [SerializeField] private float laserBeamRadius;
+    [Header("Player Interaction")]
     [SerializeField] private float attractDis = 100f;
     [SerializeField] private float damage = 1f;
     [SerializeField] private bool forceRespawn;
@@ -38,17 +40,18 @@ public class LaserBeamLauncher : ShieldAttractingObject
         var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
         if (ray)
         {
-            PlayerDetection(ray);
             Render2DRay(laserPoint.position, ray.point);
         }
         else
         {
             Render2DRay(laserPoint.position, laserPoint.right * distanceRay);
         }
+        HarmableDetection(Physics2D.CircleCast(laserPoint.position, laserBeamRadius, transform.right, Mathf.Infinity, collidableLayer));
     }
 
-    void PlayerDetection(RaycastHit2D ray)
+    void HarmableDetection(RaycastHit2D ray)
     {
+        if(!ray) return;
         if (ray.collider.CompareTag("Player"))
         {
             _player.Harm(damage);
@@ -74,6 +77,8 @@ public class LaserBeamLauncher : ShieldAttractingObject
     {
         _laserBeamRenderer.SetPosition(0, startPos);
         _laserBeamRenderer.SetPosition(1, endPos);
+        _laserBeamRenderer.startWidth = laserBeamRadius + .1f;
+        _laserBeamRenderer.endWidth = laserBeamRadius + .25f;
     }
     #if UNITY_EDITOR
     void OnDrawGizmos()

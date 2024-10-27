@@ -8,6 +8,14 @@ public abstract class PlayerBaseState
     public virtual void UpdateState(PlayerController player) {}
     public virtual void FixedUpdateState(PlayerController player){}
     public virtual void ExitState(PlayerController player){}
+
+    public virtual void HarmState(PlayerController player, float damage, Vector2 knockBack)
+    {
+        PlayerStatsManager.Instance.PlayerHealth -= damage;
+        player.StartCoroutine(player.InvincibleTimer());
+        // Flash
+        player.damageFlash.Flash();
+    }
 }
 public struct FrameInput
 {
@@ -408,22 +416,31 @@ public class PlayerDefenseState : PlayerBaseState
     private CapsuleCollider2D _col;
     private bool _grounded;
     private bool _jumpHeld;
+    PlayerStatsManager _statsManager;
+    private float _shieldCoolDownTimer;
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Player Defense!");
         _rd = player.Rb;
         _stats = player.stats;
         _col = player.GetComponent<CapsuleCollider2D>();
+        _statsManager = PlayerStatsManager.Instance;
+        _shieldCoolDownTimer = 0f;
     }
 
     public override void UpdateState(PlayerController player)
     {
         GatherInput();
+        HandleTimer();
     }
-
     private void GatherInput()
     {
         _jumpHeld = Input.GetButton("Jump");
+    }
+
+    void HandleTimer()
+    {
+        _shieldCoolDownTimer -= Time.deltaTime;
     }
     public override void FixedUpdateState(PlayerController player)
     {
@@ -476,6 +493,17 @@ public class PlayerDefenseState : PlayerBaseState
             var inAirGravity = _stats.FallAcceleration;
             if (_rd.velocity.y > 0 && !player.Bounced && !player.ShieldPushed) inAirGravity *= _stats.JumpEndEarlyGravityModifier;
             _rd.velocity = new(_rd.velocity.x, Mathf.MoveTowards(_rd.velocity.y, -_stats.MaxFallSpeed, inAirGravity * Time.fixedDeltaTime));
+        }
+    }
+
+    public override void HarmState(PlayerController player, float damage, Vector2 knockback)
+    {
+        if (_shieldCoolDownTimer > 0f) return;
+        _statsManager.ShieldHealth -= damage;
+        _shieldCoolDownTimer = .2f;
+        if (_statsManager.ShieldHealth <= 0f)
+        {
+            player.SwitchState(Enums.PlayerState.Normal);
         }
     }
 }

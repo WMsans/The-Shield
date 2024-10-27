@@ -171,7 +171,7 @@ public class ShieldFlyingState : ShieldBaseState
         
         // Decrease player acceleration
         bool neutralBounced;
-        if (Mathf.Approximately(Mathf.Sign(dir.x), Mathf.Sign(_player._pressingHor)) && !Mathf.Approximately(_player._pressingHor, 0f))
+        if (Mathf.Approximately(Mathf.Sign(dir.x), Mathf.Sign(_player.pressingHor)) && !Mathf.Approximately(_player.pressingHor, 0f))
             neutralBounced = _player.ShieldPush(dir, new Vector2(_stats.HorizontalOpposeForceToPlayer, _stats.VarticleForceToPlayer));
         else 
             neutralBounced = _player.ShieldPush(dir, new Vector2(_stats.HorizontalForceToPlayer, _stats.VarticleForceToPlayer));

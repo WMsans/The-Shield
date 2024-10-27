@@ -9,12 +9,12 @@ public class PlayerController : MonoBehaviour, IHarmable
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
-    [HideInInspector]public float _pressingHor;
-    [HideInInspector]public float _pressingVert;
-    [HideInInspector]public bool _pressingJump;
+    [HideInInspector]public float pressingHor;
+    [HideInInspector]public float pressingVert;
+    [HideInInspector]public bool pressingJump;
     public PlayerStats stats;
     public bool Bounced => _bouncedTimer > 0f;
-    public bool FacingRight { get; set; } = true;
+    public bool FacingRight { get; private set; } = true;
     private float _bouncedTimer;
     public bool ShieldPushed { get; private set; }
     private float _shieldPushTimer;
@@ -47,9 +47,9 @@ public class PlayerController : MonoBehaviour, IHarmable
         {Enums.PlayerState.Respawn, new PlayerRespawnState()}, 
     };
     #endregion
-    public bool Invincible { get; private set; }
+    public bool Invincible { get; set; }
     private float _crashTimer;
-    DamageFlash _damageFlash;
+    [FormerlySerializedAs("_damageFlash")] public DamageFlash damageFlash;
     private void Awake()
     {
         if (Instance == null)
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour, IHarmable
         Col = GetComponent<CapsuleCollider2D>();
         Spr = GetComponent<SpriteRenderer>();
         Invincible = false;
-        _damageFlash = GetComponent<DamageFlash>();
+        damageFlash = GetComponent<DamageFlash>();
         _crashTimer = 0f;
     }
 
@@ -97,9 +97,9 @@ public class PlayerController : MonoBehaviour, IHarmable
 
     void GatherInput()
     {
-        _pressingHor = Input.GetAxisRaw("Horizontal");
-        _pressingVert = Input.GetAxisRaw("Vertical");
-        _pressingJump = Input.GetButtonDown("Jump");
+        pressingHor = Input.GetAxisRaw("Horizontal");
+        pressingVert = Input.GetAxisRaw("Vertical");
+        pressingJump = Input.GetButtonDown("Jump");
     }
     private void FixedUpdate()
     {
@@ -148,7 +148,7 @@ public class PlayerController : MonoBehaviour, IHarmable
             var ray = Physics2D.Raycast(Rb.position, Vector2.right, stats.WallerDistance, stats.GroundLayer);
             if (ray.collider != null)
             {
-                if(!Mathf.Approximately(_pressingHor, 0f) && Mathf.Sign(_pressingHor) >= 1f) // Push player against the wall
+                if(!Mathf.Approximately(pressingHor, 0f) && Mathf.Sign(pressingHor) >= 1f) // Push player against the wall
                 {
                     Rb.velocity = new(-stats.WallingForce, Rb.velocity.y);
                     return false;
@@ -162,7 +162,7 @@ public class PlayerController : MonoBehaviour, IHarmable
             ray = Physics2D.Raycast(Rb.position, Vector2.left, stats.WallerDistance, stats.GroundLayer);
             if (ray.collider != null)
             {
-                if(!Mathf.Approximately(_pressingHor, 0f) && Mathf.Sign(_pressingHor) <= -1f) // Push player against the wall
+                if(!Mathf.Approximately(pressingHor, 0f) && Mathf.Sign(pressingHor) <= -1f) // Push player against the wall
                 {
                     Rb.velocity = new(stats.WallingForce, Rb.velocity.y);
                     return false;
@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour, IHarmable
         {
             SuperBounce();
         }
-        if (_pressingJump)
+        if (pressingJump)
         {
             Rb.velocity = new(Rb.velocity.x, stats.JumpPower);
         }
@@ -283,13 +283,15 @@ public class PlayerController : MonoBehaviour, IHarmable
         get => PlayerStatsManager.Instance.PlayerHealth;
         set => PlayerStatsManager.Instance.PlayerHealth = value;
     }
+
     public void Harm(float damage)
     {
+        Harm(damage, new());
+    }
+    public void Harm(float damage, Vector2 knockback)
+    {
         if (Invincible) return;
-        PlayerStatsManager.Instance.PlayerHealth -= damage;
-        StartCoroutine(InvincibleTimer());
-        // Flash
-        _damageFlash.Flash();
+        _states[CurrentState].HarmState(this, damage, knockback);
     }
 
     public void ReturnToSpawn()
@@ -297,11 +299,16 @@ public class PlayerController : MonoBehaviour, IHarmable
         SwitchState(Enums.PlayerState.Respawn);
     }
     
-    IEnumerator InvincibleTimer()
+    public IEnumerator InvincibleTimer(float invincibilityTime)
     {
         Invincible = true;
-        yield return new WaitForSeconds(stats.InvincibilityTime);
+        yield return new WaitForSeconds(invincibilityTime);
         Invincible = false;
+    }
+
+    public IEnumerator InvincibleTimer()
+    {
+        return InvincibleTimer(stats.InvincibilityTime);
     }
 }
 

@@ -5,9 +5,9 @@ using UnityEngine;
 public interface IHarmable
 {
     public float HitPoints { get; protected set; }
-    public void Harm(){ Harm(1f);}
-    public void Harm(float damage) { HitPoints -= damage;}
-    public void Harm(float damage, Vector2 knockback){ Harm(damage);}
-    public void Heal() {Heal(1f);}
-    public void Heal(float amount){HitPoints += amount;}
+    public virtual void Harm(){ Harm(1f);}
+    public virtual void Harm(float damage) {Harm(damage, new()); }
+    public virtual void Harm(float damage, Vector2 knockback){  HitPoints -= damage;}
+    public virtual void Heal() {Heal(1f);}
+    public virtual void Heal(float amount){HitPoints += amount;}
 }
