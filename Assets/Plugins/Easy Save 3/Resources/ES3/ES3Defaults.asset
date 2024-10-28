@@ -36,14 +36,16 @@ MonoBehaviour:
     - AllIn1VfxTexDemoAssembly
     - Assembly-CSharp
     - Assembly-CSharp-firstpass
-    - Com.VinarkGames.BetterRuleTiles
-    - Com.VinarkGames.BetterRuleTiles.Editor
     - ComponentNames
     - Lofelt.NiceVibrations
     - Lofelt.NiceVibrations.Demo
     - MoreMountains.Tools
     - SingularityGroup.HotReload.Runtime
     - SingularityGroup.HotReload.Runtime.Public
+    - VinarkGames.BetterRuleTiles
+    - VinarkGames.BetterRuleTiles.Editor
+    - VinarkGames.Utilities
+    - VinarkGames.Utilities.Editor
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
   autoUpdateReferences: 1

@@ -84,7 +84,7 @@ public class ShieldFlyingState : ShieldBaseState
 {
     private ShieldStats _stats;
     PlayerController _player;
-    private Rigidbody2D _rd;
+    private Rigidbody2D _rb;
     private Rigidbody2D _playerRd;
     private Camera _cam;
     private int _chanceOfChangingDir;
@@ -99,8 +99,8 @@ public class ShieldFlyingState : ShieldBaseState
 
     private Vector2 ShieldPos
     {
-        get => _rd.position;
-        set => _rd.position = value;
+        get => _rb.position;
+        set => _rb.position = value;
     }
     private List<Collider2D> _collidedFlags; 
     private Collider2D _nowGroundCollision;
@@ -131,7 +131,7 @@ public class ShieldFlyingState : ShieldBaseState
         _stats = shield.stats;
         _player = PlayerController.Instance;
         _playerRd = _player.Rb;
-        _rd = shield.Rb;
+        _rb = shield.Rb;
         _cam = CameraFollower.Instance.Cam;
         _chanceOfChangingDir = _stats.MaxChangeDirection;
         _maxSpeed = _stats.MaxSpeed;
@@ -209,13 +209,14 @@ public class ShieldFlyingState : ShieldBaseState
     void CheckForChangeDirection(ShieldController shield)
     {
         
-        var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, (_currentTarget - ShieldPos).normalized, _maxSpeed * Time.fixedDeltaTime, _stats.GroundLayer | _stats.TargetLayer);
-        
+        var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, _rb.velocity.normalized, _maxSpeed, _stats.GroundLayer | _stats.TargetLayer);
         foreach (var i in ray)
         {
             var t = i.collider;
+            if(!t) continue;
+            if(i.distance > _stats.MaxSpeed * Time.fixedDeltaTime) continue; 
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
-            if (_nowGroundCollision != null && _nowGroundCollision == t) continue;
+            if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
             _collidedFlags.Add(t);
             // Check for returning
@@ -242,15 +243,48 @@ public class ShieldFlyingState : ShieldBaseState
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
             }
-
-            //ShieldPos += i.distance * (_currentTarget - ShieldPos).normalized;
-            break;
+            //ShieldPos += i.distance * (i.point - ShieldPos).normalized;
+            return;
+        }
+        var cols = Physics2D.OverlapCircleAll(ShieldPos, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
+        foreach (var t in cols)
+        {
+            if(!t) continue;
+            var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
+            if (_nowGroundCollision && _nowGroundCollision == t) continue;
+            _nowGroundCollision = t;
+            _collidedFlags.Add(t);
+            // Check for returning
+            _chanceOfChangingDir--;
+            if (t.CompareTag("Trigger"))
+            {
+                t.GetComponent<Trigger>().OnTrigger();
+            }
+            if (_chanceOfChangingDir <= 1)
+            {
+                // No chance, return
+                shield.SwitchState(Enums.ShieldState.Returning);
+            }
+            else if (realGrounded && _holdingAttack)
+            {
+                // Holding left mouse, no attract, Return
+                shield.SwitchState(Enums.ShieldState.Returning);
+            }
+            else
+            {
+                // Change direction
+                if (!ChangeDirection())
+                {
+                    shield.SwitchState(Enums.ShieldState.Returning);
+                }
+            }
+            return;
         }
     }
     bool ChangeDirection()
     {
         // Determine the target
-        var nextPoint = new ChangePointFinder(_rd, _playerRd, _collidedFlags, _stats).NextPosition();
+        var nextPoint = new ChangePointFinder(_rb, _playerRd, _collidedFlags, _stats).NextPosition();
         if (Vector2.Distance(ShieldPos, nextPoint) > _stats.MaxTargetDistance)
             return false;
         // Change to that direction
@@ -263,8 +297,8 @@ public class ShieldFlyingState : ShieldBaseState
         // Move in direction
         var dir = (target - ShieldPos).normalized;
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        _rd.velocity = dir * spd;
-        _rd.rotation = rot;
+        _rb.velocity = dir * spd;
+        _rb.rotation = rot;
     }
     private List<ShieldAttractingObject> FindAllShieldAttractingObjects()
     {

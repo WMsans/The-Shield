@@ -296,9 +296,9 @@
       "dependencies": {
         "com.unity.modules.tilemap": "1.0.0",
         "com.unity.2d.tilemap": "1.0.0",
-        "com.unity.2d.tilemap.extras": "1.0.0"
+        "com.unity.2d.tilemap.extras": "1.6.0"
       },
-      "hash": "b2a36789262dfe79c1e88e721d09abc1248982b0"
+      "hash": "1acd7aa4bfaca22ac4544dace60cdf35e83cc9fb"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

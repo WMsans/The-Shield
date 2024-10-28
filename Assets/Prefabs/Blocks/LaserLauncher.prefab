@@ -252,7 +252,7 @@ MonoBehaviour:
   laserBeamRadius: 0.2
   launchPeriod: 2
   cooldownPeriod: 2
-  attractDis: 3
+  attractDis: 5
   damage: 1
   forceRespawn: 0
 --- !u!61 &2423763905237733628

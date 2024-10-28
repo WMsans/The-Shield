@@ -101,7 +101,6 @@ public class LaserBeamLauncher : ShieldAttractingObject
         _launched = false;
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
-        print(_launchTimer);
     }
     void Render2DRay(Vector2 startPos, Vector2 endPos, float width)
     {
