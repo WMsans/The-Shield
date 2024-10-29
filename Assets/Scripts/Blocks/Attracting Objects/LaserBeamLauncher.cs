@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class LaserBeamLauncher : ShieldAttractingObject
+public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
 {
     [Header("Laser Beam Properties")]
     [SerializeField] private float distanceRay = 100f;
@@ -12,7 +12,11 @@ public class LaserBeamLauncher : ShieldAttractingObject
     [SerializeField] private float laserBeamRadius;
     [SerializeField] private float launchPeriod;
     [SerializeField] private float cooldownPeriod;
-    bool _launched = false;
+    [Header("Harmable Properties")]
+    [SerializeField] private bool harmable = true;
+    [SerializeField] private float hpMax;
+    [SerializeField] private bool reseting;
+    private bool _launched;
     [Header("Player Interaction")]
     [SerializeField] private float attractDis = 100f;
     [SerializeField] private float damage = 1f;
@@ -21,6 +25,7 @@ public class LaserBeamLauncher : ShieldAttractingObject
     private float _launchTimer = 0f;
     LineRenderer _laserBeamRenderer;
     private PlayerController _player;
+    private float _hitPoints;
     public override float AttractDistance => attractDis;
 
     private new void Awake()
@@ -115,4 +120,15 @@ public class LaserBeamLauncher : ShieldAttractingObject
         if(laserPoint) Gizmos.DrawLine(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay);    
     }
     #endif
+    float IHarmable.HitPoints
+    {
+        get => _hitPoints;
+        set => _hitPoints = value;
+    }
+
+    public void Die()
+    {
+        cooldownPeriod = Mathf.Infinity;
+        _launched = false;
+    }
 }

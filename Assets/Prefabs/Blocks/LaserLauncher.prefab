@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 2423763905237733628}
   m_Layer: 0
   m_Name: LaserLauncher
-  m_TagString: Untagged
+  m_TagString: EnemyBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -252,6 +252,9 @@ MonoBehaviour:
   laserBeamRadius: 0.2
   launchPeriod: 2
   cooldownPeriod: 2
+  harmable: 1
+  hpMax: 0
+  reseting: 0
   attractDis: 5
   damage: 1
   forceRespawn: 0

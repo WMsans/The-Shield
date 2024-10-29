@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IResetable 
 {
-    bool Initialized { get; protected set; }
-    public void OnInitialize();
-    public void OnReset();
+    bool Initialized { get; set; }
+    public abstract void OnInitialize();
+    public abstract void OnReset();
 }

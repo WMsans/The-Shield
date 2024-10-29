@@ -208,7 +208,6 @@ public class ShieldFlyingState : ShieldBaseState
     }
     void CheckForChangeDirection(ShieldController shield)
     {
-        
         var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, _rb.velocity.normalized, _maxSpeed, _stats.GroundLayer | _stats.TargetLayer);
         foreach (var i in ray)
         {

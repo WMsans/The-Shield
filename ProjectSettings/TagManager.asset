@@ -8,6 +8,7 @@ TagManager:
   - MovingBlock
   - OneWayPlatform
   - Trigger
+  - EnemyBlock
   layers:
   - Default
   - TransparentFX

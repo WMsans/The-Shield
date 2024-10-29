@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
@@ -7,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class MovingBlock : MonoBehaviour, ITriggerable, IResetable
+public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
 {
     [Header("Movements")]
     [SerializeField] Transform target;
@@ -223,6 +221,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IResetable
 
     private float _playerExitTime;
     private bool _initialized;
+    [SerializeField]private string _id;
     private bool PlayerExiting => Mathf.Abs(_playerExitTime - _time) < 0.05f;
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -300,5 +299,22 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IResetable
     private void OnEnable()
     {
         OnInitialize();
+    }
+
+
+    string IPersistant.Id
+    {
+        get => _id;
+        set => _id = value;
+    }
+
+    public void SaveData()
+    {
+        
+    }
+    [ContextMenu("Generate Guid")]
+    public void GenerateGuid()
+    {
+        _id = System.Guid.NewGuid().ToString();
     }
 }
