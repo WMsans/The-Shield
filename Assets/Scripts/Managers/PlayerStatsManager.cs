@@ -12,6 +12,7 @@ public class PlayerStatsManager : MonoBehaviour
     public float PlayerMaxHealth { get; set; } = 10f;
     public float PlayerHealth { get; set; } = 10f;
     public float ShieldHealth { get; set; } = 10f;
+    public float PlayerAttack { get; set; } = 4f;
 
     private void Awake()
     {

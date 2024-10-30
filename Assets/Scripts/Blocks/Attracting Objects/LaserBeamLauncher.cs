@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
+public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
 {
     [Header("Laser Beam Properties")]
     [SerializeField] private float distanceRay = 100f;
@@ -15,7 +15,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
     [Header("Harmable Properties")]
     [SerializeField] private bool harmable = true;
     [SerializeField] private float hpMax;
-    [SerializeField] private bool reseting;
+    [SerializeField] private bool persistant;
     private bool _launched;
     [Header("Player Interaction")]
     [SerializeField] private float attractDis = 100f;
@@ -26,12 +26,15 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
     LineRenderer _laserBeamRenderer;
     private PlayerController _player;
     private float _hitPoints;
+    private string _id;
+    private float _realCooldownPeriod;
     public override float AttractDistance => attractDis;
 
-    private new void Awake()
+    protected override void Awake()
     {
         base.Awake();
         _laserBeamRenderer = GetComponent<LineRenderer>();
+        _realCooldownPeriod = cooldownPeriod;
     }
 
     private void Start()
@@ -69,7 +72,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
     void HandleTimer()
     {
         _launchTimer += Time.deltaTime;
-        if (_launchTimer >= (_launched ? launchPeriod : cooldownPeriod))
+        if (_launchTimer >= (_launched ? launchPeriod : _realCooldownPeriod))
         {
             _launched = !_launched;
             _launchTimer = 0f;
@@ -99,13 +102,19 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
             yield return null;
         }
     }
-    
+    public override void OnInitialize()
+    {
+        base.OnInitialize();
+        LoadData();
+    }
     public override void OnReset()
     {
+        if(persistant) return;
         base.OnReset();
         _launched = false;
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
+        _realCooldownPeriod = cooldownPeriod;
     }
     void Render2DRay(Vector2 startPos, Vector2 endPos, float width)
     {
@@ -128,7 +137,33 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable
 
     public void Die()
     {
-        cooldownPeriod = Mathf.Infinity;
+        print("Laser launcher died");
+        _realCooldownPeriod = Mathf.Infinity;
         _launched = false;
+    }
+
+    string IPersistant.Id
+    {
+        get => _id;
+        set => _id = value;
+    }
+
+    public void SaveData()
+    {
+        if(!persistant) return;
+        ES3.Save(_id + "Period", _realCooldownPeriod);
+        ES3.Save(_id + "Launching", _launched);
+    }
+    public void LoadData()
+    {
+        if(!persistant) return;
+        _realCooldownPeriod = ES3.Load<float>(_id + "Period");
+        _launched = ES3.Load<bool>(_id + "Launching");
+    }
+
+    [ContextMenu("Generate Guid")]
+    public void GenerateGuid()
+    {
+        _id = System.Guid.NewGuid().ToString();
     }
 }

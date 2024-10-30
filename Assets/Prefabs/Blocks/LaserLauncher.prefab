@@ -253,8 +253,8 @@ MonoBehaviour:
   launchPeriod: 2
   cooldownPeriod: 2
   harmable: 1
-  hpMax: 0
-  reseting: 0
+  hpMax: Infinity
+  persistant: 0
   attractDis: 5
   damage: 1
   forceRespawn: 0

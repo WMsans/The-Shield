@@ -83,7 +83,8 @@ public class ShieldHoldState : ShieldBaseState
 public class ShieldFlyingState : ShieldBaseState
 {
     private ShieldStats _stats;
-    PlayerController _player;
+    private PlayerController _player;
+    PlayerStatsManager _statsManager;
     private Rigidbody2D _rb;
     private Rigidbody2D _playerRd;
     private Camera _cam;
@@ -130,6 +131,7 @@ public class ShieldFlyingState : ShieldBaseState
         // Initiate variables
         _stats = shield.stats;
         _player = PlayerController.Instance;
+        _statsManager = PlayerStatsManager.Instance;
         _playerRd = _player.Rb;
         _rb = shield.Rb;
         _cam = CameraFollower.Instance.Cam;
@@ -220,9 +222,19 @@ public class ShieldFlyingState : ShieldBaseState
             _collidedFlags.Add(t);
             // Check for returning
             _chanceOfChangingDir--;
+            // Check for tags
             if (t.CompareTag("Trigger"))
             {
                 t.GetComponent<Trigger>().OnTrigger();
+            }
+            foreach (var tag in shield.harmableStats.harmableTags)
+            {
+                if (t.CompareTag(tag))
+                {
+                    var harmables = t.GetComponents(typeof(Component)).OfType<IHarmable>().ToList();
+                    foreach(var h in harmables) h.Harm(_statsManager.PlayerAttack, (i.point - (Vector2)t.transform.position).normalized);
+                    break;
+                }
             }
             if (_chanceOfChangingDir <= 1)
             {
@@ -258,6 +270,15 @@ public class ShieldFlyingState : ShieldBaseState
             if (t.CompareTag("Trigger"))
             {
                 t.GetComponent<Trigger>().OnTrigger();
+            }
+            foreach (var tag in shield.harmableStats.harmableTags)
+            {
+                if (t.CompareTag(tag))
+                {
+                    var harmables = t.GetComponents(typeof(Component)).OfType<IHarmable>().ToList();
+                    foreach(var h in harmables) h.Harm(_statsManager.PlayerAttack, (ShieldPos - (Vector2)t.transform.position).normalized);
+                    break;
+                }
             }
             if (_chanceOfChangingDir <= 1)
             {

@@ -162,3 +162,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 6f5f8847fe76e7a45840474cc865d63b, type: 2}
+  harmableStats: {fileID: 11400000, guid: 8edfcc231d0127549839407a6d90954e, type: 2}

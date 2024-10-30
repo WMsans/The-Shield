@@ -16,7 +16,7 @@ public class ShieldAttractingObject : MonoBehaviour, IResetable
     {
         OnInitialize();
     }
-    protected void Awake()
+    protected virtual void Awake()
     {
         Col = GetComponent<Collider2D>();
     }

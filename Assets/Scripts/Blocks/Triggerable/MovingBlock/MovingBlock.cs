@@ -16,6 +16,8 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     [SerializeField] bool autoReturn = true;
     [SerializeField] float detectionRadius;
     [SerializeField] LayerMask obstacleLayer;
+    [Header("Reset")]
+    [SerializeField] bool persistant;
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
@@ -293,6 +295,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     public void OnReset()
     {
         if (!_initialized) return;
+        if(persistant) return;
         transform.position = _oriPosition;
     }
 
@@ -307,11 +310,16 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
         get => _id;
         set => _id = value;
     }
-
     public void SaveData()
     {
         
     }
+
+    public void LoadData()
+    {
+        
+    }
+
     [ContextMenu("Generate Guid")]
     public void GenerateGuid()
     {
