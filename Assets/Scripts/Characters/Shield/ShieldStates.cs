@@ -333,6 +333,7 @@ public class ShieldFlyingState : ShieldBaseState
         private readonly LayerMask _groundLayer;
         private readonly LayerMask _targetLayer;
         private readonly LayerMask _playerLayer;
+        private readonly ShieldStats _stats;
         private Vector2 ShieldPosition => _shieldRd.position;
         private Vector2 PlayerPosition => _playerRd.position;
         private List<ShieldAttractingObject> _shieldAttractingObjects;
@@ -343,6 +344,7 @@ public class ShieldFlyingState : ShieldBaseState
 
         public ChangePointFinder(Rigidbody2D shieldRd, Rigidbody2D playerRd, List<Collider2D> collidedFlags, ShieldStats stats)
         {
+            _stats = stats;
             _shieldRd = shieldRd;
             _playerRd = playerRd;
             _groundLayer = stats.GroundLayer;
@@ -360,11 +362,17 @@ public class ShieldFlyingState : ShieldBaseState
             var bestDis = Mathf.Infinity;
             var bestPoint = new Vector2();
             
-            for (int i = 0; i < _shieldAttractingObjects.Count; i++)
+            foreach (var t in _shieldAttractingObjects)
             {
-                var shieldAttractingObject = _shieldAttractingObjects[i];
+                var shieldAttractingObject = t;
                 if(_collidedFlags.Contains(shieldAttractingObject.Col)) continue;
-                Vector2 tarPoint = _shieldAttractingObjects[i].transform.position;
+                Vector2 tarPoint = t.transform.position;
+                // Check if this thing is SUPER close to the shield
+                if (Vector2.Distance(t.transform.position, ShieldPosition) < _stats.MinTargetDistance)
+                {
+                    Debug.Log(t.transform.position);
+                    return t.transform.position;
+                }
                 // Check if this thing is reachable
                 var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if (ray.collider == null || ray.transform != shieldAttractingObject.transform || ray.distance > shieldAttractingObject.AttractDistance) continue;

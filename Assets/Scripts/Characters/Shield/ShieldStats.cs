@@ -21,8 +21,10 @@ public class ShieldStats : ScriptableObject
     public float HorizontalOpposeForceToPlayer = 20;
     [Tooltip("The max number of change in direction")]
     public int MaxChangeDirection = 3;
-    [Tooltip("The max number of target distance")]
+    [Tooltip("The max target distance")]
     public float MaxTargetDistance = 7.5f;
+    [Tooltip("The min target distance")]
+    public float MinTargetDistance = 3f;
     [Tooltip("The minimum distance to be caught by the player")]
     public float HandRange = 0.5f;
     [Tooltip("The player's cool down time to throw shield")]
