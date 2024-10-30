@@ -637,6 +637,9 @@ public class PlayerRespawnState : PlayerBaseState
         player.Spr.sortingOrder = 1;
         _shield.GetComponent<SpriteRenderer>().enabled = false;
         Physics2D.IgnoreLayerCollision(player.gameObject.layer, _stats.GroundLayer, true);
+        Physics2D.IgnoreLayerCollision(player.gameObject.layer, LayerMask.NameToLayer("Trigger"), true);
+        Physics2D.IgnoreLayerCollision(_shield.gameObject.layer, _stats.GroundLayer, true);
+        Physics2D.IgnoreLayerCollision(_shield.gameObject.layer, LayerMask.NameToLayer("Trigger"), true);
     }
 
     public override void UpdateState(PlayerController player)
@@ -658,5 +661,8 @@ public class PlayerRespawnState : PlayerBaseState
         player.Spr.sortingOrder = 0;
         _shield.GetComponent<SpriteRenderer>().enabled = true;
         Physics2D.IgnoreLayerCollision(player.gameObject.layer, _stats.GroundLayer, false);
+        Physics2D.IgnoreLayerCollision(player.gameObject.layer, LayerMask.NameToLayer("Trigger"), false);
+        Physics2D.IgnoreLayerCollision(_shield.gameObject.layer, _stats.GroundLayer, false);
+        Physics2D.IgnoreLayerCollision(_shield.gameObject.layer, LayerMask.NameToLayer("Trigger"), false);
     }
 }

@@ -5,6 +5,9 @@ public class PlayerStats : ScriptableObject
 {
     [Header("LAYERS")] [Tooltip("Set this to the layer your player is collided on")]
     public LayerMask GroundLayer;
+    
+    [Tooltip("Set this to the layer your player is disabled on in respawn state")]
+    public LayerMask RespawnLayer;
 
     [Header("INPUT")] [Tooltip("Makes all Input snap to an integer. Prevents gamepads from walking slowly. Recommended value is true to ensure gamepad/keybaord parity.")]
     public bool SnapInput = true;

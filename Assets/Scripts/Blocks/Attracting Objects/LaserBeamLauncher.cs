@@ -115,6 +115,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
         _realCooldownPeriod = cooldownPeriod;
+        _hitPoints = hpMax;
     }
     void Render2DRay(Vector2 startPos, Vector2 endPos, float width)
     {
@@ -137,6 +138,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
 
     public void Die()
     {
+        if(!harmable) return;
         print("Laser launcher died");
         _realCooldownPeriod = Mathf.Infinity;
         _launched = false;
@@ -150,17 +152,21 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
 
     public void SaveData()
     {
-        if(!persistant) return;
+        if(!persistant || _id.Length < 1 || !ES3.FileExists()) return;
         ES3.Save(_id + "Period", _realCooldownPeriod);
         ES3.Save(_id + "Launching", _launched);
     }
     public void LoadData()
     {
-        if(!persistant) return;
+        if(!persistant || _id.Length < 1) return;
         _realCooldownPeriod = ES3.Load<float>(_id + "Period");
         _launched = ES3.Load<bool>(_id + "Launching");
     }
 
+    void OnDisable()
+    {
+        SaveData();
+    }
     [ContextMenu("Generate Guid")]
     public void GenerateGuid()
     {

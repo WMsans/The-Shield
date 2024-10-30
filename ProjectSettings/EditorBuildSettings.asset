@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PersistantScene.unity
     guid: 0e047d8910c89f24a98755e8a655d0c9
+  - enabled: 1
+    path: Assets/Scenes/A1P1/A1P1_1.unity
+    guid: 451eba31675d7154291136767389045d
+  - enabled: 1
+    path: Assets/Scenes/A1P1/A1P1_2.unity
+    guid: 05d11ff1acfd0a54f920bb571bfe3858
+  - enabled: 1
+    path: Assets/Scenes/A1P1/A1P1_3.unity
+    guid: f129749e670e26845971c083d684ab0a
   m_configObjects: {}

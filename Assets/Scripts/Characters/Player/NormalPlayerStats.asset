@@ -15,6 +15,9 @@ MonoBehaviour:
   GroundLayer:
     serializedVersion: 2
     m_Bits: 1
+  RespawnLayer:
+    serializedVersion: 2
+    m_Bits: 256
   SnapInput: 1
   VerticalDeadZoneThreshold: 0.3
   HorizontalDeadZoneThreshold: 0.1
@@ -31,7 +34,7 @@ MonoBehaviour:
   WallerDistance: 1
   PushAccelerationSustainTime: 0.25
   PushAcceleration: 0.3
-  PushDeceleration: 0.8
+  BouncedBuffTime: 0.5
   JumpPower: 20
   ClimbPower: 15
   MaxFallSpeed: 30
@@ -40,3 +43,4 @@ MonoBehaviour:
   CoyoteTime: 0.15
   JumpBuffer: 0.2
   LedgeBuffer: 0.2
+  InvincibilityTime: 2

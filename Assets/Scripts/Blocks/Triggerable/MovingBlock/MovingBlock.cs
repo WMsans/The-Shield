@@ -30,11 +30,11 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _player = PlayerController.Instance;
     }
     
     void Start()
     {
+        _player = PlayerController.Instance;
         SwitchState(startingState);
     }
     public void SwitchState(MovingBlockAction state)
@@ -288,6 +288,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
 
     public void OnInitialize()
     {
+        LoadData();
         _oriPosition = transform.position;
         _initialized = true;
     }
@@ -312,12 +313,19 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     }
     public void SaveData()
     {
-        
+        if (!persistant || _id.Length < 1) return;
+        ES3.Save(_id + "Position", transform.position);
     }
 
     public void LoadData()
     {
-        
+        if (!persistant || _id.Length < 1 || !ES3.FileExists()) return;
+        transform.position = ES3.Load<Vector3>(_id + "Position");
+    }
+
+    void OnDisable()
+    {
+        SaveData();
     }
 
     [ContextMenu("Generate Guid")]
