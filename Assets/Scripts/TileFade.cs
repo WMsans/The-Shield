@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TileFadeTransparency : MonoBehaviour
+public class TileFade : MonoBehaviour
 {
-    private static readonly int Transparency = Shader.PropertyToID("_Transparency");
     [SerializeField] float fadeDuration = 0.5f;
     [SerializeField] BetterLerp.LerpType lerpType = BetterLerp.LerpType.Linear;
     private List<TilemapRenderer> _renderers;
@@ -23,17 +22,17 @@ public class TileFadeTransparency : MonoBehaviour
         }
     }
 
-    public void FadeOut()
+    public void FadeOutFloat(string propertyName)
     {
-        StartCoroutine(Fader(true));
+        StartCoroutine(Fader(propertyName, true));
     }
 
-    public void FadeIn()
+    public void FadeInFloat(string propertyName)
     {
-        StartCoroutine(Fader(false));
+        StartCoroutine(Fader(propertyName, false));
     }
 
-    IEnumerator Fader(bool fadeOut = true)
+    IEnumerator Fader(string propertyName, bool fadeOut = true)
     {
         // lerp the capacity
         var elapsedTime = 0f;
@@ -45,17 +44,17 @@ public class TileFadeTransparency : MonoBehaviour
             var st = fadeOut ? 1f : 0f;
             var ed = fadeOut ? 0f : 1f;
             var currentAmount = BetterLerp.Lerp(st, ed, elapsedTime / fadeDuration, lerpType);
-            SetFadeAmount(currentAmount);
+            SetFadeAmount(propertyName, currentAmount);
             yield return null;
         }
     }
 
-    void SetFadeAmount(float amount)
+    void SetFadeAmount(string propertyName, float amount)
     {
         // set Amount though the materials
         foreach (var t in _fadeMaterials)
         {
-            t.SetFloat(Transparency, amount);
+            t.SetFloat(propertyName, amount);
         }
     }
 }

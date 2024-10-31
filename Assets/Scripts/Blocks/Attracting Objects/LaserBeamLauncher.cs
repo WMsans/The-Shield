@@ -159,8 +159,8 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     public void LoadData()
     {
         if(!persistant || _id.Length < 1) return;
-        _realCooldownPeriod = ES3.Load<float>(_id + "Period");
-        _launched = ES3.Load<bool>(_id + "Launching");
+        _realCooldownPeriod = ES3.Load(_id + "Period", _realCooldownPeriod);
+        _launched = ES3.Load(_id + "Launching", _launched);
     }
 
     void OnDisable()

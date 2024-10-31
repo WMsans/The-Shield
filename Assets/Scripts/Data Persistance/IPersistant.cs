@@ -8,5 +8,6 @@ public interface IPersistant : IResetable
     public void SaveData();
     public void LoadData();
     [ContextMenu("Generate Guid")]
-    public void GenerateGuid()/* => Id = System.Guid.NewGuid().ToString()*/;
+    public void GenerateGuid();
+    public static void GenerateGuids(ref string guids) => guids = System.Guid.NewGuid().ToString();
 }

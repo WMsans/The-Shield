@@ -574,7 +574,8 @@ MonoBehaviour:
   - {fileID: -1701813595216724324}
   - {fileID: 6781784481458670251}
   - {fileID: -1529132651806375663}
-  variations: []
+  variations:
+  - {fileID: -1701813595216724324}
   customProperties: []
   m_ExtendedTilingRules: []
   m_ExtraTilingRules:
@@ -626,7 +627,7 @@ MonoBehaviour:
     m_Patternsize: {x: 1, y: 1}
   - m_ExtendedOutputSprite: 0
     m_Patternsize: {x: 1, y: 1}
-  HasVariations: 0
+  HasVariations: 1
   HasExtraTilingRules: 0
   TreatSimilarTilesAsSame: 0
 --- !u!114 &-1701813595216724324
@@ -643,7 +644,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DefaultSprite: {fileID: 0}
   m_DefaultGameObject: {fileID: 0}
-  m_DefaultColliderType: 1
+  m_DefaultColliderType: 0
   m_TilingRules: []
   UniqueID: 2
   otherTiles:
@@ -651,11 +652,12 @@ MonoBehaviour:
   - {fileID: -1701813595216724324}
   - {fileID: 6781784481458670251}
   - {fileID: -1529132651806375663}
-  variations: []
+  variations:
+  - {fileID: -7278232248606194305}
   customProperties: []
   m_ExtendedTilingRules: []
   m_ExtraTilingRules: []
-  HasVariations: 0
+  HasVariations: 1
   HasExtraTilingRules: 0
   TreatSimilarTilesAsSame: 0
 --- !u!114 &-1529132651806375663
@@ -701,10 +703,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     _gridShape: 0
-    _zoomAmount: 1.6368395
+    _zoomAmount: 1.0025036
     _gridCellSize: {x: 32, y: 32}
     _tileRenderOffset: {x: 0, y: 0}
-    _gridOffset: {x: -1919.0873, y: -791.3046}
+    _gridOffset: {x: -1037.8173, y: -325.23364}
     _lockWindows: 1
     _hideSprites: 0
     _showRuler: 1
@@ -6221,6 +6223,34 @@ MonoBehaviour:
     - {x: -1, y: -1, z: 0}
     - {x: 0, y: -1, z: 0}
     - {x: 1, y: -1, z: 0}
+  - Position: {x: 50, y: 22}
+    Sprite: {fileID: 0}
+    TileID: 2
+    UseDefaultSettings: 1
+    AreNeighborPositionsModified: 0
+    AreOutputSpritesModified: 0
+    Locked: 0
+    _overrideUniversalSpriteSettings: 0
+    GameObject: {fileID: 0}
+    Sprites: []
+    ColliderType: 1
+    OutputSprite: 0
+    Transform: 0
+    IncludeSpriteInOutput: 0
+    NoiseScale: 0.5
+    RandomTransform: 0
+    MinAnimationSpeed: 1
+    MaxAnimationSpeed: 1
+    PatternSize: {x: 1, y: 1}
+    NeighborPositions:
+    - {x: -1, y: 1, z: 0}
+    - {x: 0, y: 1, z: 0}
+    - {x: 1, y: 1, z: 0}
+    - {x: -1, y: 0, z: 0}
+    - {x: 1, y: 0, z: 0}
+    - {x: -1, y: -1, z: 0}
+    - {x: 0, y: -1, z: 0}
+    - {x: 1, y: -1, z: 0}
   _tiles:
   - UniqueID: 1
     Name: Ground
@@ -6232,9 +6262,9 @@ MonoBehaviour:
     DefaultSprite: {fileID: 1004283859, guid: 628b6bd5c96195041895b5879ec0725a, type: 3}
     ColliderType: 1
     DefaultGameObject: {fileID: 0}
-    uniqueTile: 0
+    uniqueTile: 1
     variationOf: 0
-    variations: 
+    variations: 02000000
     customProperties: []
   - UniqueID: 2
     Name: Empty
@@ -6244,11 +6274,11 @@ MonoBehaviour:
     MirrorTexX: 0
     MirrorTexY: 0
     DefaultSprite: {fileID: 0}
-    ColliderType: 1
+    ColliderType: 0
     DefaultGameObject: {fileID: 0}
-    uniqueTile: 0
-    variationOf: 0
-    variations: 
+    uniqueTile: 1
+    variationOf: 1
+    variations: 01000000
     customProperties: []
   - UniqueID: 3
     Name: Spike

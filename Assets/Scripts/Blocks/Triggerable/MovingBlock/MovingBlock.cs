@@ -18,6 +18,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     [SerializeField] LayerMask obstacleLayer;
     [Header("Reset")]
     [SerializeField] bool persistant;
+    [SerializeField]private string _id;
     [Header("Movement Curve")]
     [SerializeField] BetterLerp.LerpType movementType;
     [SerializeField] bool inversed;
@@ -223,7 +224,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
 
     private float _playerExitTime;
     private bool _initialized;
-    [SerializeField]private string _id;
+    
     private bool PlayerExiting => Mathf.Abs(_playerExitTime - _time) < 0.05f;
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -320,7 +321,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     public void LoadData()
     {
         if (!persistant || _id.Length < 1 || !ES3.FileExists()) return;
-        transform.position = ES3.Load<Vector3>(_id + "Position");
+        transform.position = ES3.Load(_id + "Position", transform.position);
     }
 
     void OnDisable()
