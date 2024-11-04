@@ -368,11 +368,11 @@ public class ShieldFlyingState : ShieldBaseState
                 if(_collidedFlags.Contains(shieldAttractingObject.Col)) continue;
                 Vector2 tarPoint = t.transform.position;
                 // Check if this thing is SUPER close to the shield
-                if (Vector2.Distance(t.transform.position, ShieldPosition) < _stats.MinTargetDistance)
+                /*if (Vector2.Distance(t.transform.position, ShieldPosition) < _stats.MinTargetDistance)
                 {
                     Debug.Log(t.transform.position);
                     return t.transform.position;
-                }
+                }*/
                 // Check if this thing is reachable
                 var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if (ray.collider == null || ray.transform != shieldAttractingObject.transform || ray.distance > shieldAttractingObject.AttractDistance) continue;

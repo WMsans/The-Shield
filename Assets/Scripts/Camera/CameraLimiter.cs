@@ -131,7 +131,6 @@ public class CameraLimiter : MonoBehaviour
             }
         }
     }
-
     List<IResetable> FindAllResetables(Scene sceneToSearch)
     {
         var resetables = FindObjectsOfType<MonoBehaviour>().Where(u=>u.gameObject.scene.name == sceneToSearch.name).OfType<IResetable>();  

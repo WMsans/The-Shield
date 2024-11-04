@@ -111,7 +111,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     {
         if(persistant) return;
         base.OnReset();
-        _launched = false;
+        _launched = true;
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
         _realCooldownPeriod = cooldownPeriod;
