@@ -116,7 +116,7 @@ Material:
     - _FlickerAlpha: 0
     - _FlickerFreq: 0.2
     - _FlickerPercent: 0.05
-    - _GhostBlend: 0
+    - _GhostBlend: 0.526
     - _GhostColorBoost: 5
     - _GhostTransparency: 1
     - _GlitchAmount: 3
