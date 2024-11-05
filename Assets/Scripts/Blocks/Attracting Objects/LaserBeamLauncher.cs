@@ -139,9 +139,9 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     public void Die()
     {
         if(!harmable) return;
-        print("Laser launcher died");
         _realCooldownPeriod = Mathf.Infinity;
         _launched = false;
+        GetComponent<Collider2D>().enabled = false;
     }
 
     string IPersistant.Id
