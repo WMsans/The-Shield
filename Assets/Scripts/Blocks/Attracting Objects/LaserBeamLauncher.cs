@@ -21,6 +21,9 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     [SerializeField] private float attractDis = 100f;
     [SerializeField] private float damage = 1f;
     [SerializeField] private bool forceRespawn;
+    [Header("Vfx")]
+    [SerializeField] private ParticleSystem explodeParticles;
+    [SerializeField] private ParticleSystem smokeParticles;
     private float _forceRespawnTimer = 0f;
     private float _launchTimer = 0f;
     LineRenderer _laserBeamRenderer;
@@ -41,14 +44,27 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     {
         _player = PlayerController.Instance;
         _launched = false;
+        // Vfx
+        explodeParticles.Stop();
+        smokeParticles.Stop();
+        explodeParticles.Clear();
+        smokeParticles.Clear();
     }
 
     private void Update()
     {
         ShootLaser();
         HandleTimer();
+        HandleVfx();
     }
 
+    void HandleVfx()
+    {
+        if (_hitPoints <= hpMax / 2 && !smokeParticles.isPlaying)
+        {
+            smokeParticles.Play();
+        }
+    }
     void ShootLaser()
     {
         if(!_launched)
@@ -105,6 +121,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     public override void OnInitialize()
     {
         base.OnInitialize();
+        if(persistant) return;
         LoadData();
     }
     public override void OnReset()
@@ -116,6 +133,11 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         _launchTimer = 0f;
         _realCooldownPeriod = cooldownPeriod;
         _hitPoints = hpMax;
+        // Vfx
+        explodeParticles.Stop();
+        smokeParticles.Stop();
+        explodeParticles.Clear();
+        smokeParticles.Clear();
     }
     void Render2DRay(Vector2 startPos, Vector2 endPos, float width)
     {
@@ -139,9 +161,13 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     public void Die()
     {
         if(!harmable) return;
+        // Stop laser
         _realCooldownPeriod = Mathf.Infinity;
         _launched = false;
         GetComponent<Collider2D>().enabled = false;
+        // Vfx
+        explodeParticles.Play();
+        smokeParticles.Play();
     }
 
     string IPersistant.Id
