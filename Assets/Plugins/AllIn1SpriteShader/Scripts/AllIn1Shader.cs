@@ -98,15 +98,16 @@ namespace AllIn1SpriteShader
 
         private bool SetMaterial(AfterSetAction action, bool getShaderTypeFromPrefs, string shaderName)
         {
-            Shader allIn1Shader = Resources.Load(shaderName, typeof(Shader)) as Shader;
+            #if UNITY_EDITOR
+            Shader allIn1Shader = AllIn1ShaderWindow.FindShader(shaderName);
             if (getShaderTypeFromPrefs)
             {
                 int shaderVariant = PlayerPrefs.GetInt("allIn1DefaultShader");
                 currentShaderType = (ShaderTypes)shaderVariant;
-                if (shaderVariant == 1) allIn1Shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                else if (shaderVariant == 2) allIn1Shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                else if (shaderVariant == 3) allIn1Shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-				else if (shaderVariant == 5) allIn1Shader = Resources.Load("AllIn1SpriteShaderLit", typeof(Shader)) as Shader;
+                if (shaderVariant == 1) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                else if (shaderVariant == 2) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                else if (shaderVariant == 3) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                else if (shaderVariant == 5) allIn1Shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
 			}
 
             if (!Application.isPlaying && Application.isEditor && allIn1Shader != null)
@@ -158,12 +159,13 @@ namespace AllIn1SpriteShader
             else if (allIn1Shader == null)
             {
                 #if UNITY_EDITOR
-                string logErrorMessage = "Make sure the AllIn1SpriteShader shader variants are inside the Resource folder!";
+                string logErrorMessage = "Make sure all AllIn1SpriteShader shader variants are present. Maybe delete the asset and download it again?";
                 Debug.LogError(logErrorMessage);
                 AllIn1ShaderWindow.ShowSceneViewNotification(logErrorMessage);
                 #endif
                 return false;
             }
+            #endif
             return false;
         }
 

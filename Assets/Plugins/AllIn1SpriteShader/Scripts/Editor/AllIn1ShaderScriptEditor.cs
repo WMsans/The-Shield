@@ -98,7 +98,7 @@ namespace AllIn1SpriteShader
             }
 
             bool isUrp = false;
-            Shader temp = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
+            Shader temp = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
             if (temp != null) isUrp = true;
             EditorGUILayout.BeginHorizontal();
             {
@@ -120,11 +120,11 @@ namespace AllIn1SpriteShader
                             if (sr.sharedMaterial != null)
                             {
                                 int renderingQueue = sr.sharedMaterial.renderQueue;
-                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShader", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) sr.sharedMaterial.shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-								else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) sr.sharedMaterial.shader = Resources.Load("AllIn1SpriteShaderLit", typeof(Shader)) as Shader;
+                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShader");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) sr.sharedMaterial.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
 								else SetCurrentShaderType(myScript);
                                 sr.sharedMaterial.renderQueue = renderingQueue;
 
@@ -150,11 +150,11 @@ namespace AllIn1SpriteShader
                             if (img != null && img.material != null)
                             {
                                 int renderingQueue = img.material.renderQueue;
-                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) img.material.shader = Resources.Load("AllIn1SpriteShader", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) img.material.shader = Resources.Load("AllIn1SpriteShaderScaledTime", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) img.material.shader = Resources.Load("AllIn1SpriteShaderUiMask", typeof(Shader)) as Shader;
-                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) img.material.shader = Resources.Load("AllIn1Urp2dRenderer", typeof(Shader)) as Shader;
-								else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) img.material.shader = Resources.Load("AllIn1SpriteShaderLit", typeof(Shader)) as Shader;
+                                if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Default) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShader");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.ScaledTime) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderScaledTime");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.MaskedUI) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderUiMask");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Urp2dRenderer) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1Urp2dRenderer");
+                                else if (myScript.currentShaderType == AllIn1Shader.ShaderTypes.Lit) img.material.shader = AllIn1ShaderWindow.FindShader("AllIn1SpriteShaderLit");
 								else SetCurrentShaderType(myScript);
                                 img.material.renderQueue = renderingQueue;
                             }
@@ -275,7 +275,7 @@ namespace AllIn1SpriteShader
             {
                 case ImageType.ShowImage:
                 case ImageType.HideInComponent:
-                    GetImageInspectorIfNeeded();
+                    if(imageInspector == null) imageInspector = AllIn1ShaderWindow.GetInspectorImage();
                     break;
             }
 
@@ -284,11 +284,6 @@ namespace AllIn1SpriteShader
                 Rect rect = EditorGUILayout.GetControlRect(GUILayout.Height(40));
                 GUI.DrawTexture(rect, imageInspector, ScaleMode.ScaleToFit, true);
             }
-        }
-
-        private void GetImageInspectorIfNeeded()
-        {
-            if(imageInspector == null) imageInspector = Resources.Load<Texture2D>(AllIn1ShaderWindow.CUSTOM_EDITOR_HEADER);
         }
 
         private void SetCurrentShaderType(AllIn1Shader myScript)
