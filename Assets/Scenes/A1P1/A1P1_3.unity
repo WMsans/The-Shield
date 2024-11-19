@@ -20024,7 +20024,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6965100691218423932, guid: 4c5127c0805921a4f9d493d4faac8f69, type: 3}
       propertyPath: cooldownPeriod
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6965100691218423932, guid: 4c5127c0805921a4f9d493d4faac8f69, type: 3}
       propertyPath: laserBeamRadius
@@ -20077,6 +20077,10 @@ PrefabInstance:
     - target: {fileID: 7783483821129568310, guid: 4c5127c0805921a4f9d493d4faac8f69, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -207.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 9199244862159559573, guid: 4c5127c0805921a4f9d493d4faac8f69, type: 3}
+      propertyPath: m_Parameters.colorGradient.atime0
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

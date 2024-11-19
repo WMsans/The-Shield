@@ -67,7 +67,12 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
     }
     void ShootLaser()
     {
-        if(!_launched)
+        ShootLaser(_launched, laserBeamRadius);
+    }
+
+    void ShootLaser(bool launched, float radius)
+    {
+        if(!launched)
         {
             _laserBeamRenderer.enabled = false;
             return;
@@ -76,13 +81,13 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
         if (ray)
         {
-            Render2DRay(laserPoint.position, ray.point, laserBeamRadius);
+            Render2DRay(laserPoint.position, ray.point, radius);
         }
         else
         {
-            Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, laserBeamRadius);
+            Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, radius);
         }
-        HarmableDetection(Physics2D.CircleCast(laserPoint.position, laserBeamRadius, transform.right, Mathf.Infinity, collidableLayer));
+        HarmableDetection(Physics2D.CircleCast(laserPoint.position, radius, transform.right, Mathf.Infinity, collidableLayer));
     }
 
     void HandleTimer()
@@ -91,7 +96,21 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         if (_launchTimer >= (_launched ? launchPeriod : _realCooldownPeriod))
         {
             _launched = !_launched;
+            _laserBeamRenderer.enabled = _launched;
             _launchTimer = 0f;
+        }
+        else if (!_launched && _realCooldownPeriod - _launchTimer < 1f)
+        {
+            _laserBeamRenderer.enabled = true;
+            var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
+            if (ray)
+            {
+                Render2DRay(laserPoint.position, ray.point, .001f, 0f);
+            }
+            else
+            {
+                Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, .001f, 0f);
+            }
         }
     }
     void HarmableDetection(RaycastHit2D ray)
@@ -139,12 +158,12 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         explodeParticles.Clear();
         smokeParticles.Clear();
     }
-    void Render2DRay(Vector2 startPos, Vector2 endPos, float width)
+    void Render2DRay(Vector2 startPos, Vector2 endPos, float width, float endWidthAddition = .15f)
     {
         _laserBeamRenderer.SetPosition(0, startPos);
         _laserBeamRenderer.SetPosition(1, endPos);
         _laserBeamRenderer.startWidth = width + .1f;
-        _laserBeamRenderer.endWidth = width + .25f;
+        _laserBeamRenderer.endWidth = width + .1f + endWidthAddition;
     }
     #if UNITY_EDITOR
     void OnDrawGizmos()
