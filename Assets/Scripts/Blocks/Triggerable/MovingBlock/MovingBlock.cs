@@ -40,10 +40,9 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     }
     public void SwitchState(MovingBlockAction state)
     {
-        if(CurrentState != null)
-            CurrentState.OnExit(this);
+        CurrentState?.OnExit(this);
         CurrentState = state;
-        state.OnEnter(this);
+        CurrentState?.OnEnter(this);
     }
 
     void Update()
@@ -75,16 +74,13 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
         public abstract void OnExit(MovingBlock movingBlock);
         public static implicit operator MovingBlockAction(Enums.MovingBlockState src)
         {
-            switch (src)
+            return src switch
             {
-                case Enums.MovingBlockState.Idle:
-                    return new MovingBlockResting();
-                case Enums.MovingBlockState.Dashing:
-                    return new MovingBlockDashing();
-                case Enums.MovingBlockState.Returning:
-                    return new MovingBlockReturning();
-            }
-            return null;
+                Enums.MovingBlockState.Idle => new MovingBlockResting(),
+                Enums.MovingBlockState.Dashing => new MovingBlockDashing(),
+                Enums.MovingBlockState.Returning => new MovingBlockReturning(),
+                _ => null
+            };
         }
     }
 

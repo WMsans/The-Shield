@@ -40,4 +40,17 @@ public static class Enums
         Fixation,
     }
     #endregion
+
+    #region Enemy State Machines
+
+    public enum EnemyStates
+    {
+        Idle, 
+        Walking,
+        Chasing,
+        Attacking,
+        Defending,
+    }
+
+    #endregion
 }
