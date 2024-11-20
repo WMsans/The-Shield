@@ -7,7 +7,7 @@ public class EnemyWalk : EnemyAction
     
     public override TaskStatus OnUpdate()
     {
-        rb.velocity = Mathf.Cos(transform.rotation.z * Mathf.Deg2Rad) * WalkSpeed * Vector2.right;
+        rb.velocity = new(WalkSpeed * (FacingRight ? 1 : -1), rb.velocity.y);
         return TaskStatus.Running;
     }
 }
