@@ -6,7 +6,7 @@ public abstract class EnemyConditional : Conditional
 {
     protected Rigidbody2D rb;
     protected Animator animator;
-    protected bool FacingRight => Mathf.Abs(Mathf.DeltaAngle(transform.rotation.z, 0f)) < 1f;
+    protected bool FacingRight => Mathf.Abs(Mathf.DeltaAngle(transform.rotation.y, 0f)) < 1f;
 
     public override void OnAwake()
     {
