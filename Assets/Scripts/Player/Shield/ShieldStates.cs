@@ -227,12 +227,13 @@ public class ShieldFlyingState : ShieldBaseState
             {
                 t.GetComponent<Trigger>().OnTrigger();
             }
-            foreach (var tag in shield.harmableStats.harmableTags)
+            else
             {
-                if (t.CompareTag(tag))
+                var harmables = t.GetComponents<Harmable>().ToList();
+                if (harmables.Count > 0)
                 {
-                    var harmables = t.GetComponents(typeof(Component)).OfType<IHarmable>().ToList();
-                    foreach(var h in harmables) h.Harm(_statsManager.PlayerAttack, (i.point - (Vector2)t.transform.position).normalized);
+                    foreach (var h in harmables)
+                        h.Harm(_statsManager.PlayerAttack, (i.point - (Vector2)t.transform.position).normalized);
                     break;
                 }
             }
@@ -271,12 +272,13 @@ public class ShieldFlyingState : ShieldBaseState
             {
                 t.GetComponent<Trigger>().OnTrigger();
             }
-            foreach (var tag in shield.harmableStats.harmableTags)
+            else
             {
-                if (t.CompareTag(tag))
+                var harmables = t.GetComponents<Harmable>().ToList();
+                if (harmables.Count > 0)
                 {
-                    var harmables = t.GetComponents(typeof(Component)).OfType<IHarmable>().ToList();
-                    foreach(var h in harmables) h.Harm(_statsManager.PlayerAttack, (ShieldPos - (Vector2)t.transform.position).normalized);
+                    foreach (var h in harmables)
+                        h.Harm(_statsManager.PlayerAttack, (ShieldPos - (Vector2)t.transform.position).normalized);
                     break;
                 }
             }

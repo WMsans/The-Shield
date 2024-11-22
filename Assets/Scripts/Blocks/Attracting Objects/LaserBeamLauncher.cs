@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
+public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
 {
     [Header("Laser Beam Properties")]
     [SerializeField] private float distanceRay = 100f;
@@ -171,7 +171,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, IHarmable, IPersistant
         if(laserPoint) Gizmos.DrawLine(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay);    
     }
     #endif
-    float IHarmable.HitPoints
+    float Harmable.HitPoints
     {
         get => _hitPoints;
         set => _hitPoints = value;

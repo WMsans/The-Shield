@@ -67,7 +67,6 @@ public abstract class BetterLerp
             case LerpType.Smoothstep:
                 return 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * t) / 3f);
             case LerpType.Smootherstep:
-                Debug.LogError("The inverse of smootherstep is not supported.");
                 return 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * t) / 3f); // Fallback to Smoothstep interpolation
             default:
                 return t;

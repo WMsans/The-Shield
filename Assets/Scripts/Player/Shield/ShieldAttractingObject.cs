@@ -12,7 +12,7 @@ public class ShieldAttractingObject : MonoBehaviour, IResetable
     private Vector3 _oriPosition;
     private bool _initialized;
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         OnInitialize();
     }

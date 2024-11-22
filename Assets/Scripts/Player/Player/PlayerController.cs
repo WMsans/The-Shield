@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(DamageFlash))]
-public class PlayerController : MonoBehaviour, IHarmable
+public class PlayerController : MonoBehaviour, Harmable
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
@@ -278,7 +278,7 @@ public class PlayerController : MonoBehaviour, IHarmable
         }
     }
 #endif
-    float IHarmable.HitPoints
+    float Harmable.HitPoints
     {
         get => PlayerStatsManager.Instance.PlayerHealth;
         set => PlayerStatsManager.Instance.PlayerHealth = value;

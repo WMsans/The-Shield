@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IHarmable
+public class Harmable : ShieldAttractingObject
 {
-    public float HitPoints { get; protected set; }
+    [SerializeField] float maxHitPoints = 10f;
+    public float HitPoints { get; private set; }
     public void Harm() => Harm(1f);
     public void Harm(float damage) => Harm(damage, new());
     public void Harm(float damage, Vector2 knockback){  
@@ -16,5 +17,15 @@ public interface IHarmable
     }
     public void Heal() => Heal(1f);
     public void Heal(float amount) => HitPoints += amount;
-    public void Die(){}
+
+    private void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    public override void OnReset()
+    {
+        base.OnReset();
+        HitPoints = maxHitPoints;
+    }
 }
