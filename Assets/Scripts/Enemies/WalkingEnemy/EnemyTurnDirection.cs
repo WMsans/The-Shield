@@ -5,15 +5,9 @@ using UnityEngine;
 
 public class EnemyTurnDirection : EnemyAction
 {
-    bool _facingRight;
-    public override void OnAwake()
-    {
-        _facingRight = FacingRight;
-    }
     public override TaskStatus OnUpdate()
     {
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, _facingRight ? 0f : 180f, transform.eulerAngles.z);
-        _facingRight = !_facingRight;
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, FacingRight ? 180f : 0f, transform.eulerAngles.z);
         return TaskStatus.Success;
     }
 }

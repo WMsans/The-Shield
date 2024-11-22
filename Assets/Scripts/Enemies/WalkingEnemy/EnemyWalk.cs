@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyWalk : EnemyAction
 {
-    public float WalkSpeed = 1.5f;
+    [SerializeField] float WalkSpeed = 1.5f;
     
     public override TaskStatus OnUpdate()
     {

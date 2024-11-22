@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class EnemyDetectLayer : EnemyConditional
 {
-    [SerializeField] private Vector2 wallDetectPosition;
+    [SerializeField] private Transform wallDetectTransform;
     [SerializeField] private float wallDetectRadius;
     [SerializeField] private LayerMask wallMask;
     
     public override void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(wallDetectPosition, wallDetectRadius);
+        Gizmos.DrawWireSphere(wallDetectTransform.position, wallDetectRadius);
     }
     public override TaskStatus OnUpdate()
     {
@@ -21,6 +21,6 @@ public class EnemyDetectLayer : EnemyConditional
 
     private bool CheckWall()
     {
-        return Physics2D.OverlapCircle(rb.position + wallDetectPosition * new Vector2(FacingRight ? 1 : -1, 1), wallDetectRadius, wallMask);
+        return Physics2D.OverlapCircle(wallDetectTransform.position, wallDetectRadius, wallMask);
     }
 }
