@@ -3,16 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-
+using AllIn1SpriteShader;
+[RequireComponent(typeof(AllIn1Shader))]
 public class DamageFlash : MonoBehaviour
 {
-    private static readonly int FlashColor = Shader.PropertyToID("_FlashColor");
-    private static readonly int FlashAmount = Shader.PropertyToID("_FlashAmount");
-    private static readonly int Alpha = Shader.PropertyToID("_Alpha");
-    [ColorUsage(true, true)] [SerializeField] Color flashColor = Color.white;
-    [SerializeField] float flashDuration = 0.5f;
+    private static readonly int FlashAmount = Shader.PropertyToID("_HitEffectBlend");
+    private static readonly int Alpha = Shader.PropertyToID("_GhostBlend");
+    [SerializeField] float flashDuration = 0.25f;
     [SerializeField] BetterLerp.LerpType lerpType = BetterLerp.LerpType.Linear;
-    PlayerController _player;
     private List<SpriteRenderer> _spr;
     private List<Material> _flashMat;
 
@@ -28,19 +26,12 @@ public class DamageFlash : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void Flash(float duration)
     {
-        _player = PlayerController.Instance;
+        StartCoroutine(Flasher(duration));
     }
-
-    public void Flash()
+    IEnumerator Flasher(float duration)
     {
-        StartCoroutine(Flasher());
-    }
-    IEnumerator Flasher()
-    {
-        // set the color
-        SetFlashColor(flashColor);
         // lerp the capacity
         var elapsedTime = 0f;
         while (elapsedTime < flashDuration)
@@ -53,20 +44,19 @@ public class DamageFlash : MonoBehaviour
             yield return null;
         }
 
-        InvincibleFlash();
+        InvincibleFlash(duration);
     }
-    public void InvincibleFlash()
+    public void InvincibleFlash(float duration)
     {
-        StartCoroutine(InvincibleFlasher());
+        StartCoroutine(InvincibleFlasher(duration));
     }
-    IEnumerator InvincibleFlasher()
+    IEnumerator InvincibleFlasher(float duration)
     {
         var flashPeriod = .2f;
         var elapsed = 0f;
         var next = elapsed + flashPeriod;
         var trans = false;
-        //var normalColor = _flashMat[0].color;
-        while (_player.Invincible)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             if (elapsed > next)
@@ -74,18 +64,10 @@ public class DamageFlash : MonoBehaviour
                 next = elapsed + flashPeriod;
                 trans = !trans;
             }
-            SetFlashAlpha(BetterLerp.Lerp(trans ? 0f : 1f, trans ? 1f : 0f, (next - elapsed) / flashPeriod, lerpType));
+            SetFlashAlpha(BetterLerp.Lerp(trans ? 1f : 0f, trans ? 0f : 1f, (next - elapsed) / flashPeriod, lerpType));
             yield return null;
         }
-        SetFlashAlpha(1f);
-    }
-    void SetFlashColor(Color color)
-    {
-        // set color though the materials
-        foreach (var t in _flashMat)
-        {
-            t.SetColor(FlashColor, color);
-        }
+        SetFlashAlpha(0f);
     }
 
     void SetFlashAmount(float amount)

@@ -14,7 +14,7 @@ public abstract class PlayerBaseState
         PlayerStatsManager.Instance.PlayerHealth -= damage;
         player.StartCoroutine(player.InvincibleTimer());
         // Flash
-        player.damageFlash.Flash();
+        player.damageFlash.Flash(player.stats.InvincibilityTime);
     }
 }
 public struct FrameInput

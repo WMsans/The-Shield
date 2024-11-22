@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
-public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
+[RequireComponent(typeof(LineRenderer),typeof(Harmable))]
+public class LaserBeamLauncher : MonoBehaviour, IPersistant
 {
     [Header("Laser Beam Properties")]
     [SerializeField] private float distanceRay = 100f;
@@ -12,13 +12,9 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
     [SerializeField] private float laserBeamRadius;
     [SerializeField] private float launchPeriod;
     [SerializeField] private float cooldownPeriod;
-    [Header("Harmable Properties")]
-    [SerializeField] private bool harmable = true;
-    [SerializeField] private float hpMax;
-    [SerializeField] private bool persistant;
     private bool _launched;
+    [SerializeField] bool persistant = true;
     [Header("Player Interaction")]
-    [SerializeField] private float attractDis = 100f;
     [SerializeField] private float damage = 1f;
     [SerializeField] private bool forceRespawn;
     [Header("Vfx")]
@@ -28,15 +24,14 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
     private float _launchTimer = 0f;
     LineRenderer _laserBeamRenderer;
     private PlayerController _player;
-    private float _hitPoints;
     private string _id;
     private float _realCooldownPeriod;
-    public override float AttractDistance => attractDis;
+    private Harmable _harmableBehavior;
 
-    protected override void Awake()
+    void Awake()
     {
-        base.Awake();
         _laserBeamRenderer = GetComponent<LineRenderer>();
+        _harmableBehavior= GetComponent<Harmable>();
         _realCooldownPeriod = cooldownPeriod;
     }
 
@@ -60,7 +55,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
 
     void HandleVfx()
     {
-        if (_hitPoints <= hpMax / 2 && !smokeParticles.isPlaying)
+        if (_harmableBehavior.HitPointsNormalized < .5f && !smokeParticles.isPlaying)
         {
             smokeParticles.Play();
         }
@@ -118,7 +113,7 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
         if(!ray) return;
         if (ray.collider.CompareTag("Player"))
         {
-            _player.Harm(damage);
+            _player.playerHarmable.Harm(damage);
             // Player detected, harm player
             if (forceRespawn && _forceRespawnTimer <= 0f)
             {
@@ -137,21 +132,21 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
             yield return null;
         }
     }
-    public override void OnInitialize()
+
+    public bool Initialized { get; set; }
+
+    public void OnInitialize()
     {
-        base.OnInitialize();
         if(persistant) return;
         LoadData();
     }
-    public override void OnReset()
+    public void OnReset()
     {
         if(persistant) return;
-        base.OnReset();
         _launched = true;
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
         _realCooldownPeriod = cooldownPeriod;
-        _hitPoints = hpMax;
         // Vfx
         explodeParticles.Stop();
         smokeParticles.Stop();
@@ -171,15 +166,10 @@ public class LaserBeamLauncher : ShieldAttractingObject, Harmable, IPersistant
         if(laserPoint) Gizmos.DrawLine(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay);    
     }
     #endif
-    float Harmable.HitPoints
-    {
-        get => _hitPoints;
-        set => _hitPoints = value;
-    }
-
+    
     public void Die()
     {
-        if(!harmable) return;
+        if(!_harmableBehavior) return;
         // Stop laser
         _realCooldownPeriod = Mathf.Infinity;
         _launched = false;

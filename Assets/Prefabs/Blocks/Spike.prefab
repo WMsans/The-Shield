@@ -146,21 +146,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dec3432e14779694a9d6f943803537ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 1
-  knockback: {x: 0, y: 0}
   harmingColliders: []
-  tagsToAffect: []
-  contactFilter:
-    useTriggers: 0
-    useLayerMask: 0
-    useDepth: 0
-    useOutsideDepth: 0
-    useNormalAngle: 0
-    useOutsideNormalAngle: 0
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 0
-    minDepth: 0
-    maxDepth: 0
-    minNormalAngle: 0
-    maxNormalAngle: 0
+  tagsToAffect:
+  - tag: Player
+    damage: 1
+    knockback: {x: 0, y: 0}
+  - tag: Enemy
+    damage: Infinity
+    knockback: {x: 0, y: 0}

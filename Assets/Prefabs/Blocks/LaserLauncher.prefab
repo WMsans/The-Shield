@@ -10008,6 +10008,7 @@ GameObject:
   - component: {fileID: 9199244862159559573}
   - component: {fileID: 6965100691218423932}
   - component: {fileID: 2423763905237733628}
+  - component: {fileID: 6674607097456364174}
   m_Layer: 0
   m_Name: LaserLauncher
   m_TagString: EnemyBlock
@@ -10218,8 +10219,6 @@ MonoBehaviour:
   laserBeamRadius: 0.2
   launchPeriod: 2
   cooldownPeriod: 2
-  harmable: 1
-  hpMax: 8
   persistant: 0
   attractDis: 5
   damage: 1
@@ -10271,3 +10270,41 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &6674607097456364174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7782022132822291423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c55be6b70260148b82ac2a50b57681, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHitPoints: 8
+  id: 
+  persistant: 0
+  attractDistance: 5
+  destroyOnDeath: 0
+  onDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6965100691218423932}
+        m_TargetAssemblyTypeName: LaserBeamLauncher, Assembly-CSharp
+        m_MethodName: Die
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onHarm:
+    m_PersistentCalls:
+      m_Calls: []
+  onHeal:
+    m_PersistentCalls:
+      m_Calls: []

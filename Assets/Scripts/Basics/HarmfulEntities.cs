@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class HarmEntities : MonoBehaviour
+public class HarmfulEntities : MonoBehaviour
 {
     [Serializable]
     struct HarmableTag
@@ -34,11 +34,12 @@ public class HarmEntities : MonoBehaviour
             collider1.OverlapCollider(new ContactFilter2D(), results);
             foreach (var other in results)
             {
+                if(other.gameObject == gameObject) continue;
                 var otherTag = other.gameObject.tag;
+                if(!tagsToAffect.Exists(x => x.tag == otherTag)) continue;
                 var harmInfo = tagsToAffect.Find(x => x.tag == otherTag);
-                if(harmInfo.tag == "") continue;
                 var damage = harmInfo.damage;
-                var knockBack = harmInfo.knockback * (other.transform.position - transform.position).normalized;
+                var knockBack = harmInfo.knockback * ((Vector2)(other.transform.position - transform.position)).normalized;
                 other.GetComponent<Harmable>()?.Harm(damage, knockBack);
             }
         }

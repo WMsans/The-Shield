@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(DamageFlash))]
-public class PlayerController : MonoBehaviour, Harmable
+public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     #region Movements
@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour, Harmable
         {Enums.PlayerState.Respawn, new PlayerRespawnState()}, 
     };
     #endregion
+    public Harmable playerHarmable;
     public bool Invincible { get; set; }
     private float _crashTimer;
     [FormerlySerializedAs("_damageFlash")] public DamageFlash damageFlash;
@@ -66,7 +67,8 @@ public class PlayerController : MonoBehaviour, Harmable
         Col = GetComponent<CapsuleCollider2D>();
         Spr = GetComponent<SpriteRenderer>();
         Invincible = false;
-        damageFlash = GetComponent<DamageFlash>();
+        if(damageFlash == null)
+            damageFlash = GetComponent<DamageFlash>();
         _crashTimer = 0f;
     }
 
@@ -278,20 +280,15 @@ public class PlayerController : MonoBehaviour, Harmable
         }
     }
 #endif
-    float Harmable.HitPoints
-    {
-        get => PlayerStatsManager.Instance.PlayerHealth;
-        set => PlayerStatsManager.Instance.PlayerHealth = value;
-    }
-
-    public void Harm(float damage)
-    {
-        Harm(damage, new());
-    }
     public void Harm(float damage, Vector2 knockback)
     {
         if (Invincible) return;
         _states[CurrentState].HarmState(this, damage, knockback);
+    }
+
+    public void Harm(Vector3 p)
+    {
+        this.Harm(p.x, new(p.y, p.z));
     }
 
     public void ReturnToSpawn()
@@ -302,6 +299,7 @@ public class PlayerController : MonoBehaviour, Harmable
     public IEnumerator InvincibleTimer(float invincibilityTime)
     {
         Invincible = true;
+        playerHarmable.SetInvincible(true, invincibilityTime);
         yield return new WaitForSeconds(invincibilityTime);
         Invincible = false;
     }

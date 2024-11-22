@@ -76,6 +76,8 @@ GameObject:
   - component: {fileID: 4392015822394790047}
   - component: {fileID: 5190040323061489835}
   - component: {fileID: 7935721590690901825}
+  - component: {fileID: 2062141811556325988}
+  - component: {fileID: 8914396620569596825}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -123,7 +125,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: cca49e7348facc14c8ca08caa9448415, type: 2}
+  - {fileID: 2100000, guid: c82ed65dfd838ec469f38f4b7442e2c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -229,9 +231,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7f806bfa43658d4ea6529129894a291, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pressingHor: 0
-  _pressingVert: 0
-  _pressingJump: 0
+  pressingHor: 0
+  pressingVert: 0
+  pressingJump: 0
   stats: {fileID: 11400000, guid: 2f7587faf8307124f947fdad61f1212b, type: 2}
   grabPoint: {fileID: 7415452485275484977}
   grabBodyPoint: {fileID: 3722561190428346209}
@@ -242,7 +244,9 @@ MonoBehaviour:
   anchorPointPrefab: {fileID: 6852015385444264817, guid: 04d0b4e133586c5459ac317d5759308c, type: 3}
   anchorPointBehaviour: {fileID: 0}
   crashPoint: {fileID: 1884766426152209799}
-  crashSize: {x: 0.4, y: 0.9}
+  crashSize: {x: 0.3, y: 0.7}
+  playerHarmable: {fileID: 2062141811556325988}
+  damageFlash: {fileID: 7935721590690901825}
 --- !u!114 &7935721590690901825
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,6 +262,60 @@ MonoBehaviour:
   flashColor: {r: 4, g: 4, b: 4, a: 0}
   flashDuration: 0.25
   lerpType: 1
+--- !u!114 &2062141811556325988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816864154691055965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c55be6b70260148b82ac2a50b57681, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHitPoints: Infinity
+  id: 
+  persistant: 0
+  attractDistance: -1
+  destroyOnDeath: 0
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onHarm:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5190040323061489835}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Harm
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onHeal:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &8914396620569596825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4816864154691055965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentShaderType: 0
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
 --- !u!1 &5169807724185337258
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,7 +372,7 @@ Transform:
   m_GameObject: {fileID: 5221810689803969352}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.898, y: -0.553, z: 0}
+  m_LocalPosition: {x: 1.728, y: -0.553, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

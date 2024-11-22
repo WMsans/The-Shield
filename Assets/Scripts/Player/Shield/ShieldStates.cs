@@ -216,6 +216,7 @@ public class ShieldFlyingState : ShieldBaseState
             var t = i.collider;
             if(!t) continue;
             if(i.distance > _stats.MaxSpeed * Time.fixedDeltaTime) continue; 
+            if(t.isTrigger) continue;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
@@ -233,8 +234,9 @@ public class ShieldFlyingState : ShieldBaseState
                 if (harmables.Count > 0)
                 {
                     foreach (var h in harmables)
-                        h.Harm(_statsManager.PlayerAttack, (i.point - (Vector2)t.transform.position).normalized);
-                    break;
+                    {
+                        h.Harm(_statsManager.PlayerDamage, (i.point - (Vector2)t.transform.position).normalized);
+                    }
                 }
             }
             if (_chanceOfChangingDir <= 1)
@@ -262,6 +264,7 @@ public class ShieldFlyingState : ShieldBaseState
         foreach (var t in cols)
         {
             if(!t) continue;
+            if(t.isTrigger) continue;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
@@ -278,7 +281,7 @@ public class ShieldFlyingState : ShieldBaseState
                 if (harmables.Count > 0)
                 {
                     foreach (var h in harmables)
-                        h.Harm(_statsManager.PlayerAttack, (ShieldPos - (Vector2)t.transform.position).normalized);
+                        h.Harm(_statsManager.PlayerDamage, (ShieldPos - (Vector2)t.transform.position).normalized);
                     break;
                 }
             }
@@ -369,12 +372,6 @@ public class ShieldFlyingState : ShieldBaseState
                 var shieldAttractingObject = t;
                 if(_collidedFlags.Contains(shieldAttractingObject.Col)) continue;
                 Vector2 tarPoint = t.transform.position;
-                // Check if this thing is SUPER close to the shield
-                /*if (Vector2.Distance(t.transform.position, ShieldPosition) < _stats.MinTargetDistance)
-                {
-                    Debug.Log(t.transform.position);
-                    return t.transform.position;
-                }*/
                 // Check if this thing is reachable
                 var ray = Physics2D.Raycast(ShieldPosition, (tarPoint - ShieldPosition).normalized, _maxTargetDistance, _groundLayer | _targetLayer);
                 if (ray.collider == null || ray.transform != shieldAttractingObject.transform || ray.distance > shieldAttractingObject.AttractDistance) continue;

@@ -22,7 +22,7 @@ public class CriticalBlock : MonoBehaviour
     {
         if (other.CompareTag("Player") && _player.CurrentState != Enums.PlayerState.Respawn)
         {
-            _player.Harm(damage);
+            _player.playerHarmable.Harm(damage);
             _player.ReturnToSpawn();
         }
     }

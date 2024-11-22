@@ -21,6 +21,10 @@ public class ShieldAttractingObject : MonoBehaviour, IResetable
         Col = GetComponent<Collider2D>();
     }
 
+    protected virtual void Start()
+    {
+        OnReset();
+    }
     bool IResetable.Initialized
     {
         get => _initialized;

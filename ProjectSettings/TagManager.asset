@@ -9,6 +9,7 @@ TagManager:
   - OneWayPlatform
   - Trigger
   - EnemyBlock
+  - Enemy
   layers:
   - Default
   - TransparentFX
