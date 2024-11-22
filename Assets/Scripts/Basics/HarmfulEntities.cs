@@ -40,8 +40,21 @@ public class HarmfulEntities : MonoBehaviour
                 var harmInfo = tagsToAffect.Find(x => x.tag == otherTag);
                 var damage = harmInfo.damage;
                 var knockBack = harmInfo.knockback * ((Vector2)(other.transform.position - transform.position)).normalized;
-                other.GetComponent<Harmable>()?.Harm(damage, knockBack);
+                var otherHarmable = other.GetComponent<Harmable>();
+                if (otherHarmable)
+                {
+                    if (otherHarmable.Shielded)
+                    {
+                        HitShielded(knockBack * new Vector2(-1, -1));
+                    }else
+                        otherHarmable.Harm(damage, knockBack);
+                }
             }
         }
+    }
+
+    public void HitShielded(Vector2 knockback)
+    {
+        throw new System.NotImplementedException();
     }
 }

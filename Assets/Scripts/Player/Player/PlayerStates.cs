@@ -426,6 +426,7 @@ public class PlayerDefenseState : PlayerBaseState
         _col = player.GetComponent<CapsuleCollider2D>();
         _statsManager = PlayerStatsManager.Instance;
         _shieldCoolDownTimer = 0f;
+        player.playerHarmable.Shielded = true;
     }
 
     public override void UpdateState(PlayerController player)
@@ -505,6 +506,11 @@ public class PlayerDefenseState : PlayerBaseState
         {
             player.SwitchState(Enums.PlayerState.Normal);
         }
+    }
+
+    public override void ExitState(PlayerController player)
+    {
+        player.playerHarmable.Shielded = false;
     }
 }
 

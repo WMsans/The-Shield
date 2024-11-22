@@ -16,6 +16,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     public UnityEvent<float> onHeal;
     public float HitPoints { get; private set; }
     public bool Invincible { get; private set; }
+    public bool Shielded { get; set; }
     public bool IsAlive => HitPoints > 0;
     public float HitPointsNormalized => HitPoints / maxHitPoints;
     private Rigidbody2D _rb;
@@ -55,7 +56,6 @@ public class Harmable : ShieldAttractingObject, IPersistant
         if(destroyOnDeath)
             Destroy(gameObject);
     }
-
     public void SetInvincible(bool value, float duration)
     {
         Invincible = value;
