@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer),typeof(Harmable))]
+[RequireComponent(typeof(LineRenderer))]
 public class LaserBeamLauncher : MonoBehaviour, IPersistant
 {
     [Header("Laser Beam Properties")]
@@ -24,7 +24,7 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
     private float _launchTimer = 0f;
     LineRenderer _laserBeamRenderer;
     private PlayerController _player;
-    private string _id;
+    [SerializeField] private string _id;
     private float _realCooldownPeriod;
     private Harmable _harmableBehavior;
 
@@ -55,9 +55,12 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
 
     void HandleVfx()
     {
-        if (_harmableBehavior.HitPointsNormalized < .5f && !smokeParticles.isPlaying)
+        if(_harmableBehavior)
         {
-            smokeParticles.Play();
+            if (_harmableBehavior.HitPointsNormalized <= .5f && !smokeParticles.isPlaying)
+            {
+                smokeParticles.Play();
+            }
         }
     }
     void ShootLaser()
@@ -147,6 +150,9 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
         _forceRespawnTimer = 0f;
         _launchTimer = 0f;
         _realCooldownPeriod = cooldownPeriod;
+        var cols = GetComponentsInChildren<Collider2D>();
+        foreach (var col in cols) col.enabled = true;
+        Debug.Log(cols.Length);
         // Vfx
         explodeParticles.Stop();
         smokeParticles.Stop();
@@ -169,11 +175,11 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
     
     public void Die()
     {
-        if(!_harmableBehavior) return;
         // Stop laser
         _realCooldownPeriod = Mathf.Infinity;
         _launched = false;
-        GetComponent<Collider2D>().enabled = false;
+        var cols = GetComponentsInChildren<Collider2D>();
+        foreach (var col in cols) col.enabled = false;
         // Vfx
         explodeParticles.Play();
         smokeParticles.Play();

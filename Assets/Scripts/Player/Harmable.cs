@@ -54,7 +54,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
         SaveData();
         onDeath?.Invoke();
         if(destroyOnDeath)
-            Destroy(gameObject);
+            gameObject.SetActive(false);
     }
     public void SetInvincible(bool value, float duration)
     {
@@ -70,6 +70,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     public override void OnReset()
     {
         base.OnReset();
+        HitPoints = maxHitPoints;
         LoadData();
     }
 
@@ -92,6 +93,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     }
     public void LoadData()
     {
+        if (!persistant) return;
         if (!ES3.Load(id + "_IsAlive", true))
         {
             Destroy(gameObject);

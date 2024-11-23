@@ -48,7 +48,7 @@ public class ShieldHoldState : ShieldBaseState
         {
             // Check if melee attack is available
             var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
-            if (ray.collider != null)
+            if (ray.collider && !ray.collider.isTrigger)
             {
                 // Melee attack
                 shield.SwitchState(Enums.ShieldState.Melee);
@@ -213,8 +213,8 @@ public class ShieldFlyingState : ShieldBaseState
         var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, _rb.velocity.normalized, _maxSpeed, _stats.GroundLayer | _stats.TargetLayer);
         foreach (var i in ray)
         {
+            if(!i) continue;
             var t = i.collider;
-            if(!t) continue;
             if(i.distance > _stats.MaxSpeed * Time.fixedDeltaTime) continue; 
             if(t.isTrigger) continue;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
@@ -231,11 +231,11 @@ public class ShieldFlyingState : ShieldBaseState
             else
             {
                 var harmables = t.GetComponents<Harmable>().ToList();
-                if (harmables.Count > 0)
+                if(harmables.Count > 0)
                 {
                     foreach (var h in harmables)
                     {
-                        h.Harm(_statsManager.PlayerDamage, (i.point - (Vector2)t.transform.position).normalized);
+                        h.Harm(_statsManager.PlayerDamage /*, (i.point - (Vector2)t.transform.position).normalized*/);
                     }
                 }
             }
