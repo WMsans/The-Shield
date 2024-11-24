@@ -54,7 +54,23 @@ public class Harmable : ShieldAttractingObject, IPersistant
         SaveData();
         onDeath?.Invoke();
         if(destroyOnDeath)
-            gameObject.SetActive(false);
+            Activate(false);
+    }
+    private void Activate(bool value)
+    {
+        // Get all colliders and renderer of the object
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+
+        // Disable all colliders and renderers
+        foreach (Collider2D c in colliders)
+        {
+            c.enabled = value;
+        }
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = value;
+        }
     }
     public void SetInvincible(bool value, float duration)
     {
@@ -71,6 +87,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     {
         base.OnReset();
         HitPoints = maxHitPoints;
+        Activate(true);
         LoadData();
     }
 

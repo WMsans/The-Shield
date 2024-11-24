@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 public class HarmfulEntities : MonoBehaviour
@@ -16,6 +17,8 @@ public class HarmfulEntities : MonoBehaviour
     [Tooltip("List of colliders that can harm the player. Leave empty to affect all colliders")]
     [SerializeField] private List<Collider2D> harmingColliders;
     [SerializeField] private List<HarmableTag> tagsToAffect;
+    [SerializeField] private UnityEvent<Vector2> onShielded;
+    [SerializeField] private UnityEvent<Harmable> onHarmingOther;
 
     private void Start()
     {
@@ -47,14 +50,17 @@ public class HarmfulEntities : MonoBehaviour
                     {
                         HitShielded(knockBack * new Vector2(-1, -1));
                     }else
+                    {
                         otherHarmable.Harm(damage, knockBack);
+                        onHarmingOther.Invoke(otherHarmable);
+                    }
                 }
             }
         }
     }
-
     public void HitShielded(Vector2 knockback)
     {
-        throw new System.NotImplementedException();
+        onShielded.Invoke(knockback);
     }
+    
 }

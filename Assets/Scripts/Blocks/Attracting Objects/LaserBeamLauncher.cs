@@ -152,7 +152,6 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
         _realCooldownPeriod = cooldownPeriod;
         var cols = GetComponentsInChildren<Collider2D>();
         foreach (var col in cols) col.enabled = true;
-        Debug.Log(cols.Length);
         // Vfx
         explodeParticles.Stop();
         smokeParticles.Stop();
