@@ -46,18 +46,8 @@ public class ShieldHoldState : ShieldBaseState
         _coolDownTimer = Mathf.Max(0f, _coolDownTimer - Time.deltaTime);
         if (shield.FireDownTimer > 0f && _coolDownTimer <= 0f)
         {
-            // Check if melee attack is available
-            var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
-            if (ray.collider && !ray.collider.isTrigger)
-            {
-                // Melee attack
-                shield.SwitchState(Enums.ShieldState.Melee);
-            }
-            else
-            {
-                // Throw Shield: go to fly state
-                shield.SwitchState(Enums.ShieldState.Flying);
-            }
+            // Fly or melee attack depending on can melee attack
+            shield.SwitchState(CanMeleeAttack() ? Enums.ShieldState.Melee : Enums.ShieldState.Flying);
             shield.FireDownTimer = 0;
         }
         else if (shield.DefenseDownTimer > 0f)
@@ -66,9 +56,15 @@ public class ShieldHoldState : ShieldBaseState
             shield.SwitchState(Enums.ShieldState.Defense);
         }
     }
+
+    private bool CanMeleeAttack()
+    {
+        var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
+        return ray.collider && !ray.collider.isTrigger;
+    }
     public override void FixedUpdateState(ShieldController shield)
     {
-        _rd.velocity = Vector2.zero;    
+        _rd.velocity = Vector2.zero;
     }
 
     public override void LateUpdateState(ShieldController shield)
@@ -107,6 +103,7 @@ public class ShieldFlyingState : ShieldBaseState
     private Collider2D _nowGroundCollision;
     private bool _outOfRangeFlag;
     private bool _holdingAttack;
+    private bool _clickingAttack;
     public override void EnterState(ShieldController shield)
     {
         InitializeVariables(shield);
@@ -199,7 +196,18 @@ public class ShieldFlyingState : ShieldBaseState
         {
             shield.SwitchState(Enums.ShieldState.Hold);
         }
-        else CheckForChangeDirection(shield); // Check for collision
+        else if (shield.FireDownTimer > 0f)
+        {
+            // Return if clicking attack
+            Debug.Log("Clicking attack");
+            shield.SwitchState(Enums.ShieldState.Returning);
+            shield.FireDownTimer = 0f;
+            return;
+        }
+        else
+        {
+            CheckForChangeDirection(shield);// Check for collision
+        } 
         if (Vector2.Distance(ShieldPos, PlayerPos) > _stats.HandRange) _outOfRangeFlag = true;
         if (Vector2.Distance(ShieldPos, PlayerPos) >= _stats.MaxTargetDistance)
         {

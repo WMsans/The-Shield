@@ -13,6 +13,7 @@ public class HarmfulEntities : MonoBehaviour
         public string tag;
         public float damage;
         public Vector2 knockback;
+        public float ShakeAmount => damage * 0.03f;
     }
     [Tooltip("List of colliders that can harm the player. Leave empty to affect all colliders")]
     [SerializeField] private List<Collider2D> harmingColliders;
@@ -48,7 +49,7 @@ public class HarmfulEntities : MonoBehaviour
                 {
                     if (otherHarmable.Shielded)
                     {
-                        HitShielded(knockBack * new Vector2(-1, -1));
+                        HitShielded(knockBack * new Vector2(-1, -1), harmInfo.ShakeAmount );
                     }else
                     {
                         otherHarmable.Harm(damage, knockBack);
@@ -58,9 +59,15 @@ public class HarmfulEntities : MonoBehaviour
             }
         }
     }
-    public void HitShielded(Vector2 knockback)
+    public void HitShielded(Vector2 knockback, float shakeAmount)
     {
         onShielded.Invoke(knockback);
+        // Screen shake
+        ShakeCamera(shakeAmount);
     }
-    
+
+    private void ShakeCamera(float amount)
+    {
+        CameraShake.Instance?.ShakeCamera(amount);
+    }
 }
