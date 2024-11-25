@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]public AnchorPoint anchorPointBehaviour;
     public Transform crashPoint;
     public Vector2 crashSize;
+    public Transform shieldPoint;
     public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Vector2 RespawnPoint { get; set; }
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
     };
     #endregion
     public Harmable playerHarmable;
+    public ShieldModel shieldModel;
     public bool Invincible { get; set; }
     private float _crashTimer;
     [FormerlySerializedAs("_damageFlash")] public DamageFlash damageFlash;
@@ -65,7 +67,7 @@ public class PlayerController : MonoBehaviour
         }
         Rb = GetComponent<Rigidbody2D>();
         Col = GetComponent<CapsuleCollider2D>();
-        Spr = GetComponent<SpriteRenderer>();
+        Spr = GetComponentInChildren<SpriteRenderer>();
         Invincible = false;
         if(damageFlash == null)
             damageFlash = GetComponent<DamageFlash>();
@@ -89,6 +91,11 @@ public class PlayerController : MonoBehaviour
         GatherInput();
         _states[CurrentState].UpdateState(this);
         
+        HandleTimer();
+        
+    }
+    private void HandleTimer()
+    {
         _shieldPushTimer -= Time.deltaTime;
         if(_shieldPushTimer <= 0) ShieldPushed = false;
         if (!ShieldPushed) _shieldPushTimer = 0f;
@@ -96,7 +103,6 @@ public class PlayerController : MonoBehaviour
         _bouncedTimer -= Time.deltaTime;
         if(!Bounced) _bouncedTimer = 0f;
     }
-
     void GatherInput()
     {
         pressingHor = Input.GetAxisRaw("Horizontal");

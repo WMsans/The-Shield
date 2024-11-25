@@ -25,11 +25,6 @@ public class ShieldAttractingObject : MonoBehaviour, IResetable
     {
         OnReset();
     }
-    bool IResetable.Initialized
-    {
-        get => _initialized;
-        set => _initialized = value;
-    }
 
     public virtual void OnInitialize()
     {

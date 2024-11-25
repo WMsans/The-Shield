@@ -427,12 +427,22 @@ public class PlayerDefenseState : PlayerBaseState
         _statsManager = PlayerStatsManager.Instance;
         _shieldCoolDownTimer = 0f;
         player.playerHarmable.Shielded = true;
+        player.shieldModel.OnDefence = true;
     }
 
     public override void UpdateState(PlayerController player)
     {
         GatherInput();
         HandleTimer();
+        HandleShielded(player);
+    }
+    private void HandleShielded(PlayerController player)
+    {
+        if (player.shieldModel == null) return;
+        if (player.shieldModel.IsDead)
+        {
+            player.SwitchState(Enums.PlayerState.Normal);
+        }
     }
     private void GatherInput()
     {
@@ -511,6 +521,7 @@ public class PlayerDefenseState : PlayerBaseState
     public override void ExitState(PlayerController player)
     {
         player.playerHarmable.Shielded = false;
+        player.shieldModel.OnDefence = false;
     }
 }
 

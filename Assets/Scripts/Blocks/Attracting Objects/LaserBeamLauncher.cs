@@ -184,12 +184,6 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
         smokeParticles.Play();
     }
 
-    string IPersistant.Id
-    {
-        get => _id;
-        set => _id = value;
-    }
-
     public void SaveData()
     {
         if(!persistant || _id.Length < 1 || !ES3.FileExists()) return;

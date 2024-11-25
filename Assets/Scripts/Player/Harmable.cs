@@ -11,6 +11,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     [SerializeField] private bool persistant;
     [SerializeField] private float attractDistance;
     [SerializeField] private bool destroyOnDeath;
+    [SerializeField] private ShieldModel shieldModel;
     public UnityEvent onDeath;
     public UnityEvent<Vector3> onHarm;
     public UnityEvent<float> onHeal;
@@ -41,6 +42,11 @@ public class Harmable : ShieldAttractingObject, IPersistant
         {
             Die();
         }
+    }
+
+    public void OnShielded(float damage)
+    {
+        shieldModel?.TakeDamage(damage);
     }
     public void Heal() => Heal(1f);
     public void Heal(float amount)
@@ -89,12 +95,6 @@ public class Harmable : ShieldAttractingObject, IPersistant
         HitPoints = maxHitPoints;
         Activate(true);
         LoadData();
-    }
-
-    string IPersistant.Id
-    {
-        get => id;
-        set => id = value;
     }
 
     public void SaveData()

@@ -49,7 +49,7 @@ public class HarmfulEntities : MonoBehaviour
                 {
                     if (otherHarmable.Shielded)
                     {
-                        HitShielded(knockBack * new Vector2(-1, -1), harmInfo.ShakeAmount );
+                        HitShielded(damage,knockBack * new Vector2(-1, -1), otherHarmable);
                     }else
                     {
                         otherHarmable.Harm(damage, knockBack);
@@ -59,11 +59,12 @@ public class HarmfulEntities : MonoBehaviour
             }
         }
     }
-    public void HitShielded(Vector2 knockback, float shakeAmount)
+    private void HitShielded(float damage, Vector2 knockback, Harmable other)
     {
         onShielded.Invoke(knockback);
+        other.OnShielded(damage);
         // Screen shake
-        ShakeCamera(shakeAmount);
+        ShakeCamera(tagsToAffect.Find(x => other.gameObject.CompareTag(x.tag)).ShakeAmount);
     }
 
     private void ShakeCamera(float amount)

@@ -246,6 +246,7 @@ MonoBehaviour:
   crashPoint: {fileID: 1884766426152209799}
   crashSize: {x: 0.3, y: 0.7}
   playerHarmable: {fileID: 2062141811556325988}
+  shieldModel: {fileID: 0}
   damageFlash: {fileID: 7935721590690901825}
 --- !u!114 &7935721590690901825
 MonoBehaviour:
@@ -259,7 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c6adcfdc095cb74b99b8701a758503b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flashColor: {r: 4, g: 4, b: 4, a: 0}
+  flashColor: {r: 1, g: 0, b: 0, a: 0}
   flashDuration: 0.25
   lerpType: 1
 --- !u!114 &2062141811556325988
@@ -279,6 +280,7 @@ MonoBehaviour:
   persistant: 0
   attractDistance: -1
   destroyOnDeath: 0
+  shieldModel: {fileID: 0}
   onDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -312,7 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentShaderType: 0
+  currentShaderType: 3
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0

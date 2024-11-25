@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using AllIn1SpriteShader;
-[RequireComponent(typeof(AllIn1Shader))]
+
 public class DamageFlash : MonoBehaviour
 {
     private static readonly int FlashAmount = Shader.PropertyToID("_HitEffectBlend");
     private static readonly int Alpha = Shader.PropertyToID("_GhostBlend");
+    [SerializeField] Color flashColor = Color.white;
     [SerializeField] float flashDuration = 0.25f;
     [SerializeField] BetterLerp.LerpType lerpType = BetterLerp.LerpType.Linear;
     private List<SpriteRenderer> _spr;
@@ -76,6 +77,7 @@ public class DamageFlash : MonoBehaviour
         foreach (var t in _flashMat)
         {
             t.SetFloat(FlashAmount, amount);
+            t.SetColor("_HitEffectColor", flashColor);
         }
     }
 

@@ -26,7 +26,15 @@ public class PlayerStatsManager : MonoBehaviour
 
     void Update()
     {
-        playerHPtext.text = "HP: " + PlayerHealth;
-        shieldHPtext.text = "Shield HP: " + ShieldHealth;
+        playerHPtext.text = "HP: " + PlayerHealth.ToString("0.00");
+        shieldHPtext.text = "Shield HP: " + ShieldHealth.ToString("0.00");
+    }
+    public void ChangeShieldHp(float amount)
+    {
+        ShieldHealth = amount;
+    }
+    public void ChangePlayerHp(float amount)
+    {
+        PlayerHealth = amount;
     }
 }

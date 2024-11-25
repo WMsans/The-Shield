@@ -10,6 +10,7 @@ public class ShieldController : MonoBehaviour
     public Rigidbody2D Rb { get; private set; }
     public bool DisCoolDown {get; set; }
     public ShieldStats stats;
+    public ShieldModel shieldModel;
     public Enums.ShieldState CurrentState { get; private set; }
 
     private readonly Dictionary<Enums.ShieldState, ShieldBaseState> _states = new()

@@ -49,12 +49,6 @@ public class TriggerZone : MonoBehaviour, IPersistant
         _alreadyEntered = false;
     }
 
-    string IPersistant.Id
-    {
-        get => _id;
-        set => _id = value;
-    }
-
     public void SaveData()
     {
         if(!persistant) return;

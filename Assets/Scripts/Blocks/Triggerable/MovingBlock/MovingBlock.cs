@@ -277,12 +277,6 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
         SwitchState(Enums.MovingBlockState.Returning);
     }
 
-    bool IResetable.Initialized
-    {
-        get => _initialized;
-        set => _initialized = value;
-    }
-
     public void OnInitialize()
     {
         LoadData();
@@ -301,13 +295,7 @@ public class MovingBlock : MonoBehaviour, ITriggerable, IPersistant
     {
         OnInitialize();
     }
-
-
-    string IPersistant.Id
-    {
-        get => _id;
-        set => _id = value;
-    }
+    
     public void SaveData()
     {
         if (!persistant || _id.Length < 1) return;

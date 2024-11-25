@@ -8,11 +8,11 @@ using Object = UnityEngine.Object;
 
 public abstract class ShieldBaseState
 {
-    public abstract void EnterState(ShieldController shield);
-    public abstract void UpdateState(ShieldController shield);
-    public abstract void FixedUpdateState(ShieldController shield);
-    public abstract void LateUpdateState(ShieldController shield);
-    public abstract void ExitState(ShieldController shield);
+    public virtual void EnterState(ShieldController shield){}
+    public virtual void UpdateState(ShieldController shield){}
+    public virtual void FixedUpdateState(ShieldController shield){}
+    public virtual void LateUpdateState(ShieldController shield){}
+    public virtual void ExitState(ShieldController shield){}
 }
 
 public class ShieldHoldState : ShieldBaseState
@@ -20,7 +20,7 @@ public class ShieldHoldState : ShieldBaseState
     private ShieldStats _stats;
     #region movements
     private Rigidbody2D _rd;
-    private Rigidbody2D _playerRd;
+    private PlayerController _player;
     private float _coolDownTimer;
     #endregion
     
@@ -32,7 +32,7 @@ public class ShieldHoldState : ShieldBaseState
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rb;
-        _playerRd = PlayerController.Instance.Rb;
+        _player = PlayerController.Instance;
         _cam = CameraFollower.Instance.Cam;
         _stats = shield.stats;
         if(!shield.DisCoolDown)
@@ -44,6 +44,12 @@ public class ShieldHoldState : ShieldBaseState
     public override void UpdateState(ShieldController shield)
     {
         _coolDownTimer = Mathf.Max(0f, _coolDownTimer - Time.deltaTime);
+        HandleInput(shield);
+    }
+
+    private void HandleInput(ShieldController shield)
+    {
+        if(shield.shieldModel && shield.shieldModel.IsDead) return;
         if (shield.FireDownTimer > 0f && _coolDownTimer <= 0f)
         {
             // Fly or melee attack depending on can melee attack
@@ -56,7 +62,6 @@ public class ShieldHoldState : ShieldBaseState
             shield.SwitchState(Enums.ShieldState.Defense);
         }
     }
-
     private bool CanMeleeAttack()
     {
         var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
@@ -69,11 +74,7 @@ public class ShieldHoldState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _playerRd.position, 120f * Time.deltaTime);
-    }
-    public override void ExitState(ShieldController shield)
-    {
-        
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.shieldPoint.position, 120f * Time.deltaTime);
     }
 }
 public class ShieldFlyingState : ShieldBaseState
