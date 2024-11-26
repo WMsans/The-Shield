@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
         {Enums.PlayerState.Respawn, new PlayerRespawnState()}, 
     };
     #endregion
+    #region Animation
+    public Animator playerAnimator;
+    #endregion
     public Harmable playerHarmable;
     public ShieldModel shieldModel;
     public bool Invincible { get; set; }
@@ -92,6 +95,21 @@ public class PlayerController : MonoBehaviour
         _states[CurrentState].UpdateState(this);
         
         HandleTimer();
+        HandleAnimation();
+    }
+
+    private void HandleAnimation()
+    {
+        playerAnimator.SetFloat("xVelocity", Mathf.Abs(Rb.velocity.x));
+        playerAnimator.SetFloat("yVelocity", Rb.velocity.y);
+        if (CurrentState == Enums.PlayerState.Crouch || CurrentState == Enums.PlayerState.Defense)
+        {
+            playerAnimator.SetBool("Crouch", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Crouch", false);
+        }
         
     }
     private void HandleTimer()

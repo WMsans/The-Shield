@@ -94,7 +94,6 @@ public class ShieldFlyingState : ShieldBaseState
         get => _playerRd.position;
         set => _playerRd.position = value;
     }
-
     private Vector2 ShieldPos
     {
         get => _rb.position;
@@ -105,14 +104,22 @@ public class ShieldFlyingState : ShieldBaseState
     private bool _outOfRangeFlag;
     private bool _holdingAttack;
     private bool _clickingAttack;
+    private float _returnTimer;
     public override void EnterState(ShieldController shield)
     {
         InitializeVariables(shield);
         InitializeMovement(shield);
         InitializePosition(shield);
         InitializePlayerMovement(shield);
+        InitializeTimer(shield);
+        
+        _player.playerAnimator.SetTrigger("Attack");
     }
 
+    void InitializeTimer(ShieldController shield)
+    {
+        _returnTimer = 1f;
+    }
     void InitializePosition(ShieldController shield)
     {
         var nowForward = 0.1f;
@@ -184,8 +191,13 @@ public class ShieldFlyingState : ShieldBaseState
     public override void UpdateState(ShieldController shield)
     {
         GatherInput();
+        HandleTimer();
     }
 
+    void HandleTimer()
+    {
+        _returnTimer -= Time.deltaTime;
+    }
     void GatherInput()
     {
         _holdingAttack = Input.GetButton("Fire1");
@@ -193,14 +205,14 @@ public class ShieldFlyingState : ShieldBaseState
     public override void FixedUpdateState(ShieldController shield)
     {
         // If out range, return
-        if (_outOfRangeFlag && Vector2.Distance(ShieldPos, PlayerPos) < _stats.HandRange)
+        var dir = (_currentTarget - ShieldPos).normalized;
+        if (_outOfRangeFlag && Vector2.Distance(ShieldPos, _player.shieldPoint.position) < _stats.HandRange)
         {
             shield.SwitchState(Enums.ShieldState.Hold);
         }
-        else if (shield.FireDownTimer > 0f)
+        else if (shield.FireDownTimer > 0f /*&& Mathf.Abs(Mathf.DeltaAngle(Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg, 270f)) >= 30f*/ && _returnTimer <= 0f)
         {
-            // Return if clicking attack
-            Debug.Log("Clicking attack");
+            // Return if clicking attack and shield is not flying downward
             shield.SwitchState(Enums.ShieldState.Returning);
             shield.FireDownTimer = 0f;
             return;
@@ -573,7 +585,7 @@ public class ShieldMeleeState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.shieldPoint.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)
@@ -618,7 +630,7 @@ public class ShieldDefenseState : ShieldBaseState
 
     public override void LateUpdateState(ShieldController shield)
     {
-        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.Rb.position, 120f * Time.deltaTime);
+        shield.transform.position = Vector2.MoveTowards(shield.transform.position, _player.shieldPoint.position, 120f * Time.deltaTime);
     }
 
     public override void ExitState(ShieldController shield)

@@ -25,6 +25,7 @@ public struct FrameInput
 }
 public class PlayerNormalState : PlayerBaseState
 {
+    private static readonly int Jump = Animator.StringToHash("Jump");
     private PlayerStats _stats;
     private Rigidbody2D _rb;
     private CapsuleCollider2D _col;
@@ -34,7 +35,8 @@ public class PlayerNormalState : PlayerBaseState
     private float _ledgeCheckRadius;
     private float _timeGrabDownWasPressed;
     private Vector2 FrameInput => _frameInput.Move;
-    Vector2 _preBouncedVelocity;
+    private Vector2 _preBouncedVelocity;
+    private Animator _animator;
 
     private float _time;
 
@@ -54,16 +56,20 @@ public class PlayerNormalState : PlayerBaseState
         _ledgeCheckRadius = player.grabRadius;
 
         _endedJumpEarly = false;
+
+        _animator = player.playerAnimator;
     }
     public override void UpdateState(PlayerController player)
     {
         _time += Time.deltaTime;
         
         GatherInput();
-        if (!_frameInput.JumpDown && FrameInput.y < 0)
-        {
-            player.SwitchState(Enums.PlayerState.Crouch);
-        }
+        HandleAnimation();
+    }
+
+    private void HandleAnimation()
+    {
+        _animator.SetBool("Landed", _grounded);
     }
     private void GatherInput()
     {
@@ -84,7 +90,8 @@ public class PlayerNormalState : PlayerBaseState
         {
             _jumpToConsume = true;
             _timeJumpWasPressed = _time;
-        }else if (Input.GetButtonDown("Ledge"))
+        }
+        else if (Input.GetButtonDown("Ledge"))
         {
             _timeGrabDownWasPressed = _time;
         }
@@ -214,37 +221,36 @@ public class PlayerNormalState : PlayerBaseState
     {
         ResetJumpBuff();
         _rb.velocity = new(_rb.velocity.x, _stats.JumpPower);
+        _animator.SetTrigger(Jump);
     }
 
     private void CheckForBounced(PlayerController player)
     {
-        if (player.Bounced)
+        if (!player.Bounced) return;
+        if (_grounded && !player.ShieldPushed) player.StopBounceTimer();
+        /*else if (_rb.velocity.x < .5f)
         {
-            if (_grounded && !player.ShieldPushed) player.StopBounceTimer();
-            /*else if (_rb.velocity.x < .5f)
+            // Buff on y
+            var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.right * Mathf.Sign(_rb.velocity.x), _stats.WallerDistance, _stats.GroundLayer);
+            if (!ray)
             {
-                // Buff on y
-                var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.right * Mathf.Sign(_rb.velocity.x), _stats.WallerDistance, _stats.GroundLayer);
-                if (!ray)
-                {
-                    // Able to buff
-                    _rb.position += Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
-                    _rb.velocity += Vector2.right * _preBouncedVelocity;
-                }else player.StopBounceTimer();
-            }
-            else if (_rb.velocity.y < .5f)
-            {
-                // Buff on x
-                var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.up * Mathf.Sign(_rb.velocity.y), _stats.GrounderDistance, _stats.GroundLayer);
-                if (!ray)
-                {
-                    // Able to buff
-                    _rb.position += Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
-                    _rb.velocity += Vector2.up * _preBouncedVelocity;
-                }else player.StopBounceTimer();
-            }
-            else _preBouncedVelocity = _rb.velocity;*/
+                // Able to buff
+                _rb.position += Vector2.up * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
+                _rb.velocity += Vector2.right * _preBouncedVelocity;
+            }else player.StopBounceTimer();
         }
+        else if (_rb.velocity.y < .5f)
+        {
+            // Buff on x
+            var ray = Physics2D.CapsuleCast((Vector2)_col.bounds.center + Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime), _col.size, _col.direction, 0, Vector2.up * Mathf.Sign(_rb.velocity.y), _stats.GrounderDistance, _stats.GroundLayer);
+            if (!ray)
+            {
+                // Able to buff
+                _rb.position += Vector2.right * _rb.velocity * (_stats.BouncedBuffTime * Time.fixedDeltaTime);
+                _rb.velocity += Vector2.up * _preBouncedVelocity;
+            }else player.StopBounceTimer();
+        }
+        else _preBouncedVelocity = _rb.velocity;*/
     }
     #endregion
 
@@ -285,7 +291,7 @@ public class PlayerNormalState : PlayerBaseState
         // Player rotation
         if (FrameInput.x != 0 && player.FacingRight ^ (_rb.velocity.x > 0))
         {
-            player.FlipPlayer(_rb.velocity.x > 0);
+            player.FlipPlayer(FrameInput.x > 0);
         }
     }
     
@@ -418,6 +424,7 @@ public class PlayerDefenseState : PlayerBaseState
     private bool _jumpHeld;
     PlayerStatsManager _statsManager;
     private float _shieldCoolDownTimer;
+    private Animator _animator;
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Player Defense!");
@@ -428,6 +435,9 @@ public class PlayerDefenseState : PlayerBaseState
         _shieldCoolDownTimer = 0f;
         player.playerHarmable.Shielded = true;
         player.shieldModel.OnDefence = true;
+        _animator = player.playerAnimator;
+        
+        _animator.SetBool("Crouch", true);
     }
 
     public override void UpdateState(PlayerController player)
@@ -522,6 +532,8 @@ public class PlayerDefenseState : PlayerBaseState
     {
         player.playerHarmable.Shielded = false;
         player.shieldModel.OnDefence = false;
+        
+        _animator.SetBool("Crouch", false);
     }
 }
 
@@ -536,6 +548,7 @@ public class PlayerLedgeState : PlayerBaseState
     private Vector2 LedgePoint => _playerLedgePoint + (Vector2)_anchorPoint.transform.position - _initAnchorPoint;
     Vector2 _initAnchorPoint;
     PlayerStats _stats;
+    private Animator _animator;
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Climb Edge");
@@ -547,6 +560,9 @@ public class PlayerLedgeState : PlayerBaseState
         _anchorPoint = player.anchorPointBehaviour;
         _playerLedgePoint = player.LedgePoint;
         _initAnchorPoint = _anchorPoint.transform.position;
+        _animator = player.playerAnimator;
+        
+        _animator.SetTrigger("Hang");
     }
 
     public override void UpdateState(PlayerController player)
@@ -622,6 +638,7 @@ public class PlayerLedgeState : PlayerBaseState
                 }
             }
             player.SwitchState(Enums.PlayerState.Normal);
+            _animator.SetTrigger("Jump");
         }
     }
     void ReleaseGrip(PlayerController player)
@@ -630,6 +647,7 @@ public class PlayerLedgeState : PlayerBaseState
         {
             //player.AnchorPush();
             player.SwitchState(Enums.PlayerState.Normal);
+            _animator.SetTrigger("Jump");
         }
     }
     public override void ExitState(PlayerController player)
