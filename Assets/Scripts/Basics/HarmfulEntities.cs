@@ -65,10 +65,16 @@ public class HarmfulEntities : MonoBehaviour
         other.OnShielded(damage);
         // Screen shake
         ShakeCamera(tagsToAffect.Find(x => other.gameObject.CompareTag(x.tag)).ShakeAmount);
+        FrozeFrame(.05f);
     }
 
     private void ShakeCamera(float amount)
     {
         CameraShake.Instance?.ShakeCamera(amount);
+    }
+
+    private void FrozeFrame(float duration)
+    {
+        TimeManager.Instance?.FrozenTime(duration, .05f, .1f);
     }
 }

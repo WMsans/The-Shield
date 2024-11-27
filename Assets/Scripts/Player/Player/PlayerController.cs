@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector]public float pressingVert;
     [HideInInspector]public bool pressingJump;
     public PlayerStats stats;
+    public ShieldStats shieldStats;
     public bool Bounced => _bouncedTimer > 0f;
     public bool FacingRight { get; private set; } = true;
     private float _bouncedTimer;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     public Transform crashPoint;
     public Vector2 crashSize;
     public Transform shieldPoint;
+    public Collider2D meleeDetector;
     public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Vector2 RespawnPoint { get; set; }
@@ -314,7 +316,7 @@ public class PlayerController : MonoBehaviour
     {
         this.Harm(p.x, new(p.y, p.z));
     }
-
+    
     public void ReturnToSpawn()
     {
         SwitchState(Enums.PlayerState.Respawn);
@@ -331,6 +333,22 @@ public class PlayerController : MonoBehaviour
     public IEnumerator InvincibleTimer()
     {
         return InvincibleTimer(stats.InvincibilityTime);
+    }
+
+    public void MeleeAttack()
+    {
+        var col = new List<Collider2D>();
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(shieldStats.TargetLayer);
+        meleeDetector.OverlapCollider(filter, col);
+        foreach (var c in col)
+        {
+            var harmable = c.GetComponent<Harmable>();
+            if (!harmable) continue;
+            var knockback = ((Vector2)(c.transform.position - this.transform.position)).normalized * 8f;
+            harmable.Harm(PlayerStatsManager.Instance.PlayerDamage, knockback);
+            Rb.velocity = knockback * (Mathf.Approximately(pressingHor, 0f) ? -3f : -stats.PlayerMeleeKnockback);
+        }
     }
 }
 

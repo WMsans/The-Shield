@@ -64,8 +64,7 @@ public class ShieldHoldState : ShieldBaseState
     }
     private bool CanMeleeAttack()
     {
-        var ray = Physics2D.Raycast(_rd.position, (MousePos - _rd.position).normalized, _stats.DetectionRayLength, _stats.TargetLayer);
-        return ray.collider && !ray.collider.isTrigger;
+        return _player.meleeDetector.IsTouchingLayers(_stats.TargetLayer);
     }
     public override void FixedUpdateState(ShieldController shield)
     {
@@ -105,6 +104,7 @@ public class ShieldFlyingState : ShieldBaseState
     private bool _holdingAttack;
     private bool _clickingAttack;
     private float _returnTimer;
+    private float _holdTimer;
     public override void EnterState(ShieldController shield)
     {
         InitializeVariables(shield);
@@ -114,11 +114,13 @@ public class ShieldFlyingState : ShieldBaseState
         InitializeTimer(shield);
         
         _player.playerAnimator.SetTrigger("Attack");
+        TimeManager.Instance?.FrozenTime(.01f, .05f, .2f);
     }
 
     void InitializeTimer(ShieldController shield)
     {
         _returnTimer = 1f;
+        _holdTimer = .1f;
     }
     void InitializePosition(ShieldController shield)
     {
@@ -197,6 +199,7 @@ public class ShieldFlyingState : ShieldBaseState
     void HandleTimer()
     {
         _returnTimer -= Time.deltaTime;
+        _holdTimer -= Time.deltaTime;
     }
     void GatherInput()
     {
@@ -221,7 +224,7 @@ public class ShieldFlyingState : ShieldBaseState
         {
             CheckForChangeDirection(shield);// Check for collision
         } 
-        if (Vector2.Distance(ShieldPos, PlayerPos) > _stats.HandRange) _outOfRangeFlag = true;
+        if (Vector2.Distance(ShieldPos, PlayerPos) > _stats.HandRange && _holdTimer < 0f) _outOfRangeFlag = true;
         if (Vector2.Distance(ShieldPos, PlayerPos) >= _stats.MaxTargetDistance)
         {
             shield.SwitchState(Enums.ShieldState.Returning);
@@ -560,12 +563,14 @@ public class ShieldReturnState : ShieldBaseState
 
 public class ShieldMeleeState : ShieldBaseState
 {
+    private static readonly int Melee = Animator.StringToHash("Melee");
     PlayerController _player;
     private float _debugTimer;
     public override void EnterState(ShieldController shield)
     {
         Debug.Log("Shield Melee Attack!!!");
         _player = PlayerController.Instance;
+        _player.playerAnimator.SetTrigger(Melee);
     }
 
     public override void UpdateState(ShieldController shield)
@@ -590,7 +595,7 @@ public class ShieldMeleeState : ShieldBaseState
 
     public override void ExitState(ShieldController shield)
     {
-        
+        _player.playerAnimator.SetBool(Melee, false);
     }
 }
 

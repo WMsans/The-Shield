@@ -86,4 +86,6 @@ public class PlayerStats : ScriptableObject
     
     [Header("Others")] [Tooltip("The time of invincible time after getting hit")]
     public float InvincibilityTime = 2f;
+    
+    public float PlayerMeleeKnockback = 500f;
 }

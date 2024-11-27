@@ -1981,7 +1981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c55be6b70260148b82ac2a50b57681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHitPoints: 12
+  maxHitPoints: Infinity
   id: 
   persistant: 0
   attractDistance: 999

@@ -539,6 +539,7 @@ public class PlayerDefenseState : PlayerBaseState
 
 public class PlayerLedgeState : PlayerBaseState
 {
+    private static readonly int Hang = Animator.StringToHash("Hang");
     private Rigidbody2D _rb;
     private float _jumpTimer;
     private float _releaseTimer;
@@ -552,7 +553,11 @@ public class PlayerLedgeState : PlayerBaseState
     public override void EnterState(PlayerController player)
     {
         Debug.Log("Climb Edge");
-        
+        InitializeVariables(player);
+    }
+
+    void InitializeVariables(PlayerController player)
+    {
         _rb = player.Rb;
         _stats = player.stats;
         _jumpTimer = 0f;
@@ -562,9 +567,8 @@ public class PlayerLedgeState : PlayerBaseState
         _initAnchorPoint = _anchorPoint.transform.position;
         _animator = player.playerAnimator;
         
-        _animator.SetTrigger("Hang");
+        _animator.SetTrigger(Hang);
     }
-
     public override void UpdateState(PlayerController player)
     {
         GatherInput();
