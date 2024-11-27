@@ -44,4 +44,4 @@ MonoBehaviour:
   JumpBuffer: 0.2
   LedgeBuffer: 0.2
   InvincibilityTime: 2
-  PlayerMeleeKnockback: 2
+  PlayerMeleeKnockback: 4

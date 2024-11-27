@@ -72,7 +72,12 @@ public class ShieldHoldState : ShieldBaseState
     }
     private bool CanMeleeAttack()
     {
-        return _player.meleeDetector.IsTouchingLayers(_stats.TargetLayer) && !_parkourMode;
+        if(_parkourMode) return false;
+        var cols = new List<Collider2D>();
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(_stats.TargetLayer);
+        _player.meleeDetector.OverlapCollider(filter, cols);
+        return cols.Any(x => x.isTrigger == false);
     }
     public override void FixedUpdateState(ShieldController shield)
     {

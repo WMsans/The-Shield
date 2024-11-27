@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 crashSize;
     public Transform shieldPoint;
     public Collider2D meleeDetector;
+    public Collider2D meleeDamageDetector;
     public Vector2 AnchorPointVelocity => anchorPointBehaviour.AnchorPointVelocity;
     public Vector2 LedgePoint { get; set; }
     public Vector2 RespawnPoint { get; set; }
@@ -340,9 +341,10 @@ public class PlayerController : MonoBehaviour
         var col = new List<Collider2D>();
         var filter = new ContactFilter2D();
         filter.SetLayerMask(shieldStats.TargetLayer);
-        meleeDetector.OverlapCollider(filter, col);
+        meleeDamageDetector.OverlapCollider(filter, col);
         foreach (var c in col)
         {
+            if(c.isTrigger) continue;
             var harmable = c.GetComponent<Harmable>();
             if (!harmable) continue;
             var knockback = ((Vector2)(c.transform.position - this.transform.position)).normalized * 8f;
