@@ -40,6 +40,7 @@ public class TimeManager : MonoBehaviour
         Time.timeScale = frScale;
         StartCoroutine(FrozenTimeCoroutine(duration, frScale, toScale));
     }
+    public void FrozenTime(float duration, float frScale) => FrozenTime(duration, frScale, frScale);
     private IEnumerator FrozenTimeCoroutine(float duration, float frScale, float toScale)
     {
         var timer = duration;

@@ -127,8 +127,9 @@ public class ShieldFlyingState : ShieldBaseState
         InitializeTimer(shield);
         
         _player.playerAnimator.SetTrigger("Attack");
-        TimeManager.Instance?.FrozenTime(.01f, .05f, .2f);
+        //TimeManager.Instance?.FrozenTime(.008f, .05f);
         shield.shieldTrail.Active = true;
+        
     }
 
     void InitializeTimer(ShieldController shield)
@@ -249,6 +250,7 @@ public class ShieldFlyingState : ShieldBaseState
     void CheckForChangeDirection(ShieldController shield)
     {
         var ray = Physics2D.CircleCastAll(ShieldPos, _stats.DetectionRadius, _rb.velocity.normalized, _maxSpeed, _stats.GroundLayer | _stats.TargetLayer);
+        var shakeFlag = false;
         foreach (var i in ray)
         {
             if(!i) continue;
@@ -271,6 +273,7 @@ public class ShieldFlyingState : ShieldBaseState
                 var harmables = t.GetComponents<Harmable>().ToList();
                 if(harmables.Count > 0)
                 {
+                    shakeFlag = true;
                     foreach (var h in harmables)
                     {
                         h.Harm(_statsManager.PlayerDamage /*, (i.point - (Vector2)t.transform.position).normalized*/);
@@ -295,8 +298,6 @@ public class ShieldFlyingState : ShieldBaseState
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
             }
-            //ShieldPos += i.distance * (i.point - ShieldPos).normalized;
-            return;
         }
         var cols = Physics2D.OverlapCircleAll(ShieldPos, _stats.DetectionRadius, _stats.GroundLayer | _stats.TargetLayer);
         foreach (var t in cols)
@@ -318,9 +319,9 @@ public class ShieldFlyingState : ShieldBaseState
                 var harmables = t.GetComponents<Harmable>().ToList();
                 if (harmables.Count > 0)
                 {
+                    shakeFlag = true;
                     foreach (var h in harmables)
                         h.Harm(_statsManager.PlayerDamage, (ShieldPos - (Vector2)t.transform.position).normalized);
-                    break;
                 }
             }
             if (_chanceOfChangingDir <= 1)
@@ -341,7 +342,13 @@ public class ShieldFlyingState : ShieldBaseState
                     shield.SwitchState(Enums.ShieldState.Returning);
                 }
             }
-            return;
+        }
+
+        if (shakeFlag)
+        {
+            TimeManager.Instance?.FrozenTime(.023f, .05f);
+            CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
+            Debug.Log("Shake");
         }
     }
     bool ChangeDirection()

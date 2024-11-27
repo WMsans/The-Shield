@@ -8,6 +8,7 @@ public class TriggerZone : MonoBehaviour, IPersistant
     private bool _alreadyEntered;
  
     [SerializeField] string collisionTag;
+    [SerializeField] bool acceptTriggerCollider;
     [SerializeField] UnityEvent onTriggerEnter;
     [SerializeField] UnityEvent onTriggerExit;
     [SerializeField]private string _id;
@@ -15,6 +16,8 @@ public class TriggerZone : MonoBehaviour, IPersistant
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (_alreadyEntered)
+            return;
+        if(!acceptTriggerCollider && collision.isTrigger)
             return;
  
         if (!string.IsNullOrEmpty(collisionTag) && !collision.CompareTag(collisionTag))
@@ -29,6 +32,9 @@ public class TriggerZone : MonoBehaviour, IPersistant
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (_alreadyEntered)
+            return;
+        
+        if(!acceptTriggerCollider && collision.isTrigger)
             return;
         
         if (!string.IsNullOrEmpty(collisionTag) && !collision.CompareTag(collisionTag))
