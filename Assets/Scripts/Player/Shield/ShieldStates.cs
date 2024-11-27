@@ -27,9 +27,17 @@ public class ShieldHoldState : ShieldBaseState
     #region input
     private Camera _cam;
     private Vector2 MousePos => _cam.ScreenToWorldPoint(Input.mousePosition);
+    private bool _parkourMode;
     
     #endregion
     public override void EnterState(ShieldController shield)
+    {
+        InitializeVariables(shield);
+        
+        shield.shieldTrail.Active = false;
+    }
+
+    void InitializeVariables(ShieldController shield)
     {
         _rd = shield.Rb;
         _player = PlayerController.Instance;
@@ -40,7 +48,6 @@ public class ShieldHoldState : ShieldBaseState
         else
             shield.DisCoolDown = false;
     }
-
     public override void UpdateState(ShieldController shield)
     {
         _coolDownTimer = Mathf.Max(0f, _coolDownTimer - Time.deltaTime);
@@ -50,6 +57,7 @@ public class ShieldHoldState : ShieldBaseState
     private void HandleInput(ShieldController shield)
     {
         if(shield.shieldModel && shield.shieldModel.IsDead) return;
+        _parkourMode = Input.GetButton("ParkourMode");
         if (shield.FireDownTimer > 0f && _coolDownTimer <= 0f)
         {
             // Fly or melee attack depending on can melee attack
@@ -64,7 +72,7 @@ public class ShieldHoldState : ShieldBaseState
     }
     private bool CanMeleeAttack()
     {
-        return _player.meleeDetector.IsTouchingLayers(_stats.TargetLayer);
+        return _player.meleeDetector.IsTouchingLayers(_stats.TargetLayer) && !_parkourMode;
     }
     public override void FixedUpdateState(ShieldController shield)
     {
@@ -115,6 +123,7 @@ public class ShieldFlyingState : ShieldBaseState
         
         _player.playerAnimator.SetTrigger("Attack");
         TimeManager.Instance?.FrozenTime(.01f, .05f, .2f);
+        shield.shieldTrail.Active = true;
     }
 
     void InitializeTimer(ShieldController shield)
@@ -506,12 +515,6 @@ public class ShieldFlyingState : ShieldBaseState
             return true;
         }
     }
-    
-    
-    public override void LateUpdateState(ShieldController shield)
-    {
-        
-    }
     public override void ExitState(ShieldController shield)
     {
         
@@ -522,13 +525,17 @@ public class ShieldReturnState : ShieldBaseState
     Rigidbody2D _rd;
     Rigidbody2D _playerRd;
     ShieldStats _stats;
+    Collider2D _col;
+    List<Collider2D> _colList;
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rb;
         _playerRd = PlayerController.Instance.Rb;
         _stats = shield.stats;
 
-        shield.GetComponent<Collider2D>().enabled = false;
+        _col = shield.GetComponent<Collider2D>();
+        _col.enabled = false;
+        _colList = new();
     }
     void ChangeDirection(Vector2 target)
     {
@@ -538,22 +545,27 @@ public class ShieldReturnState : ShieldBaseState
         _rd.velocity = dir * _stats.MaxSpeed;
         _rd.rotation = rot;
     }
-    public override void UpdateState(ShieldController shield)
-    {
-        
-    }
-
     public override void FixedUpdateState(ShieldController shield)
     {
         ChangeDirection(_playerRd.position);
+        CheckForTarget(shield);
         if (Vector2.Distance(_rd.position, _playerRd.position) < _stats.HandRange)
         {
             shield.SwitchState(Enums.ShieldState.Hold);
         }
     }
-    public override void LateUpdateState(ShieldController shield)
+
+    private void CheckForTarget(ShieldController shield)
     {
-        
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(_stats.TargetLayer);
+        var cols = Physics2D.OverlapCircleAll(_rd.position, _stats.DetectionRadius, _stats.TargetLayer);
+        foreach (var c in cols)
+        {
+            if(_colList.Contains(c)) continue;
+            c.GetComponent<Harmable>()?.Harm(PlayerStatsManager.Instance.PlayerDamage);
+            _colList.Add(c);
+        }
     }
     public override void ExitState(ShieldController shield)
     {
@@ -571,6 +583,7 @@ public class ShieldMeleeState : ShieldBaseState
         Debug.Log("Shield Melee Attack!!!");
         _player = PlayerController.Instance;
         _player.playerAnimator.SetTrigger(Melee);
+        shield.shieldTrail.Active = false;
     }
 
     public override void UpdateState(ShieldController shield)
@@ -611,6 +624,7 @@ public class ShieldDefenseState : ShieldBaseState
             _player.SwitchState(Enums.PlayerState.Defense);
 
         _rb = shield.Rb;
+        shield.shieldTrail.Active = true;
     }
 
     public override void UpdateState(ShieldController shield)

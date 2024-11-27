@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TrailsFX;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
@@ -11,6 +12,7 @@ public class ShieldController : MonoBehaviour
     public bool DisCoolDown {get; set; }
     public ShieldStats stats;
     public ShieldModel shieldModel;
+    public TrailEffect shieldTrail;
     public Enums.ShieldState CurrentState { get; private set; }
 
     private readonly Dictionary<Enums.ShieldState, ShieldBaseState> _states = new()
