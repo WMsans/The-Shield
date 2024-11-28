@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(ParticleSystem))]
-public class ParticleLight : MonoBehaviour
+public class GenerateParticleLight : MonoBehaviour
 {
-    public GameObject m_Prefab;
+    [SerializeField] private GameObject m_Prefab;
+    [SerializeField] private float intensity;
 
     private ParticleSystem m_ParticleSystem;
     private List<GameObject> m_Instances = new List<GameObject>();
@@ -24,7 +26,7 @@ public class ParticleLight : MonoBehaviour
             m_Instances.Add(Instantiate(m_Prefab, m_ParticleSystem.transform));
 
         var worldSpace = m_ParticleSystem.main.simulationSpace;
-        for (int i = 0; i < m_Instances.Count; i++)
+        for (var i = 0; i < m_Instances.Count; i++)
         {
             if (i < count)
             {
@@ -37,6 +39,8 @@ public class ParticleLight : MonoBehaviour
                     m_Instances[i].transform.parent = m_ParticleSystem.main.customSimulationSpace;
                     m_Instances[i].transform.localPosition = m_Particles[i].position;
                 }
+
+                m_Instances[i].GetComponent<Light2D>().intensity = m_Particles[i].GetCurrentColor(m_ParticleSystem).a / 255f * intensity;
                 m_Instances[i].SetActive(true);
             }
             else
