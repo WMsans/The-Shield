@@ -346,9 +346,8 @@ public class ShieldFlyingState : ShieldBaseState
 
         if (shakeFlag)
         {
-            TimeManager.Instance?.FrozenTime(.023f, .05f);
+            TimeManager.Instance?.FrozenTime(.024f, .05f);
             CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
-            Debug.Log("Shake");
         }
     }
     bool ChangeDirection()
