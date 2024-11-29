@@ -12,7 +12,8 @@ public abstract class BetterLerp
         Cube, 
         Quart,
         Smoothstep,
-        Smootherstep
+        Smootherstep, 
+        Pong
     }
 
     public static float Lerp(float start, float end, float t, LerpType type, bool invert = false)
@@ -45,6 +46,8 @@ public abstract class BetterLerp
                 return t * t * (3f - 2f * t);
             case LerpType.Smootherstep:
                 return t * t * t * (t * (6f * t - 15f) + 10f);
+            case LerpType.Pong:
+                return 1 - (t - 0.5f) * (t - 0.5f) * 4f;
             default:
                 return t; // Default to linear interpolation
         }
@@ -68,6 +71,8 @@ public abstract class BetterLerp
                 return 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * t) / 3f);
             case LerpType.Smootherstep:
                 return 0.5f - Mathf.Sin(Mathf.Asin(1f - 2f * t) / 3f); // Fallback to Smoothstep interpolation
+            case LerpType.Pong:
+                return Mathf.Sqrt((1-t)/4) * (t > .5f ? -1 : 1) + .5f;
             default:
                 return t;
         }

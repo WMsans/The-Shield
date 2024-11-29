@@ -4762,6 +4762,9 @@ MonoBehaviour:
   attractDistance: 999
   destroyOnDeath: 1
   shieldModel: {fileID: 0}
+  frozeTime: 0
+  frozenScale: 0.01
+  frozenTimeDuration: 0.05
   onDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -5188,6 +5191,9 @@ MonoBehaviour:
   attractDistance: 999
   destroyOnDeath: 1
   shieldModel: {fileID: 0}
+  frozeTime: 0
+  frozenScale: 0.01
+  frozenTimeDuration: 0.05
   onDeath:
     m_PersistentCalls:
       m_Calls: []

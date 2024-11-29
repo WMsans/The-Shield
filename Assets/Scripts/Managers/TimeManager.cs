@@ -19,14 +19,14 @@ public class TimeManager : MonoBehaviour
         }
     }
 
-    public void SetTimeScale(float scale, float duration)
+    public void SetTimeScale(float duration, float scale)
     {
         StartCoroutine(SetTimeScaleCoroutine(duration, scale));
     }
     private IEnumerator SetTimeScaleCoroutine(float duration, float scale)
     {
         Time.timeScale = scale;
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSecondsRealtime(duration);
         ResetTimeScale();
     }
 
@@ -35,21 +35,5 @@ public class TimeManager : MonoBehaviour
         Time.timeScale = _defaultTimeScale;
     }
 
-    public void FrozenTime(float duration, float frScale, float toScale)
-    {
-        Time.timeScale = frScale;
-        StartCoroutine(FrozenTimeCoroutine(duration, frScale, toScale));
-    }
-    public void FrozenTime(float duration, float frScale) => FrozenTime(duration, frScale, frScale);
-    private IEnumerator FrozenTimeCoroutine(float duration, float frScale, float toScale)
-    {
-        var timer = duration;
-        while (timer > 0f)
-        {
-            Time.timeScale = BetterLerp.Lerp(frScale, toScale, timer / duration, BetterLerp.LerpType.Sin);
-            timer -= Time.deltaTime;
-            yield return null;
-        }
-        ResetTimeScale();
-    }
+    public void FrozenTime(float duration, float scale) => SetTimeScale(duration, scale);
 }

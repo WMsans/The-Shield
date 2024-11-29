@@ -111,7 +111,7 @@ public class ShieldFlyingState : ShieldBaseState
         get => _rb.position;
         set => _rb.position = value;
     }
-    private List<Collider2D> _collidedFlags; 
+    private List<Collider2D> _colList; 
     private Collider2D _nowGroundCollision;
     private bool _outOfRangeFlag;
     private bool _holdingAttack;
@@ -160,7 +160,7 @@ public class ShieldFlyingState : ShieldBaseState
         _chanceOfChangingDir = _stats.MaxChangeDirection;
         _maxSpeed = _stats.MaxSpeed;
         _nowGroundCollision = null;
-        _collidedFlags = new();
+        _colList = new();
         _outOfRangeFlag = false;
         _holdingAttack = false;
     }
@@ -260,7 +260,7 @@ public class ShieldFlyingState : ShieldBaseState
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
-            _collidedFlags.Add(t);
+            _colList.Add(t);
             // Check for returning
             _chanceOfChangingDir--;
             // Check for tags
@@ -307,7 +307,7 @@ public class ShieldFlyingState : ShieldBaseState
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
-            _collidedFlags.Add(t);
+            _colList.Add(t);
             // Check for returning
             _chanceOfChangingDir--;
             if (t.CompareTag("Trigger"))
@@ -346,14 +346,14 @@ public class ShieldFlyingState : ShieldBaseState
 
         if (shakeFlag)
         {
-            TimeManager.Instance?.FrozenTime(.024f, .05f);
+            TimeManager.Instance?.FrozenTime(.1f, 0f);
             CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
         }
     }
     bool ChangeDirection()
     {
         // Determine the target
-        var nextPoint = new ChangePointFinder(_rb, _playerRd, _collidedFlags, _stats).NextPosition();
+        var nextPoint = new ChangePointFinder(_rb, _playerRd, _colList, _stats).NextPosition();
         if (Vector2.Distance(ShieldPos, nextPoint) > _stats.MaxTargetDistance)
             return false;
         // Change to that direction
@@ -526,10 +526,6 @@ public class ShieldFlyingState : ShieldBaseState
             return true;
         }
     }
-    public override void ExitState(ShieldController shield)
-    {
-        
-    }
 }
 public class ShieldReturnState : ShieldBaseState
 {
@@ -571,11 +567,22 @@ public class ShieldReturnState : ShieldBaseState
         var filter = new ContactFilter2D();
         filter.SetLayerMask(_stats.TargetLayer);
         var cols = Physics2D.OverlapCircleAll(_rd.position, _stats.DetectionRadius, _stats.TargetLayer);
+        var shakeFlag = false;
         foreach (var c in cols)
         {
             if(_colList.Contains(c)) continue;
-            c.GetComponent<Harmable>()?.Harm(PlayerStatsManager.Instance.PlayerDamage);
+            var harmable = c.GetComponent<Harmable>();
+            if(harmable != null)
+            {
+                harmable.Harm(PlayerStatsManager.Instance.PlayerDamage);
+                //shakeFlag = true;
+            }
             _colList.Add(c);
+        }
+        if (shakeFlag)
+        {
+            TimeManager.Instance?.FrozenTime(.1f, 0f);
+            CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
         }
     }
     public override void ExitState(ShieldController shield)

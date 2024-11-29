@@ -12,6 +12,11 @@ public class Harmable : ShieldAttractingObject, IPersistant
     [SerializeField] private float attractDistance;
     [SerializeField] private bool destroyOnDeath;
     [SerializeField] private ShieldModel shieldModel;
+    [SerializeField] private bool frozeTime = false;
+    [SerializeField] private float frozenScale = 0.01f;
+    [SerializeField] private float frozenTimeDuration = 0.05f;
+    [SerializeField] private bool changeChromaticAberration;
+    [SerializeField] private bool shakeCamera;
     public UnityEvent onDeath;
     public UnityEvent<Vector3> onHarm;
     public UnityEvent<float> onHeal;
@@ -41,6 +46,21 @@ public class Harmable : ShieldAttractingObject, IPersistant
         if (HitPoints <= 0)
         {
             Die();
+        }
+        if(frozeTime)
+        {
+            TimeManager.Instance?.FrozenTime(frozenTimeDuration, frozenScale);
+        }
+
+        if (changeChromaticAberration)
+        {
+            GlobalVolumeManager.Instance?.ChangeChromaticAberration(1f, 0f, 0.3f, BetterLerp.LerpType.Sin, true);
+            RadialBlurManager.Instance?.UpdateMaterial(-0.1f, 0f, 0.3f, BetterLerp.LerpType.Sin, true);
+        }
+        
+        if (shakeCamera)
+        {
+            CameraShake.Instance?.ShakeCamera(0.1f, 0.3f);
         }
     }
 

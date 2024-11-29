@@ -75,6 +75,6 @@ public class HarmfulEntities : MonoBehaviour
 
     private void FrozeFrame(float duration)
     {
-        TimeManager.Instance?.FrozenTime(duration, .05f, .1f);
+        TimeManager.Instance?.FrozenTime(duration, 0f);
     }
 }

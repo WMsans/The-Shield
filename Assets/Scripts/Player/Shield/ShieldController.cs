@@ -36,7 +36,15 @@ public class ShieldController : MonoBehaviour
             Debug.LogError("There is more than one Shield in the scene");
             Destroy(gameObject);
         }
+        InitializeVariables();
+    }
+
+    private void InitializeVariables()
+    {
         Rb = GetComponent<Rigidbody2D>();
+        DisCoolDown = false;
+        FireDownTimer = 0f;
+        DefenseDownTimer = 0f;
     }
     private void Update()
     {

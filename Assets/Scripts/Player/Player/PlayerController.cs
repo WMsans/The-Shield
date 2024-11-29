@@ -350,8 +350,8 @@ public class PlayerController : MonoBehaviour
             var knockback = ((Vector2)(c.transform.position - this.transform.position)).normalized * 8f;
             harmable.Harm(PlayerStatsManager.Instance.PlayerDamage, knockback);
             Rb.velocity = knockback * (Mathf.Approximately(pressingHor, 0f) ? -3f : -stats.PlayerMeleeKnockback);
-            CameraShake.Instance?.ShakeCamera(0.03f, 0.3f);
-            TimeManager.Instance?.FrozenTime(.008f, .05f);
+            CameraShake.Instance?.ShakeCamera(0.05f, 0.5f);
+            TimeManager.Instance?.FrozenTime(.2f, 0f);
         }
     }
 }
