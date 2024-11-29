@@ -467,11 +467,14 @@ public class PlayerDefenseState : PlayerBaseState
     {
         CheckCollisions(player);
         HandleGravity(player);
-        
-        var decel = _grounded ? _stats.GroundDeceleration : 0f;
-        _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
+        HandleDirection(player);
     }
 
+    private void HandleDirection(PlayerController player)
+    {
+        var decel = _grounded ? _stats.AirDeceleration : 0f;
+        _rd.velocity = new (Mathf.MoveTowards(_rd.velocity.x, 0, decel * Time.fixedDeltaTime), _rd.velocity.y);
+    }
     private void CheckCollisions(PlayerController player)
     {
         Physics2D.queriesStartInColliders = false;

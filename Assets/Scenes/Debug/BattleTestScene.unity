@@ -4681,6 +4681,7 @@ MonoBehaviour:
   - tag: Player
     damage: 4
     knockback: {x: 25, y: 10}
+    stunDuration: 3
   onShielded:
     m_PersistentCalls:
       m_Calls:
@@ -4765,6 +4766,8 @@ MonoBehaviour:
   frozeTime: 0
   frozenScale: 0.01
   frozenTimeDuration: 0.05
+  changeChromaticAberration: 0
+  shakeCamera: 0
   onDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -5122,6 +5125,7 @@ MonoBehaviour:
   - tag: Player
     damage: 1
     knockback: {x: 35, y: 35}
+    stunDuration: 0
   onShielded:
     m_PersistentCalls:
       m_Calls: []
@@ -5194,6 +5198,8 @@ MonoBehaviour:
   frozeTime: 0
   frozenScale: 0.01
   frozenTimeDuration: 0.05
+  changeChromaticAberration: 0
+  shakeCamera: 0
   onDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -5692,6 +5698,7 @@ MonoBehaviour:
   - tag: Player
     damage: 3
     knockback: {x: 30, y: 10}
+    stunDuration: 0
   onShielded:
     m_PersistentCalls:
       m_Calls:

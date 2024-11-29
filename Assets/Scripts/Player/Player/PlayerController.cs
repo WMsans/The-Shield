@@ -352,6 +352,7 @@ public class PlayerController : MonoBehaviour
             Rb.velocity = knockback * (Mathf.Approximately(pressingHor, 0f) ? -3f : -stats.PlayerMeleeKnockback);
             CameraShake.Instance?.ShakeCamera(0.05f, 0.5f);
             TimeManager.Instance?.FrozenTime(.2f, 0f);
+            RadialBlurManager.Instance?.UpdateMaterial(-0.05f, 0f, 0.3f, BetterLerp.LerpType.Sin, true);
         }
     }
 }
