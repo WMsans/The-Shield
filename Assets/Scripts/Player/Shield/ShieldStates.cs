@@ -535,6 +535,7 @@ public class ShieldReturnState : ShieldBaseState
     ShieldStats _stats;
     Collider2D _col;
     List<Collider2D> _colList;
+    float _returnTimer;
     public override void EnterState(ShieldController shield)
     {
         _rd = shield.Rb;
@@ -544,6 +545,7 @@ public class ShieldReturnState : ShieldBaseState
         _col = shield.GetComponent<Collider2D>();
         _col.enabled = false;
         _colList = new();
+        _returnTimer = 0f;
     }
     void ChangeDirection(Vector2 target)
     {
@@ -552,6 +554,11 @@ public class ShieldReturnState : ShieldBaseState
         var rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         _rd.velocity = dir * _stats.MaxSpeed;
         _rd.rotation = rot;
+    }
+
+    public override void UpdateState(ShieldController shield)
+    {
+        _returnTimer += Time.deltaTime;
     }
     public override void FixedUpdateState(ShieldController shield)
     {
@@ -576,14 +583,14 @@ public class ShieldReturnState : ShieldBaseState
             if(harmable != null)
             {
                 harmable.Harm(PlayerStatsManager.Instance.PlayerDamage);
-                //shakeFlag = true;
+                shakeFlag = true;
             }
             _colList.Add(c);
         }
-        if (shakeFlag)
+        if (shakeFlag && _returnTimer > .05f)
         {
-            TimeManager.Instance?.FrozenTime(.1f, 0f);
-            CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
+            /*TimeManager.Instance?.FrozenTime(.1f, 0f);
+            CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);*/
             shield.hitEnemyAudio.PlayAudio();
         }
     }
