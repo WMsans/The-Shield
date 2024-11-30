@@ -6331,7 +6331,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -4.899663e-10, g: 5.77e-43, b: -1270.2476, a: 6.8257e-41}
+    m_ColorMin: {r: 9.1835e-41, g: 0, b: 1.4650854e-13, a: 3.3323e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -6503,8 +6503,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 00c1110bb94f0ff4abb307738560ed41, type: 3}
-  volume: 1
+  - {fileID: 8300000, guid: 941a2d71e1cd4224eba9d144f3e09a48, type: 3}
+  volume: 0.8
   soundFx: 0
   playOnAwake: 1
 --- !u!1 &781483407
@@ -7135,6 +7135,37 @@ MonoBehaviour:
   nameOverride: Particle Bound (Circle Collider 2D)
   tooltipOverride: 
   target: {fileID: 1391475449}
+--- !u!1 &1282671950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1282671951}
+  m_Layer: 3
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1282671951
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1282671950}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1056959134}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1365360010
 GameObject:
   m_ObjectHideFlags: 0
@@ -7494,7 +7525,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -4.956613e-10, g: 5.77e-43, b: -1270.2476, a: 6.8257e-41}
+    m_ColorMin: {r: 4.968941e-10, g: 4.43e-43, b: 1.4650854e-13, a: 3.3323e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -12832,7 +12863,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioMixer: {fileID: 24100000, guid: bb5e3bc303739644db8e9749f7d55400, type: 2}
   _masterVolume: 1
-  _musicVolume: 1
+  _musicVolume: 0.0001
   _soundFxVolume: 1
 --- !u!1 &1868824020
 GameObject:
@@ -13726,11 +13757,23 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: onHarm.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: onHarm.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 239997550646088617}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 239997550646088617}
     - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
@@ -13742,6 +13785,14 @@ PrefabInstance:
       value: PlayAudioWithIndex
       objectReference: {fileID: 0}
     - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayAudioWithIndex
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: onHarm.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
       value: AudioPlayer, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -13750,7 +13801,19 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: AudioPlayer, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: onHarm.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 2062141811556325988, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      propertyPath: onShield.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
@@ -13811,6 +13874,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 93944460}
+    - targetCorrespondingSourceObject: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1282671951}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4816864154691055965, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       insertIndex: -1
@@ -13838,6 +13904,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 84ea5b527d103f64fa1b32fe1af753d9, type: 3}
   - {fileID: 8300000, guid: 1ed2eda57a480ea42b301b428798a6bd, type: 3}
   - {fileID: 8300000, guid: e2b11585719d2eb42b4c271ff9d09e27, type: 3}
+  - {fileID: 8300000, guid: 082c5811210cd7846bf2568176ac8431, type: 3}
   volume: 0.7
   soundFx: 1
   playOnAwake: 0

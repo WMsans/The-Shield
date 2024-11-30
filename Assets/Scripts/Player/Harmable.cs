@@ -20,6 +20,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     public UnityEvent onDeath;
     public UnityEvent<Vector3> onHarm;
     public UnityEvent<float> onHeal;
+    public UnityEvent<float> onShield;
     public float HitPoints { get; private set; }
     public bool Invincible { get; private set; }
     public bool Shielded { get; set; }
@@ -67,6 +68,7 @@ public class Harmable : ShieldAttractingObject, IPersistant
     public void OnShielded(float damage)
     {
         shieldModel?.TakeDamage(damage);
+        onShield?.Invoke(damage);
     }
     public void Heal() => Heal(1f);
     public void Heal(float amount)
