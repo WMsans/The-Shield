@@ -6331,7 +6331,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: 9.1835e-41, g: 0, b: 1.4650854e-13, a: 3.3323e-41}
+    m_ColorMin: {r: -1.2293e-19, g: 8.7e-43, b: -1.945813e-18, a: 1.504e-42}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -7525,7 +7525,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: 4.968941e-10, g: 4.43e-43, b: 1.4650854e-13, a: 3.3323e-41}
+    m_ColorMin: {r: -1.2408371e-19, g: 8.7e-43, b: -1.945813e-18, a: 1.504e-42}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -12864,7 +12864,7 @@ MonoBehaviour:
   _audioMixer: {fileID: 24100000, guid: bb5e3bc303739644db8e9749f7d55400, type: 2}
   _masterVolume: 1
   _musicVolume: 0.0001
-  _soundFxVolume: 1
+  _soundFxVolume: 0.512
 --- !u!1 &1868824020
 GameObject:
   m_ObjectHideFlags: 0
@@ -13905,6 +13905,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1ed2eda57a480ea42b301b428798a6bd, type: 3}
   - {fileID: 8300000, guid: e2b11585719d2eb42b4c271ff9d09e27, type: 3}
   - {fileID: 8300000, guid: 082c5811210cd7846bf2568176ac8431, type: 3}
+  - {fileID: 8300000, guid: f0e5e88d34bfb1c4f9d456e783d7c596, type: 3}
+  - {fileID: 8300000, guid: 13c94dd6c12dc5b4ba50d77516d1a66e, type: 3}
   volume: 0.7
   soundFx: 1
   playOnAwake: 0
