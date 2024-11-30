@@ -256,7 +256,7 @@ public class ShieldFlyingState : ShieldBaseState
             if(!i) continue;
             var t = i.collider;
             if(i.distance > _stats.MaxSpeed * Time.fixedDeltaTime) continue; 
-            if(t.isTrigger) continue;
+            if(t.isTrigger && !t.CompareTag("Trigger")) continue;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;
@@ -303,7 +303,7 @@ public class ShieldFlyingState : ShieldBaseState
         foreach (var t in cols)
         {
             if(!t) continue;
-            if(t.isTrigger) continue;
+            if(t.isTrigger && !t.CompareTag("Trigger")) continue;
             var realGrounded = (_stats.GroundLayer & (1 << t.gameObject.layer)) != 0;
             if (_nowGroundCollision && _nowGroundCollision == t) continue;
             _nowGroundCollision = t;

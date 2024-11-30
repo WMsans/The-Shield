@@ -6331,7 +6331,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -1.2293e-19, g: 8.7e-43, b: -1.945813e-18, a: 1.504e-42}
+    m_ColorMin: {r: -4.056716e+19, g: 6.96e-43, b: -155.0751, a: 8.6352e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -7525,7 +7525,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -1.2408371e-19, g: 8.7e-43, b: -1.945813e-18, a: 1.504e-42}
+    m_ColorMin: {r: -3.995453e+19, g: 6.96e-43, b: -155.0751, a: 8.6352e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -13818,11 +13818,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.9890404
+      value: -15.5
       objectReference: {fileID: 0}
     - target: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.0803127
+      value: 18.6
       objectReference: {fileID: 0}
     - target: {fileID: 2412510535714422383, guid: 9ed8e902d54a54c4da8a4a7305a0b36c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13924,11 +13924,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4590542110432576597, guid: 2bb2500679eb2cd4d8081b2ddc667a55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.341
+      value: -15.851959
       objectReference: {fileID: 0}
     - target: {fileID: 4590542110432576597, guid: 2bb2500679eb2cd4d8081b2ddc667a55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.474
+      value: 19.206314
       objectReference: {fileID: 0}
     - target: {fileID: 4590542110432576597, guid: 2bb2500679eb2cd4d8081b2ddc667a55, type: 3}
       propertyPath: m_LocalPosition.z
