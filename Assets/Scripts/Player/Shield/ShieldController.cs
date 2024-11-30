@@ -13,6 +13,8 @@ public class ShieldController : MonoBehaviour
     public ShieldStats stats;
     public ShieldModel shieldModel;
     public TrailEffect shieldTrail;
+    public AudioPlayer hitEnemyAudio;
+    public AudioPlayer throwAudio;
     public Enums.ShieldState CurrentState { get; private set; }
 
     private readonly Dictionary<Enums.ShieldState, ShieldBaseState> _states = new()

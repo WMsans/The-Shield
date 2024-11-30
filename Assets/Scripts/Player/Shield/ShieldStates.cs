@@ -129,7 +129,7 @@ public class ShieldFlyingState : ShieldBaseState
         _player.playerAnimator.SetTrigger("Attack");
         //TimeManager.Instance?.FrozenTime(.008f, .05f);
         shield.shieldTrail.Active = true;
-        
+        shield.throwAudio.PlayAudio();
     }
 
     void InitializeTimer(ShieldController shield)
@@ -348,6 +348,7 @@ public class ShieldFlyingState : ShieldBaseState
         {
             TimeManager.Instance?.FrozenTime(.1f, 0f);
             CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
+            shield.hitEnemyAudio.PlayAudio();
         }
     }
     bool ChangeDirection()
@@ -583,6 +584,7 @@ public class ShieldReturnState : ShieldBaseState
         {
             TimeManager.Instance?.FrozenTime(.1f, 0f);
             CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);
+            shield.hitEnemyAudio.PlayAudio();
         }
     }
     public override void ExitState(ShieldController shield)
