@@ -578,7 +578,7 @@ public class ShieldReturnState : ShieldBaseState
         var shakeFlag = false;
         foreach (var c in cols)
         {
-            if(_colList.Contains(c)) continue;
+            if(_colList.Contains(c) || _returnTimer <= .05f) continue;
             var harmable = c.GetComponent<Harmable>();
             if(harmable != null)
             {
@@ -587,7 +587,7 @@ public class ShieldReturnState : ShieldBaseState
             }
             _colList.Add(c);
         }
-        if (shakeFlag && _returnTimer > .05f)
+        if (shakeFlag)
         {
             /*TimeManager.Instance?.FrozenTime(.1f, 0f);
             CameraShake.Instance?.ShakeCamera(0.02f, 0.3f);*/

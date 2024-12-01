@@ -27,9 +27,9 @@ public class DamageFlash : MonoBehaviour
         }
     }
 
-    public void Flash(float duration)
+    public void Flash(float invincibleDuration)
     {
-        StartCoroutine(Flasher(duration));
+        StartCoroutine(Flasher(invincibleDuration));
     }
     IEnumerator Flasher(float duration)
     {
