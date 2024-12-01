@@ -4756,6 +4756,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 869749781405505281, guid: 008106842891dff4695ca353639473ee, type: 3}
   m_PrefabInstance: {fileID: 1025929194306593259}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1104898448
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1104898449}
+  - component: {fileID: 1104898450}
+  m_Layer: 7
+  m_Name: OuterVision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1104898449
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104898448}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1227470543}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &1104898450
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1104898448}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 20
 --- !u!1 &1227470542
 GameObject:
   m_ObjectHideFlags: 0
@@ -4774,6 +4841,7 @@ GameObject:
   - component: {fileID: 1227470550}
   - component: {fileID: 1227470551}
   - component: {fileID: 1227470552}
+  - component: {fileID: 1227470553}
   m_Layer: 7
   m_Name: FlyEnemy
   m_TagString: Untagged
@@ -4795,6 +4863,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1493488748}
+  - {fileID: 1104898449}
   m_Father: {fileID: 204847021}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1227470544
@@ -4838,7 +4907,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 2014803707, guid: 40f10a038047a8a4cafdb451f306959d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4878,16 +4947,27 @@ MonoBehaviour:
       startIndex: 
       variableStartIndex: 
       JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(259.205872,20)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(4.44399738,140.5495)","Comment":"Main
-        Loop\n"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-4.624069,131.3526)"},"ID":2,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.UntilSuccess","NodeData":{"Offset":"(-131.896729,108.170807)"},"ID":3,"Name":"Until
-        Success","Instant":true,"Children":[{"Type":"EnemyDetectPlayer","NodeData":{"Offset":"(-1.89672852,123.170715)"},"ID":4,"Name":"Enemy
-        Detect Player","Instant":true,"Collider2Dvision":0,"LayerMaskplayerLayer":8}]}]}]}}'
+        Loop\n"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-4.624069,131.3526)"},"ID":2,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Unity.UnityAnimator.SetTrigger","NodeData":{"Offset":"(-321.6773,119.644371)"},"ID":3,"Name":"Set
+        Trigger","Instant":true,"SharedGameObjecttargetGameObject":{"Type":"BehaviorDesigner.Runtime.SharedGameObject","Name":null,"GameObjectmValue":0},"SharedStringparamaterName":{"Type":"BehaviorDesigner.Runtime.SharedString","Name":null,"StringmValue":"Idle"}},{"Type":"BehaviorDesigner.Runtime.Tasks.UntilSuccess","NodeData":{"Offset":"(-177.824173,124.352234)"},"ID":4,"Name":"Until
+        Success","Instant":true,"Children":[{"Type":"EnemyDetectPlayer","NodeData":{"Offset":"(-7.24136734,105.517273)"},"ID":5,"Name":"Enemy
+        Detect Player","Instant":true,"Collider2Dvision":1,"LayerMaskplayerLayer":8}]},{"Type":"EnemyAstarSetTargetPlayer","NodeData":{"Offset":"(24.1150856,110.617889)"},"ID":6,"Name":"Enemy
+        Astar Set Target Player","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Unity.UnityAnimator.SetTrigger","NodeData":{"Offset":"(209.550568,108.685455)"},"ID":7,"Name":"Set
+        Trigger","Instant":true,"SharedGameObjecttargetGameObject":{"Type":"BehaviorDesigner.Runtime.SharedGameObject","Name":null,"GameObjectmValue":2},"SharedStringparamaterName":{"Type":"BehaviorDesigner.Runtime.SharedString","Name":null,"StringmValue":"Walk"}},{"Type":"BehaviorDesigner.Runtime.Tasks.UntilSuccess","NodeData":{"Offset":"(347.64917,115.049591)"},"ID":8,"Name":"Until
+        Success","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Parallel","NodeData":{"Offset":"(-3.84222412,118.790833)"},"ID":9,"Name":"Parallel","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"EnemyFacePlayer","NodeData":{"Offset":"(-104.4989,115.654785)"},"ID":10,"Name":"Enemy
+        Face Player","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(91.964386,110)"},"ID":11,"Name":"Inverter","Instant":true,"Children":[{"Type":"EnemyDetectPlayer","NodeData":{"Offset":"(-4.594635,118.108154)"},"ID":12,"Name":"Enemy
+        Detect Player","Instant":true,"Collider2Dvision":3,"LayerMaskplayerLayer":8}]}]}]},{"Type":"EnemyAstarSetTarget","NodeData":{"Offset":"(500.081116,111.518822)"},"ID":13,"Name":"Enemy
+        Astar Set Target","Instant":true,"Transformtarget":4}]}]}}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
         startIndex: 
         dataPosition: 
         unityObjects:
+        - {fileID: 1227470542}
         - {fileID: 1493488749}
+        - {fileID: 1227470542}
+        - {fileID: 1104898450}
+        - {fileID: 1227470543}
         byteData: 
         byteDataArray: 
       Version: 1.7.10
@@ -4941,7 +5021,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0.5
+  m_LinearDrag: 1
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -4954,7 +5034,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &1227470548
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4991,7 +5071,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2.4, y: 2.4}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -5115,8 +5195,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1073741824
-  target: {fileID: 43240941}
+  target: {fileID: 1227470543}
   useRotation: 0
+--- !u!95 &1227470553
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227470542}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1e2a3131592f87e4bb6e6124dd329eaa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &1300251074
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5244,7 +5345,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 14.12
+  m_Radius: 10
 --- !u!1001 &1858845967
 PrefabInstance:
   m_ObjectHideFlags: 0

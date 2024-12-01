@@ -6331,7 +6331,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -4.059228e+19, g: 6.96e-43, b: -155.0751, a: 8.6352e-41}
+    m_ColorMin: {r: -4.7426596e-10, g: 7.65e-43, b: 4.996505e-33, a: 3.3581e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
@@ -7015,6 +7015,7 @@ GameObject:
   - component: {fileID: 1058669847}
   - component: {fileID: 1058669848}
   - component: {fileID: 1058669849}
+  - component: {fileID: 1058669850}
   m_Layer: 0
   m_Name: A*Manager
   m_TagString: Untagged
@@ -7051,7 +7052,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1073741824
   data:
-    dataString: UEsDBBQAAAgIAACAn+u55O+ZxwIAAAIGAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVNtu4jAQ/RXk56UiXArdt12gdB/aoqWrPix9cOMJsTB25EuBVvz7zjgJCayEFHPm4jNnZvzFpHYFpN7YhZXi0Qhg3zuMzuxbpzE+wIFvjF7JT6h9XqXwOTnx6PObe2kQTyjMmR14K9MfeqPIuYdg0DIzdjcXG5ga5x3CGVcO0GSNp2iN0FeHHfDTH1PI8Xz6xNNdr3PCYwrag21cx8ObUe0bT+Tb7d/cTXr9QX/e7U1iWNCp4rsCBNXQRCeTpA4eRD+N5VUuZEmNUtJV3Jg/FrH2KS9cwMrQQUiOtUZC5J+D3OSe0rWDn7PMga+EsPw4kxYlK7Oyn6bUccfdtiT2wVWIBCKjMuXjf9Zuac6s2T3UtyY9usHnMt3+5seUO9+SuQ3PLmkHvedqy98VvOagn8zCmqBFKzY46M/wv7cB2pVNc0i3DV5yvQJD0ehdt7VuKhVxisUfVh6KcyG9m2GD/nHgVspE7aucZKmQO8oFFvv2CwuKg+SqGxAlkhj/wjftiasM99I6j6ZKhQol3yU2CAToFCrhu+Sgid67CZZysXnkSmoEPzVWQ4QrggVorvxxiRn99QRc2Vq8riz3nJavYlfZ6p26Colw49/rXZmWZn/utsXZdXGg69PfN2qCy83+EVz+HLySuqU2GZ5Q4KnRuhzctph12CrYjKetMA8HHyzMuOfxNqSDE9YeK4daxggdlKJhjgVERlgA/d5I35zjvSrC7MnouHgX30h/E6S4XBE25BNxO0rGt6M+JOkEukk2Gg5uB2OepKP3SSpY3CGpUW6ulqVeVZdwunRTi8Z9qZ/GzsLyIu6ssHy/kJ870+q81JlZpRZAP5cZzsWCxUvwbRFzIbHMFXgvdZxL9rVmyqRbEOtzonUUdn7wlq+bLGtWyA/jCVmzaXwL14zg80ri6H5I2NPlF8lAYetAvEgFO16QKTmx0z9QSwMEFAAACAgAAICf6yWPQlFsAAAAdwAAAAkAJABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGrVipLLSrOzM9TslIw1TPUM9NRUEovSizIKAYKGII4pZkpIHa0kkmiRYqZqaG5malRqmGyRaquYZqpibGZsXmiYbJpkkVyilIsUH1JZUGqX2JuKkRPQGJJRlpmXkpmXrqee1FmijvIaKXYWgBQSwECLQAUAAAICAAAgJ/rueTvmccCAAACBgAACwAkAAAAAAAAAAAAAAAAAAAAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwECLQAUAAAICAAAgJ/rJY9CUWwAAAB3AAAACQAkAAAAAAAAAAAAAAAUAwAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAACAAIAuAAAAMsDAAAAAA==
+    dataString: UEsDBBQAAAgIAACAn+v1m/8duQIAAPoFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFlVMlOIzEQ/ZXI5wF1AmGZ20wSwhyAiDDiMOFg7Oq0Fbfd8kISUP59ym73kiAhxbxa/N5zVX8RoWwFzGkzN4I/aA7k54CEM/kx6IL3sKNrrZbiE5qcV8FdEZJozHmmTmjEh6HM6hKcEeyXWsuQnCHolci1KWd8DRNtnUU4p9IChox2oVoh9DUgO/wZXYeSfXv6xNNtNjjgkYFyYLrUNvE8G2dZdpGy62SvmKRlBTww72qGWVOFp5ioUFXKCQqYllLYRIm4fRUlT2hlPQrCBC4oSow8Qn4BYl24wKJf/JTnFlziaOh+Kgw6VXclv3VtX0ntpmb2QaWPBCKjuuXDt+hZHc6NLu+bW2s9rhBs80z3jFrXc7cPT49pe7WlckPfJbwWoB713GiveK/WWxhN8X9nPPSVTQpgmw6vuZ6Avvr+SM1bBhGHKH63dFC1QrLzyw79a8EupY7ep54hkpDb0AsMvtsfFBTnx6YbEA0ksf6FrvuDlgJ3wliHoeRCQkPuAh8IOCgGyfizkKACvXftTehFZpFrcMO7iTYKIpwIVqCodPsFdnSnE3AS6/E6idzRsHOJXYo1q3RSEuEuP8tOQgu9bV/b4OzaONDN6d9beARb6O0D2OLJOylUz+0QeESDJ1qpenD7ZjZlS29yynplDnbOG5hSR+NtSAcnrD9WFr2MFcpLGYY5CoiMUED4ewv+FhTvlREmj1rFxTv6jfTXXvDjFSGX9IZfjYfXV+MRDNkNnA3z8eXF1cU1HbLx+w3jJO6QUGg3lYvar/RKOF2q06JwX5ov4mBuaBV3lhu6nYvPUvf9ECrXS2YA1FPdolULBm/BjwufcYE6l+CcUHEwydeKSM02wFftnavo7GznDF11XVakEh/aBWRFJvEbuCIBbncSZ/dDwDZcftQMJL4d8BchoaRVCA0P5PAfUEsDBBQAAAgIAACAn+slj0JRbAAAAHcAAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNUz1DPTUVBKL0osyCgGChiCOKWZKSB2tJJJokWKmamhuZmpUaphskWqrmGaqYmxmbF5omGyaZJFcopSLFB9SWVBql9ibipET0BiSUZaZl5KZl66nntRZoo7yGil2FoAUEsBAi0AFAAACAgAAICf6/Wb/x25AgAA+gUAAAsAJAAAAAAAAAAAAAAAAAAAAGdyYXBoMC5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsBAi0AFAAACAgAAICf6yWPQlFsAAAAdwAAAAkAJAAAAAAAAAAAAAAABgMAAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAVBLBQYAAAAAAgACALgAAAC9AwAAAAA=
     file_cachedStartup: {fileID: 0}
     cacheStartup: 0
   showNavGraphs: 1
@@ -7135,6 +7136,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 270e318789a7fc043919e8cec99f8a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1058669850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1058669846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a634230476dc478b88eceac73b1c8a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1073741824
+  updateDistance: 10
+  target: {fileID: 1056959134}
+  graphIndex: 0
 --- !u!1 &1136960998
 GameObject:
   m_ObjectHideFlags: 0
@@ -7656,7 +7673,7 @@ MonoBehaviour:
       m_ColorSpace: -1
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    m_ColorMin: {r: -4.3463607e+19, g: 6.96e-43, b: -155.0751, a: 8.6352e-41}
+    m_ColorMin: {r: -4.9988813e-10, g: 7.65e-43, b: 4.996505e-33, a: 3.3581e-41}
     m_ColorMax: {r: 1, g: 1, b: 1, a: 1}
   isBurst: 0
   minNumberOfParticles: 1000
