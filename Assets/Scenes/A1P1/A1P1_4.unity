@@ -14724,6 +14724,8 @@ MonoBehaviour:
     m_SceneName: A1P1_2
   - m_SceneAsset: {fileID: 102900000, guid: f129749e670e26845971c083d684ab0a, type: 3}
     m_SceneName: A1P1_3
+  - m_SceneAsset: {fileID: 102900000, guid: e8cb907ac650b9a40b146dc0f19771e1, type: 3}
+    m_SceneName: A1P1_5
   respawnPoint:
   - {fileID: 584384301}
 --- !u!61 &170526229
@@ -14987,6 +14989,8 @@ MonoBehaviour:
     m_SceneName: A1P1_2
   - m_SceneAsset: {fileID: 102900000, guid: f129749e670e26845971c083d684ab0a, type: 3}
     m_SceneName: A1P1_3
+  - m_SceneAsset: {fileID: 102900000, guid: e8cb907ac650b9a40b146dc0f19771e1, type: 3}
+    m_SceneName: A1P1_5
   respawnPoint:
   - {fileID: 1208668364}
 --- !u!61 &283210865

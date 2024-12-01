@@ -130,6 +130,12 @@ public class CameraLimiter : MonoBehaviour
                 SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
             }
         }
+        StartCoroutine(RescanAstarGraph());
+    }
+    IEnumerator RescanAstarGraph()
+    {
+        yield return new WaitForSeconds(.1f);
+        AstarManager.Instance?.Rescan();
     }
     List<IResetable> FindAllResetables(Scene sceneToSearch)
     {

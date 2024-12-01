@@ -427,7 +427,6 @@ public class PlayerDefenseState : PlayerBaseState
     private Animator _animator;
     public override void EnterState(PlayerController player)
     {
-        Debug.Log("Player Defense!");
         _rd = player.Rb;
         _stats = player.stats;
         _col = player.GetComponent<CapsuleCollider2D>();
@@ -555,7 +554,6 @@ public class PlayerLedgeState : PlayerBaseState
     private Animator _animator;
     public override void EnterState(PlayerController player)
     {
-        Debug.Log("Climb Edge");
         InitializeVariables(player);
     }
 
