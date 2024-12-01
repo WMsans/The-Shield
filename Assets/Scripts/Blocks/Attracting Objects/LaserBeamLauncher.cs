@@ -76,16 +76,18 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
             return;
         }
         _laserBeamRenderer.enabled = true;
-        var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
-        if (ray)
+        var rays = Physics2D.RaycastAll(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
+        var detectedFlag = false;
+        foreach (var ray in rays)
         {
+            if(!ray) continue;
+            if(ray.collider.isTrigger) continue;
+            detectedFlag = true;
             Render2DRay(laserPoint.position, ray.point, radius);
+            break;
         }
-        else
-        {
-            Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, radius);
-        }
-        HarmableDetection(Physics2D.CircleCast(laserPoint.position, radius, transform.right, Mathf.Infinity, collidableLayer));
+        if(!detectedFlag) Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, radius);
+        HarmableDetection(radius);
     }
 
     void HandleTimer()
@@ -100,28 +102,41 @@ public class LaserBeamLauncher : MonoBehaviour, IPersistant
         else if (!_launched && _realCooldownPeriod - _launchTimer < 1f)
         {
             _laserBeamRenderer.enabled = true;
-            var ray = Physics2D.Raycast(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
-            if (ray)
+            var rays = Physics2D.RaycastAll(laserPoint.position, transform.right, Mathf.Infinity, collidableLayer);
+            var detectedFlag = false;
+            foreach (var ray in rays)
             {
+                if (!ray) continue;
+                if (ray.collider.isTrigger) continue;
                 Render2DRay(laserPoint.position, ray.point, .001f, 0f);
+                detectedFlag = true;
+                break;
             }
-            else
-            {
-                Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, .001f, 0f);
-            }
+            if(!detectedFlag) Render2DRay(laserPoint.position, laserPoint.position + laserPoint.right * distanceRay, .001f, 0f);
         }
     }
-    void HarmableDetection(RaycastHit2D ray)
+    void HarmableDetection(float radius)
     {
-        if(!ray) return;
-        if (ray.collider.CompareTag("Player"))
+        var rays = Physics2D.CircleCastAll(laserPoint.position, radius, transform.right, Mathf.Infinity,
+            collidableLayer);
+        foreach (var ray in rays)
         {
-            _player.playerHarmable.Harm(damage);
-            // Player detected, harm player
-            if (forceRespawn && _forceRespawnTimer <= 0f)
+            if (!ray) continue;
+            if (ray.collider.isTrigger) continue;
+            if (ray.collider.CompareTag("Player"))
             {
-                StartCoroutine(ForceRespawn());
+                _player.playerHarmable.Harm(damage);
+                // Player detected, harm player
+                if (forceRespawn && _forceRespawnTimer <= 0f)
+                {
+                    StartCoroutine(ForceRespawn());
+                }
             }
+            else if (ray.collider.CompareTag("Enemy"))
+            {
+                ray.collider.GetComponent<Harmable>().Harm(damage);
+            }
+            break;
         }
     }
 

@@ -13,5 +13,110 @@ MonoBehaviour:
   m_Name: vHierarchy Data
   m_EditorClassIdentifier: 
   sceneDatasByGuid:
-    keys: []
-    values: []
+    keys:
+    - 7774ed15d78a0e749ab1b4211b6a8f73
+    - 0e047d8910c89f24a98755e8a655d0c9
+    - 451eba31675d7154291136767389045d
+    - 05d11ff1acfd0a54f920bb571bfe3858
+    - f129749e670e26845971c083d684ab0a
+    - 5361db1651e896f409e06a711a005683
+    - e8cb907ac650b9a40b146dc0f19771e1
+    values:
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
+    - goDatasByGlobalId:
+        keys:
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-2086814608-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-1803110745-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-1372980915-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-2065819622-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-2032579449-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-1991143407-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-1742186478-0
+        - GlobalObjectId_V1-2-0e047d8910c89f24a98755e8a655d0c9-519420028-0
+        values:
+        - iColor: 0
+          icon: AvatarMask On Icon
+        - iColor: 0
+          icon: ParticleSystem Icon
+        - iColor: 0
+          icon: Canvas Icon
+        - iColor: 0
+          icon: EventSystem Icon
+        - iColor: 5
+          icon: 
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Camera Icon
+      goDatasByInstanceId:
+        keys: 00a30000bca200007aa20000f8a20000eea20000e0a20000b6a20000f4a100000eab0000caaa000088aa000006ab0000fcaa0000eeaa0000c4aa000002aa0000
+        values:
+        - iColor: 0
+          icon: AvatarMask On Icon
+        - iColor: 0
+          icon: ParticleSystem Icon
+        - iColor: 0
+          icon: Canvas Icon
+        - iColor: 0
+          icon: EventSystem Icon
+        - iColor: 5
+          icon: 
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Camera Icon
+        - iColor: 0
+          icon: AvatarMask On Icon
+        - iColor: 0
+          icon: ParticleSystem Icon
+        - iColor: 0
+          icon: Canvas Icon
+        - iColor: 0
+          icon: EventSystem Icon
+        - iColor: 5
+          icon: 
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Light Icon
+        - iColor: 0
+          icon: Camera Icon
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
+    - goDatasByGlobalId:
+        keys: []
+        values: []
+      goDatasByInstanceId:
+        keys: 
+        values: []
