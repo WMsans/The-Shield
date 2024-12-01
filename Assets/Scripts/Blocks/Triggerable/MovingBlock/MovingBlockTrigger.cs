@@ -35,4 +35,9 @@ public class MovingBlockTrigger : Trigger
             OnTrigger();
         }
     }
+
+    public override void OnReset()
+    {
+        
+    }
 }

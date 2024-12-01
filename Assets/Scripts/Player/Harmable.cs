@@ -86,9 +86,10 @@ public class Harmable : ShieldAttractingObject, IPersistant
     }
     public void Activate()
     {
+        HitPoints = maxHitPoints;
         // Get all colliders and renderer of the object
-        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        var colliders = GetComponentsInChildren<Collider2D>();
+        var renderers = GetComponentsInChildren<Renderer>();
 
         // Disable all colliders and renderers
         foreach (Collider2D c in colliders)
@@ -101,21 +102,24 @@ public class Harmable : ShieldAttractingObject, IPersistant
         }
     }
 
-    public void Deactivate()
+    public void DeactivateColliders()
     {
-        // Get all colliders and renderer of the object
-        Collider2D[] colliders = GetComponentsInChildren<Collider2D>();
-        Renderer[] renderers = GetComponentsInChildren<Renderer>();
-
-        // Disable all colliders and renderers
-        foreach (Collider2D c in colliders)
+        foreach (var c in GetComponentsInChildren<Collider2D>())
         {
             c.enabled = false;
         }
-        foreach (Renderer r in renderers)
+    }
+    public void DeactivateRenderers()
+    {
+        foreach (var r in GetComponentsInChildren<Renderer>())
         {
             r.enabled = false;
         }
+    }
+    public void Deactivate()
+    {
+        DeactivateColliders();
+        DeactivateRenderers();
     }
     public void SetInvincible(bool value, float duration)
     {
