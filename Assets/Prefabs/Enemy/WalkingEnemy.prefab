@@ -248,7 +248,7 @@ MonoBehaviour:
       startIndex: 
       variableStartIndex: 
       JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(244.5,60)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Parallel","NodeData":{"Offset":"(4.537939,115.68367)"},"ID":1,"Name":"Parallel","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"EnemyWalk","NodeData":{"Offset":"(-141.588013,100.014664)"},"ID":2,"Name":"Enemy
-        Walk","Instant":true,"SingleWalkSpeed":6},{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(122.896515,96.14441)"},"ID":3,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(4.41317749,110.6539)"},"ID":4,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-106.796356,126.987)"},"ID":5,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-90,110)"},"ID":6,"Name":"Inverter","Instant":true,"Children":[{"Type":"EnemyDetectLayer","NodeData":{"Offset":"(0.432739258,114.867752)"},"ID":7,"Name":"Enemy
+        Walk","Instant":true,"SingleWalkSpeed":3},{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(122.896515,96.14441)"},"ID":3,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(4.41317749,110.6539)"},"ID":4,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-106.796356,126.987)"},"ID":5,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-90,110)"},"ID":6,"Name":"Inverter","Instant":true,"Children":[{"Type":"EnemyDetectLayer","NodeData":{"Offset":"(0.432739258,114.867752)"},"ID":7,"Name":"Enemy
         Detect Layer","Instant":true,"TransformwallDetectTransform":0,"SinglewallDetectRadius":0.1,"LayerMaskwallMask":1}]},{"Type":"EnemyDetectLayer","NodeData":{"Offset":"(90,110)"},"ID":8,"Name":"Enemy
         Detect Layer","Instant":true,"TransformwallDetectTransform":1,"SinglewallDetectRadius":0.1,"LayerMaskwallMask":1}]},{"Type":"EnemyTurnDirection","NodeData":{"Offset":"(169.796967,134.162949)"},"ID":9,"Name":"Enemy
         Turn Direction","Instant":true}]}]}]}}'
@@ -325,7 +325,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.13}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1.6, y: 1.6}
     newSize: {x: 1, y: 2}
     adaptiveTilingThreshold: 0.5
